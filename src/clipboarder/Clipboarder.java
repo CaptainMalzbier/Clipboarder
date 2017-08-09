@@ -5,6 +5,8 @@
  */
 package clipboarder;
 
+import java.awt.SystemTray;
+
 /**
  *
  * @author Philipp
@@ -16,6 +18,11 @@ public class Clipboarder {
      */
     public static void main(String[] args) {
         // TODO code application logic here
+        System.out.println("Hello World!");
+        if (!SystemTray.isSupported()) {
+            System.out.println("SystemTray is not supported");
+            return;
+        }
     }
-    
+
 }
