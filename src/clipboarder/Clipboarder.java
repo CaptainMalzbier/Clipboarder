@@ -5,6 +5,7 @@
  */
 package clipboarder;
 
+import java.awt.AWTException;
 import java.sql.DriverManager;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -14,6 +15,8 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 
 import java.awt.SystemTray;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -31,6 +34,14 @@ public class Clipboarder {
             System.out.println("SystemTray is not supported");
             return;
         }
+        
+        SysTray sysTray = new SysTray();
+        try {
+            sysTray.createTrayIcon();
+        } catch (AWTException ex) {
+            Logger.getLogger(Clipboarder.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
         ExecuteSQL.executeQuerryAndPrint("SELECT ID, BenutzerName, EMail FROM Benutzer");
         ExecuteSQL.executeQuerry("UPDATE `Benutzer` SET `BenutzerName`= 'Arschi' WHERE `BenutzerName` like '%Arsch%'");
         ExecuteSQL.executeQuerry("INSERT INTO `Benutzer`(`BenutzerName`, `EMail`, `Passwort`) VALUES ('Didi' , 'dd@web.de' , 'jay')");        
