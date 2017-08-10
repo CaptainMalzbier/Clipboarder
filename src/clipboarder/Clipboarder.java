@@ -31,9 +31,14 @@ public class Clipboarder {
             System.out.println("SystemTray is not supported");
             return;
         }
+        
+        String UserID =  ExecuteSQL.getUserID("david-heik@web.de", "testPW");
+        System.out.println("Login: " + UserID);
         ExecuteSQL.executeQuerryAndPrint("SELECT ID, BenutzerName, EMail FROM Benutzer");
         ExecuteSQL.executeQuerry("UPDATE `Benutzer` SET `BenutzerName`= 'Arschi' WHERE `BenutzerName` like '%Arsch%'");
-        ExecuteSQL.executeQuerry("INSERT INTO `Benutzer`(`BenutzerName`, `EMail`, `Passwort`) VALUES ('Didi' , 'dd@web.de' , 'jay')");        
+       // ExecuteSQL.executeQuerry("INSERT INTO `Benutzer`(`BenutzerName`, `EMail`, `Passwort`) VALUES ('Didi' , 'dd@web.de' , 'jay')");    
+        
+        
     }
 
 }
