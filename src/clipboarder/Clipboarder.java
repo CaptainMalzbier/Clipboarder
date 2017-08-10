@@ -5,6 +5,14 @@
  */
 package clipboarder;
 
+import java.sql.DriverManager;
+import java.sql.Connection;
+import java.sql.SQLException;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+
 import java.awt.SystemTray;
 
 /**
@@ -23,6 +31,9 @@ public class Clipboarder {
             System.out.println("SystemTray is not supported");
             return;
         }
+        ExecuteSQL.executeQuerryAndPrint("SELECT ID, BenutzerName, EMail FROM Benutzer");
+        ExecuteSQL.executeQuerry("UPDATE `Benutzer` SET `BenutzerName`= 'Arschi' WHERE `BenutzerName` like '%Arsch%'");
+        ExecuteSQL.executeQuerry("INSERT INTO `Benutzer`(`BenutzerName`, `EMail`, `Passwort`) VALUES ('Didi' , 'dd@web.de' , 'jay')");        
     }
 
 }
