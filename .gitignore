@@ -2,3 +2,5 @@
 /build/
 /src/clipboarder/assets/images/logo.ai
 /src/clipboarder/assets/images/logo_icon.ai
+/bin/
+/target/
