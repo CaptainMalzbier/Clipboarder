@@ -37,16 +37,13 @@ import javafx.stage.Stage;
  *
  * @author Philipp
  */
-public class Clipboarder extends Application implements NativeKeyListener {
+@SuppressWarnings("restriction")
+public class Clipboarder extends Application {
 
 	public static Scene scene; // in der Scene werden alle Elemente dargestellt
 	public static Properties prop = new Properties(); // Einstellungen / Pfade und Variablen
 	public static String configPath;
 	public static Stage stage;
-	private short hotKeyFlag = 0x00;
-	public static boolean MASK_CTRL = false;
-	public static boolean MASK_C = false;
-
 	/**
 	 * @param args
 	 *            the command line arguments
@@ -113,11 +110,10 @@ public class Clipboarder extends Application implements NativeKeyListener {
 		stage.setScene(scene); // setze Szene in Fenster ein
 		stage.setMaximized(false); // minimiere Fenster
 		stage.setMinWidth(Double.parseDouble(prop.getProperty("width"))); // setze Mindestbreite des Fensters bei
-																			// Verkleinerung
 		stage.setMinHeight(Double.parseDouble(prop.getProperty("height"))); // setze Mindesthoehe des Fensters bei
 
 		// add key listener
-		GlobalScreen.addNativeKeyListener(new Clipboarder());
+		GlobalScreen.addNativeKeyListener(new KeyboardListener());
 
 		// Verkleinerung
 		// stage.show(); // zeige Fenster
@@ -137,8 +133,9 @@ public class Clipboarder extends Application implements NativeKeyListener {
 			// set up a system tray icon.
 			java.awt.SystemTray tray = java.awt.SystemTray.getSystemTray();
 			java.awt.Image image = Toolkit.getDefaultToolkit()
-					.getImage(SysTray.class.getResource("assets/images/logo.gif"));
+					.getImage(prop.getProperty("trayicon"));
 			java.awt.TrayIcon trayIcon = new java.awt.TrayIcon(image);
+			trayIcon.setImageAutoSize(true);
 
 			// if the user double-clicks on the tray icon, show the main app stage.
 			trayIcon.addActionListener(event -> Platform.runLater(this::showStage));
@@ -203,47 +200,4 @@ public class Clipboarder extends Application implements NativeKeyListener {
 			stage.toFront();
 		}
 	}
-
-	public void nativeKeyPressed(NativeKeyEvent e) {
-		System.out.println("Key Pressed: " + NativeKeyEvent.getKeyText(e.getKeyCode()));
-
-		if (e.getKeyCode() == NativeKeyEvent.VC_CONTROL) {
-			MASK_CTRL = true;
-			// Check the mask and do work.
-			if (MASK_CTRL && MASK_C) {
-				System.out.println("BEIDES");
-			}
-		} else if (e.getKeyCode() == NativeKeyEvent.VC_C) {
-			MASK_C = true;
-			if (MASK_CTRL && MASK_C) {
-				System.out.println("BEIDES");
-			}
-
-		}
-
-		// if (e.getKeyCode() == NativeKeyEvent.VC_ESCAPE) {
-		// try {
-		// GlobalScreen.unregisterNativeHook();
-		// } catch (NativeHookException e1) {
-		// // TODO Auto-generated catch block
-		// e1.printStackTrace();
-		// }
-		// }
-	}
-
-	public void nativeKeyReleased(NativeKeyEvent e) {
-		System.out.println("Key Released: " + NativeKeyEvent.getKeyText(e.getKeyCode()));
-
-		if (e.getKeyCode() == NativeKeyEvent.VC_CONTROL) {
-			MASK_CTRL = false;
-		} else if (e.getKeyCode() == NativeKeyEvent.VC_C) {
-			MASK_C = false;
-		}
-
-	}
-
-	public void nativeKeyTyped(NativeKeyEvent e) {
-		System.out.println("Key Typed: " + e.getKeyText(e.getKeyCode()));
-	}
-
 }
