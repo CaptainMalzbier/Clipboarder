@@ -12,45 +12,45 @@ package com.heikweber.clipboarder;
  */
 class CopyEntry {
 
-    private int id;
-    private String name;
-    private String content;
-    private boolean status;
+	private int id;
+	private String name;
+	private String content = "";
+	private boolean status;
 
-    CopyEntry(String name) {
-        this.name = name;
-    }
+	CopyEntry(String name) {
+		this.name = name;
+	}
 
-    public int getId() {
-        return id;
-    }
+	public int getId() {
+		return id;
+	}
 
-    public void setId(int id) {
-        this.id = id;
-    }
+	public void setId(int id) {
+		this.id = id;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public String getContent() {
-        return content;
-    }
+	public String getContent() {
+		return content;
+	}
 
-    public void setContent(String content) {
-        this.content = content;
-    }
+	public void setContent(String content) {
+		this.content = content != null ? content : "";
+	}
 
-    public boolean isStatus() {
-        return status;
-    }
+	public boolean isStatus() {
+		return status;
+	}
 
-    public void setStatus(boolean status) {
-        this.status = status;
-    }
+	public void setStatus(boolean status) {
+		this.status = status;
+	}
 
 }
