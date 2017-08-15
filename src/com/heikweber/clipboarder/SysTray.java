@@ -22,9 +22,14 @@ import javafx.application.Platform;
  *
  * @author Philipp
  */
-public class SysTray {
+public class SysTray extends TrayIcon implements ActionListener{
 
-    public void createTrayIcon() throws AWTException {
+    public SysTray(Image image) {
+		super(image);
+		setImageAutoSize(true);
+		}
+
+	public void createTrayIcon() throws AWTException {
         if (!SystemTray.isSupported()) {
             System.out.println("SystemTray is not supported, exiting!");
             return;
@@ -59,5 +64,12 @@ public class SysTray {
         SystemTray tray = SystemTray.getSystemTray();
         tray.add(trayIcon);
     }
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+//		Clipboarder.showStage();
+//		Platform.runLater(Clipboarder::showStage);
+		
+	}
 
 }
