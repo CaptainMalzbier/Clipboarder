@@ -13,12 +13,13 @@ package com.heikweber.clipboarder;
 class CopyEntry {
 
 	private int id;
-	private String name;
 	private String content = "";
 	private boolean status;
+	private Runnable listener = () -> {
+	};
 
-	CopyEntry(String name) {
-		this.name = name;
+	CopyEntry(String content) {
+		this.content = content;
 	}
 
 	public int getId() {
@@ -27,14 +28,7 @@ class CopyEntry {
 
 	public void setId(int id) {
 		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
+		listener.run();
 	}
 
 	public String getContent() {
@@ -43,6 +37,7 @@ class CopyEntry {
 
 	public void setContent(String content) {
 		this.content = content != null ? content : "";
+		listener.run();
 	}
 
 	public boolean isStatus() {
@@ -51,6 +46,11 @@ class CopyEntry {
 
 	public void setStatus(boolean status) {
 		this.status = status;
+		listener.run();
+	}
+
+	public void addListener(Runnable listener) {
+		this.listener = listener;
 	}
 
 }

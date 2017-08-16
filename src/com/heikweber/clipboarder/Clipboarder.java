@@ -14,10 +14,7 @@ import java.awt.Toolkit;
 import java.awt.TrayIcon;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
@@ -30,7 +27,6 @@ import org.jnativehook.NativeHookException;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -42,11 +38,10 @@ import javafx.stage.StageStyle;
  */
 public class Clipboarder extends Application {
 
-	public static Scene scene; // in der Scene werden alle Elemente dargestellt
-	public static Properties prop = new Properties(); // Einstellungen / Pfade und Variablen
-	public static String configPath;
+	private SceneModel model;
 	public static Stage stage;
 	public static String clipboardText;
+	private static Configuration config;
 
 	/**
 	 * @param args
@@ -79,13 +74,12 @@ public class Clipboarder extends Application {
 			System.exit(1);
 		}
 
-		configPath = args[0]; // erhalte Pfad zur Konfigurationsdatei aus Startargumenten des Programms
-		File propertiesFile = new File(configPath);
-		try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(propertiesFile))) {
-			prop.load(bis);
+		String configPath = args[0]; // erhalte Pfad zur Konfigurationsdatei aus Startargumenten des Programms
+		try {
+			config = new Configuration(configPath);
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			System.out.println("Failed to read configuration file: " + propertiesFile);
+			System.out.println("Failed to read configuration file: " + configPath);
 			System.exit(1);
 		}
 
@@ -95,39 +89,32 @@ public class Clipboarder extends Application {
 	@Override
 	public void start(final Stage stage) {
 
-		double width = Double.parseDouble(prop.getProperty("width"));
-		double height = Double.parseDouble(prop.getProperty("height"));
-
 		// stores a reference to the stage.
 		Clipboarder.stage = stage;
 		// instructs the javafx system not to exit implicitly when the last application
 		// window is shut.
 		Platform.setImplicitExit(false);
-
 		// Funktion zum Starten des Fensters
-		scene = new SceneGenerator().createScene(configPath); // erhalte die Szene aus createScene() aus der Klasse
-																// SceneGenerator
-		// fuege Stylesheet zur Gestaltung per CSS zur Szene hinzu
-		scene.getStylesheets().add(new File(prop.getProperty("stylePath")).toURI().toString());
+		model = new SceneModel(config);
 		// setze eigenes Icon fuer das Fenster
-		stage.getIcons().add(new Image(new File(prop.getProperty("icon")).toURI().toString()));
+		stage.getIcons().add(new Image(new File(config.get("icon")).toURI().toString()));
 		stage.setFullScreen(false);
-		stage.setScene(scene); // setze Szene in Fenster ein
+		stage.setScene(model.getScene()); // setze Szene in Fenster ein
 		stage.setMaximized(false); // minimiere Fenster
 		stage.setResizable(false);
-		if (Boolean.parseBoolean(prop.getProperty("alwaysontop"))) {
+		if (Boolean.parseBoolean(config.get("alwaysontop"))) {
 			stage.setAlwaysOnTop(true);
 		}
 
 		Rectangle2D primaryScreenBounds = Screen.getPrimary().getBounds();
-		stage.setX(primaryScreenBounds.getMinX() + primaryScreenBounds.getWidth() - width - 20);
-		stage.setY(primaryScreenBounds.getMinY() + primaryScreenBounds.getHeight() - height - 80);
+		stage.setX(primaryScreenBounds.getMinX() + primaryScreenBounds.getWidth() - config.getWidth() - 20);
+		stage.setY(primaryScreenBounds.getMinY() + primaryScreenBounds.getHeight() - config.getHeight() - 80);
 		stage.initStyle(StageStyle.UNDECORATED);
-		stage.setMinWidth(width); // setze Mindestbreite des Fensters bei
-		stage.setMinHeight(height); // setze Mindesthoehe des Fensters bei
+		stage.setMinWidth(config.getWidth()); // setze Mindestbreite des Fensters bei
+		stage.setMinHeight(config.getHeight()); // setze Mindesthoehe des Fensters bei
 
 		// add key listener
-		GlobalScreen.addNativeKeyListener(new KeyboardListener());
+		GlobalScreen.addNativeKeyListener(new KeyboardListener(this));
 
 		// sets up the tray icon (using awt code run on the swing thread).
 		SwingUtilities.invokeLater(this::addAppToTray);
@@ -143,16 +130,15 @@ public class Clipboarder extends Application {
 
 			// set up a system tray icon.
 			SystemTray tray = SystemTray.getSystemTray();
-			java.awt.Image image = Toolkit.getDefaultToolkit().getImage(prop.getProperty("trayicon"));
+			java.awt.Image image = Toolkit.getDefaultToolkit().getImage(config.get("trayicon"));
 			TrayIcon trayIcon = new SysTray(image);
 
 			// if the user double-clicks on the tray icon, show the main app stage.
-			final Clipboarder clipboarder = this;
 			trayIcon.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent e) {
 					if (e.getButton() == MouseEvent.BUTTON1) {
-						Platform.runLater(() -> clipboarder.showStage());
+						Platform.runLater(() -> Clipboarder.this.showStage());
 					}
 				}
 			});
@@ -197,5 +183,9 @@ public class Clipboarder extends Application {
 			stage.show();
 			stage.toFront();
 		}
+	}
+
+	public SceneModel getModel() {
+		return model;
 	}
 }
