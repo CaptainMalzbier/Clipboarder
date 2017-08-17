@@ -39,16 +39,14 @@ import javafx.stage.StageStyle;
 public class Clipboarder extends Application {
 
 	private SceneModel model;
-	public static Stage stage;
-	public static String clipboardText;
-	private static Configuration config;
+	private Stage stage;
+	private Configuration config;
 
 	/**
 	 * @param args
 	 *            the command line arguments
 	 */
 	public static void main(String[] args) {
-
 		// Clear previous logging configurations.
 		LogManager.getLogManager().reset();
 		// Get the logger for "org.jnativehook" and set the level to off.
@@ -74,7 +72,13 @@ public class Clipboarder extends Application {
 			System.exit(1);
 		}
 
-		String configPath = args[0]; // erhalte Pfad zur Konfigurationsdatei aus Startargumenten des Programms
+		Application.launch(args);
+	}
+
+	@Override
+	public void start(final Stage stage) {
+		String configPath = getParameters().getRaw().get(0); // erhalte Pfad zur Konfigurationsdatei aus Startargumenten
+																// des Programms
 		try {
 			config = new Configuration(configPath);
 		} catch (Exception ex) {
@@ -83,14 +87,7 @@ public class Clipboarder extends Application {
 			System.exit(1);
 		}
 
-		Application.launch(args);
-	}
-
-	@Override
-	public void start(final Stage stage) {
-
-		// stores a reference to the stage.
-		Clipboarder.stage = stage;
+		this.stage = stage;
 		// instructs the javafx system not to exit implicitly when the last application
 		// window is shut.
 		Platform.setImplicitExit(false);
@@ -121,6 +118,7 @@ public class Clipboarder extends Application {
 
 		// Verkleinerung
 		// stage.show(); // zeige Fenster
+		// showStage();
 	}
 
 	private void addAppToTray() {
@@ -131,7 +129,7 @@ public class Clipboarder extends Application {
 			// set up a system tray icon.
 			SystemTray tray = SystemTray.getSystemTray();
 			java.awt.Image image = Toolkit.getDefaultToolkit().getImage(config.get("trayicon"));
-			TrayIcon trayIcon = new SysTray(image);
+			TrayIcon trayIcon = new SysTray(this, image);
 
 			// if the user double-clicks on the tray icon, show the main app stage.
 			trayIcon.addMouseListener(new MouseAdapter() {
@@ -187,5 +185,9 @@ public class Clipboarder extends Application {
 
 	public SceneModel getModel() {
 		return model;
+	}
+
+	public Stage getStage() {
+		return stage;
 	}
 }

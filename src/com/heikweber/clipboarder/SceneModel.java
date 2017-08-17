@@ -9,6 +9,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.sun.istack.internal.Nullable;
+
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -74,14 +76,15 @@ public class SceneModel {
 
 	private VBox setupHomeMenu() {
 		menu = new VBox();
-//		for (int index = 0; index < 9; index++) {
-//			addCopyEntry("Test #" + (index + 1));
-//		}
+		// for (int index = 0; index < 9; index++) {
+		// addCopyEntry("Test #" + (index + 1));
+		// }
 		return menu;
 	}
 
 	private Button createButton(CopyEntry copyEntry) {
 		Button button = new Button(copyEntry.getContent());
+		button.setMaxWidth(150);
 		button.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
@@ -110,6 +113,17 @@ public class SceneModel {
 		return copyEntryList.get(index);
 	}
 
+	public List<CopyEntry> getCopyEntryList() {
+		return copyEntryList;
+	}
+
+	@Nullable
+	public CopyEntry getLatestCopyEntry() {
+		if (copyEntryList.isEmpty())
+			return null;
+		return copyEntryList.get(getCopyEntryList().size() - 1);
+	}
+
 	public void addCopyEntry(String content) {
 		int index = copyEntryList.size();
 		CopyEntry copyEntry = new CopyEntry(content);
@@ -119,11 +133,8 @@ public class SceneModel {
 		menu.getChildren().add(button);
 		copyEntry.addListener(() -> {
 			button.setText(copyEntry.getContent());
+			tabPane.requestLayout();
 		});
-	}
-
-	public void update() {
-		this.tabPane.requestLayout();
 	}
 
 	public Scene getScene() {
