@@ -118,7 +118,7 @@ public class Clipboarder extends Application {
 
 		// Verkleinerung
 		// stage.show(); // zeige Fenster
-		// showStage();
+//		showStage();
 	}
 
 	private void addAppToTray() {

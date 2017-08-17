@@ -14,14 +14,17 @@ import com.sun.istack.internal.Nullable;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Pagination;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.util.Callback;
 
 /**
  *
@@ -41,6 +44,7 @@ public class SceneModel {
 	private TabPane tabPane;
 	private int selectedEntry = 0;
 	private VBox menu;
+	private Pagination pagination;
 
 	private Scene createScene(Configuration config) {
 		// Klasse zum Erzeugen der Szene
@@ -76,10 +80,23 @@ public class SceneModel {
 
 	private VBox setupHomeMenu() {
 		menu = new VBox();
-		// for (int index = 0; index < 9; index++) {
-		// addCopyEntry("Test #" + (index + 1));
-		// }
+		// TODO Buttons von unten nach oben auftauchen.
+		pagination = new Pagination(28, 0);
+		pagination.setStyle("-fx-border-color:red;");
+		pagination.setPageFactory(new Callback<Integer, Node>() {
+			@Override
+			public Node call(Integer pageIndex) {
+				return createPage(pageIndex);
+			}
+		});
 		return menu;
+	}
+
+	protected Node createPage(Integer pageIndex) {
+		System.out.println(pageIndex);
+		final VBox page = new VBox();
+		// this.copyEntryList
+		return page;
 	}
 
 	private Button createButton(CopyEntry copyEntry) {
