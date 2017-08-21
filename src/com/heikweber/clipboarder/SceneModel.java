@@ -21,10 +21,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.util.Callback;
 
 /**
  *
@@ -55,14 +55,14 @@ public class SceneModel {
 		BorderPane borderPane = new BorderPane();
 		Tab tabSettings = new Tab();
 		Tab tabHome = new Tab();
-		VBox vBoxHome = setupHomeMenu();
+		AnchorPane vBoxHome = setupHomeMenu();
 		VBox vBoxSettings = setupSettingsMenu();
 		tabHome.setText("Home");
 		tabHome.setClosable(false);
 		tabSettings.setText("Settings");
 		tabSettings.setClosable(false);
 		// vBoxHome.getChildren().add(new Label("Tab" + i));
-		vBoxHome.setAlignment(Pos.BASELINE_RIGHT);
+		// vBoxHome.setAlignment(Pos.BASELINE_RIGHT);
 		vBoxSettings.getChildren().add(new Label("Settings"));
 		vBoxSettings.setAlignment(Pos.CENTER);
 		tabHome.setContent(vBoxHome);
@@ -78,24 +78,54 @@ public class SceneModel {
 		return new Scene(layout, config.getWidth(), config.getHeight());
 	}
 
-	private VBox setupHomeMenu() {
-		menu = new VBox();
+	private AnchorPane setupHomeMenu() {
+		// menu = new VBox();
 		// TODO Buttons von unten nach oben auftauchen.
-		pagination = new Pagination(28, 0);
+
+		pagination = new Pagination(1, 0);
 		pagination.setStyle("-fx-border-color:red;");
-		pagination.setPageFactory(new Callback<Integer, Node>() {
-			@Override
-			public Node call(Integer pageIndex) {
-				return createPage(pageIndex);
-			}
-		});
-		return menu;
+		pagination.setPageFactory(pageIndex -> createPage(pageIndex));
+		AnchorPane anchorPane = new AnchorPane();
+		AnchorPane.setTopAnchor(pagination, 10.0);
+		AnchorPane.setRightAnchor(pagination, 10.0);
+		AnchorPane.setBottomAnchor(pagination, 10.0);
+		AnchorPane.setLeftAnchor(pagination, 10.0);
+		anchorPane.getChildren().addAll(pagination);
+
+		return anchorPane;
+		// return menu;
 	}
 
 	protected Node createPage(Integer pageIndex) {
-		System.out.println(pageIndex);
+		System.out.println("creating page " + pageIndex);
 		final VBox page = new VBox();
-		// this.copyEntryList
+		if (pageIndex == null || copyEntryList.isEmpty())
+			return page;
+
+		int entryFrom = pageIndex * 10;
+		int entryTo = entryFrom + 10;
+
+		if (entryFrom >= copyEntryList.size())
+			return page;
+		if (entryTo >= copyEntryList.size())
+			entryTo = copyEntryList.size();
+
+		// for (int i = copyEntryList.size(); i > copyEntryList.size() - pageIndex * 10;
+		// i--) {
+		// System.out.println(copyEntryList.get(i).getContent());
+		// }
+
+		for (int i = entryFrom; i < entryTo; ++i) {
+			// for (int i = entryFrom; i < entryTo; ++i) {
+			final CopyEntry copyEntry = copyEntryList.get(i);
+			final Button button = createButton(copyEntry);
+			page.getChildren().add(button);
+			copyEntry.addListener(() -> {
+				button.setText(copyEntry.getContent());
+				tabPane.requestLayout();
+			});
+		}
+
 		return page;
 	}
 
@@ -138,20 +168,17 @@ public class SceneModel {
 	public CopyEntry getLatestCopyEntry() {
 		if (copyEntryList.isEmpty())
 			return null;
-		return copyEntryList.get(getCopyEntryList().size() - 1);
+		return copyEntryList.get(0);
 	}
 
 	public void addCopyEntry(String content) {
+		System.out.println("adding copy entry");
 		int index = copyEntryList.size();
 		CopyEntry copyEntry = new CopyEntry(content);
 		copyEntry.setId(index);
-		copyEntryList.add(copyEntry);
-		final Button button = createButton(copyEntry);
-		menu.getChildren().add(button);
-		copyEntry.addListener(() -> {
-			button.setText(copyEntry.getContent());
-			tabPane.requestLayout();
-		});
+		copyEntryList.add(0, copyEntry);
+		pagination.setPageFactory(idx -> createPage(idx));
+		tabPane.requestLayout();
 	}
 
 	public Scene getScene() {
