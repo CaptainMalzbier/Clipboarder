@@ -2,14 +2,14 @@
 require_once 'config.inc.php';
 require_once 'token.inc.php';
 
-$_POST['password'] = "TestPW";
-$_POST['email'] = "david-heik@web.de";
 $username = "";
+$sDbToken = "";
 $iCountUser = False;
 $iID = FALSE;
 
 
-if (isset($_POST['password']) && isset($_POST['email'])) {
+if (isset($_POST['password']) && isset($_POST['email']) && isset($_POST['token'])) {
+    $token = $_POST['token'];
     $email = $_POST['email'];
     $sql = "SELECT * FROM `clipboarderuser` WHERE `EMail` = '" . $email . "' AND `Activatedate` IS NOT NULL";
     if ($result = $dbClipboarder->query($sql)) {
@@ -18,6 +18,7 @@ if (isset($_POST['password']) && isset($_POST['email'])) {
                 $iCountUser = 1;
                 $iID = ($row->ID);
                 $username = ($row->Username);
+                $sDbToken = ($row->PasswordReset);
             } else {
                 die("Error");
             }
@@ -29,21 +30,25 @@ if (isset($_POST['password']) && isset($_POST['email'])) {
             'cost' => 12,
         ];
         $password = password_hash($_POST['password'], PASSWORD_BCRYPT, $aPasswordOptions);
-        $token = getToken(6);
+        if ($token == $sDbToken) {
+            $sql = "UPDATE `clipboarderuser` SET `Password` = '" . $password . "' ,`PasswordReset`= '' WHERE `ID` = '" . $iID . "'";
 
-        $sql = "UPDATE `clipboarderuser` SET `Password` = '" . $password . "' WHERE `ID` = '" . $iID . "'";
+            if ($dbClipboarder->query($sql)) {
+                echo "Password Changed";
+                sendMail($email, $username);
 
-        if ($dbClipboarder->query($sql)) {
-            echo "Password Changed";
-            sendMail($email, $username);
-
+            } else {
+                echo "Error while changing password";
+            }
+            // todo ausgabe
         } else {
-            echo "Error while changing password";
+            echo "User does not exitis";
         }
-    } else {
-        echo "User does not exitis";
     }
+}else{
+    echo "Missing parameters";
 }
+
 function sendMail($email, $username)
 {
     $sInhalt = "";

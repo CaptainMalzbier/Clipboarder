@@ -2,11 +2,11 @@
 require_once 'config.inc.php';
 require_once 'token.inc.php';
 
-$_POST['password'] = "TestPW";
-$_POST['email'] = "david-heik@web.de";
-$_POST['remindme'] = 1;
-$_POST['token'] = "66";
-$_POST['usetoken'] = TRUE;
+//$_POST['password'] = "TestPW";
+//$_POST['email'] = "david-heik@web.de";
+//$_POST['remindme'] = 1;
+//$_POST['token'] = "66";
+//$_POST['usetoken'] = TRUE;
 $iCountUser = FALSE;
 $iCountToken = FALSE;
 $iID = FALSE;

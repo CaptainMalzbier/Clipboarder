@@ -3,9 +3,9 @@ require_once 'config.inc.php';
 require_once 'checkUserExists.php';
 require_once 'token.inc.php';
 
-$_POST['password'] = "TestPW";
-$_POST['username'] = "David";
-$_POST['email'] = "david-heik@web.de";
+//$_POST['password'] = "TestPW";
+//$_POST['username'] = "David";
+//$_POST['email'] = "david-heik@web.de";
 
 if (isset($_POST['username']) && isset($_POST['password']) && isset($_POST['email'])) {
 // check
@@ -42,6 +42,8 @@ if (isset($_POST['username']) && isset($_POST['password']) && isset($_POST['emai
         echo "User exitis";
     }
 
+}else{
+    echo "Missing parameters";
 }
 
 function sendMail($email, $username, $token)
