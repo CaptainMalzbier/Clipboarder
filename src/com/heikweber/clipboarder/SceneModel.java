@@ -179,6 +179,9 @@ public class SceneModel {
 		copyEntryList.add(0, copyEntry);
 		pagination.setPageFactory(idx -> createPage(idx));
 		tabPane.requestLayout();
+		if (copyEntryList.size() < 2) {
+			pagination.setPageCount(pagination.getPageCount() + 1);
+		}
 	}
 
 	public Scene getScene() {

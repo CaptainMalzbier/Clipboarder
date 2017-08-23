@@ -45,8 +45,14 @@ public class Clipboarder extends Application {
 	/**
 	 * @param args
 	 *            the command line arguments
+	 * @throws Exception
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
+		// HTTPRequest Test = new HTTPRequest();
+		// String Response = Test.register("David", "david@heik.info", "TestPW");
+		// Response = Test.activate("david@heik.info", "446591");
+		// System.out.println(Response);
+
 		// Clear previous logging configurations.
 		LogManager.getLogManager().reset();
 		// Get the logger for "org.jnativehook" and set the level to off.
@@ -118,7 +124,7 @@ public class Clipboarder extends Application {
 
 		// Verkleinerung
 		// stage.show(); // zeige Fenster
-//		showStage();
+		// showStage();
 	}
 
 	private void addAppToTray() {
