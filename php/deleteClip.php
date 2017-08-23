@@ -2,28 +2,22 @@
 require_once 'config.inc.php';
 require_once 'token.inc.php';
 
-//$_POST['password'] = "TestPW";
 //$_POST['email'] = "david-heik@web.de";
-//$_POST['remindme'] = 1;
+//$_POST['password'] = "TestPW";
 //$_POST['token'] = "66";
 //$_POST['usetoken'] = TRUE;
+//$_POST['clipid'] = "1";
 $iCountUser = FALSE;
 $iCountToken = FALSE;
 $iID = FALSE;
-$bRemindMe = FALSE;
 $bUseToken = FALSE;
-if (isset($_POST['remindme'])) {
-    if ($_POST['remindme'] == "1") {
-        $bRemindMe = TRUE;
-    }
-}
 if (isset($_POST['usetoken'])) {
     if ($_POST['usetoken'] == "1") {
         $bUseToken = TRUE;
     }
 }
 
-if (isset($_POST['email'])) {
+if (isset($_POST['email']) && isset($_POST['clipid'])) {
     $email = $_POST['email'];
     if ($bUseToken) {
         // login with token
@@ -43,7 +37,9 @@ if (isset($_POST['email'])) {
                     }
                 }
                 if ($sDbToken == $token) {
-                    die("token correct");
+                    //  token correct
+                    //  delete clip
+                    deleteClipFromDatabase($dbClipboarder, $iID, $_POST['clipid']);
                 } else {
                     die("token incorrect");
                 }
@@ -61,18 +57,9 @@ if (isset($_POST['email'])) {
                 $passwordFromDB = getUserPassword($dbClipboarder, $email);
                 $password = $_POST['password'];
                 if (password_verify($password, $passwordFromDB)) {
-                    if ($bRemindMe) {
-                        // create new token and print out
-                        $token = getTokenWithLetters(16);
-                        $sql = "INSERT INTO `clipboarderlogin`(`UserID`, `Token`, `CreateDate`) VALUES ('" . $iID . "', '" . $token . "', '" . time() . "')";
-                        if ($dbClipboarder->query($sql)) {
-                            die($token);
-                        } else {
-                            die("Error while creating token");
-                        }
-                    } else {
-                        die('Correct password');
-                    }
+                    //  password correct
+                    //  delete clip
+                    deleteClipFromDatabase($dbClipboarder, $iID, $_POST['clipid']);
                 } else {
                     die('Worng password.');
                 }
@@ -84,7 +71,7 @@ if (isset($_POST['email'])) {
         }
     }
 } else {
-    die("Missing parameter email");
+    die("Missing parameter email or ClipID");
 }
 
 function getUserIdWhenExitstAndActive($dbClipboarder, $email)
@@ -131,3 +118,12 @@ function getUserPassword($dbClipboarder, $email)
     }
 }
 
+function deleteClipFromDatabase($dbClipboarder, $iUserID, $iClipboardID)
+{
+    $sql = "DELETE FROM `clipboarderclipboards` WHERE  `ID` = '". $iClipboardID  . "' AND `UserID` = '". $iUserID. "'";
+    if ($dbClipboarder->query($sql)) {
+        die ("Successfully deleted");
+    } else {
+        die("Error while deleting");
+    }
+}

@@ -2,28 +2,30 @@
 require_once 'config.inc.php';
 require_once 'token.inc.php';
 
-//$_POST['password'] = "TestPW";
 //$_POST['email'] = "david-heik@web.de";
-//$_POST['remindme'] = 1;
+//$_POST['password'] = "TestPW";
 //$_POST['token'] = "66";
 //$_POST['usetoken'] = TRUE;
+//$_POST['offset'] = 0;
+//$_POST['number'] = 10;
 $iCountUser = FALSE;
 $iCountToken = FALSE;
 $iID = FALSE;
-$bRemindMe = FALSE;
 $bUseToken = FALSE;
-if (isset($_POST['remindme'])) {
-    if ($_POST['remindme'] == "1") {
-        $bRemindMe = TRUE;
-    }
-}
+$iOffset = 0;
+$iNumberOfElements = 10;
 if (isset($_POST['usetoken'])) {
     if ($_POST['usetoken'] == "1") {
         $bUseToken = TRUE;
     }
 }
-
-if (isset($_POST['email'])) {
+if (isset($_POST['offset'])) {
+    $iOffset = $_POST['offset'];
+}
+if (isset($_POST['number'])) {
+    $iNumberOfElements = $_POST['number'];
+}
+if (isset($_POST['email']) && isset($_POST['clipboard'])) {
     $email = $_POST['email'];
     if ($bUseToken) {
         // login with token
@@ -43,7 +45,10 @@ if (isset($_POST['email'])) {
                     }
                 }
                 if ($sDbToken == $token) {
-                    die("token correct");
+                    //  token correct
+                    //  load clips from User
+                    loadClipsFromDatabase($dbClipboarder, $iID, $iOffset, $iNumberOfElements);
+
                 } else {
                     die("token incorrect");
                 }
@@ -61,18 +66,9 @@ if (isset($_POST['email'])) {
                 $passwordFromDB = getUserPassword($dbClipboarder, $email);
                 $password = $_POST['password'];
                 if (password_verify($password, $passwordFromDB)) {
-                    if ($bRemindMe) {
-                        // create new token and print out
-                        $token = getTokenWithLetters(16);
-                        $sql = "INSERT INTO `clipboarderlogin`(`UserID`, `Token`, `CreateDate`) VALUES ('" . $iID . "', '" . $token . "', '" . time() . "')";
-                        if ($dbClipboarder->query($sql)) {
-                            die($token);
-                        } else {
-                            die("Error while creating token");
-                        }
-                    } else {
-                        die('Correct password');
-                    }
+                    //  password correct
+                    //  load clips from User
+                    loadClipsFromDatabase($dbClipboarder, $iID, $iOffset, $iNumberOfElements)
                 } else {
                     die('Worng password.');
                 }
@@ -84,7 +80,7 @@ if (isset($_POST['email'])) {
         }
     }
 } else {
-    die("Missing parameter email");
+    die("Missing parameter email or clipboard");
 }
 
 function getUserIdWhenExitstAndActive($dbClipboarder, $email)
@@ -131,3 +127,18 @@ function getUserPassword($dbClipboarder, $email)
     }
 }
 
+function loadClipsFromDatabase($dbClipboarder, $iUserID, $iOffset, $iNumberOfElements)
+{
+    $sql = "SELECT * FROM `clipboarderclipboards` WHERE `UserID` = '" . $iUserID . "' ORDER BY `clipboarderclipboards`.`ID` DESC Limit " . $iOffset . "," . $iNumberOfElements;
+    if ($result = $dbClipboarder->query($sql)) {
+        while ($row = $result->fetch_object()) {
+            $aDbRowData[] = [
+                "ID" => $row->ID,
+                "UserID" => $row->UserID,
+                "Content" => $row->Content,
+                "CreateDate" => $row->CreateDate,
+            ];
+        }
+    }
+    echo json_encode($aDbRowData);
+}

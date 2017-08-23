@@ -5,7 +5,7 @@ require_once 'token.inc.php';
 $username = "";
 $iCountUser = False;
 $iID = FALSE;
-$_POST['email'] = "david-heik@web.de";
+// $_POST['email'] = "david-heik@web.de";
 $token = getToken(6);
 
 if (isset($_POST['email'])) {
