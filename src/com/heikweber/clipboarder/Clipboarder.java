@@ -48,10 +48,11 @@ public class Clipboarder extends Application {
 	 * @throws Exception
 	 */
 	public static void main(String[] args) throws Exception {
-		// HTTPRequest Test = new HTTPRequest();
+		 // HTTPRequest Test = new HTTPRequest();
 		// String Response = Test.register("David", "david@heik.info", "TestPW");
 		// Response = Test.activate("david@heik.info", "446591");
-		// System.out.println(Response);
+		 // String Response = Test.addClipWithPassword("david@heik.info", "TestPW",  "clip");
+		 // System.out.println(Response);
 
 		// Clear previous logging configurations.
 		LogManager.getLogManager().reset();
