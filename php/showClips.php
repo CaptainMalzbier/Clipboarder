@@ -135,7 +135,7 @@ function loadClipsFromDatabase($dbClipboarder, $iUserID, $iOffset, $iNumberOfEle
             $aDbRowData[] = [
                 "ID" => $row->ID,
                 "UserID" => $row->UserID,
-                "Content" => $row->Content,
+                "Content" =>  ($row->Content),
                 "CreateDate" => $row->CreateDate,
             ];
         }

@@ -6,7 +6,6 @@ require_once 'token.inc.php';
 //$_POST['password'] = "TestPW";
 //$_POST['token'] = "66";
 //$_POST['usetoken'] = TRUE;
-//$_POST['clipboard'] = "TestEintrag";
 $iCountUser = FALSE;
 $iCountToken = FALSE;
 $iID = FALSE;
@@ -17,7 +16,7 @@ if (isset($_POST['usetoken'])) {
     }
 }
 
-if (isset($_POST['email']) && isset($_POST['clipboard'])) {
+if (isset($_POST['email'])) {
     $email = $_POST['email'];
     if ($bUseToken) {
         // login with token
@@ -38,8 +37,9 @@ if (isset($_POST['email']) && isset($_POST['clipboard'])) {
                 }
                 if ($sDbToken == $token) {
                     //  token correct
-                    //  insert clip
-                    insertClipIntoDatabase($dbClipboarder, $iID, $_POST['clipboard']);
+                    //  load clips from User
+                    loadClipsFromDatabase($dbClipboarder, $iID, $iOffset, $iNumberOfElements);
+
                 } else {
                     die("token incorrect");
                 }
@@ -58,8 +58,8 @@ if (isset($_POST['email']) && isset($_POST['clipboard'])) {
                 $password = $_POST['password'];
                 if (password_verify($password, $passwordFromDB)) {
                     //  password correct
-                    //  insert clip
-                    insertClipIntoDatabase($dbClipboarder, $iID, $_POST['clipboard']);
+                    //  load clips from User
+                    loadClipsFromDatabase($dbClipboarder, $iID);
                 } else {
                     die('Worng password.');
                 }
@@ -71,7 +71,7 @@ if (isset($_POST['email']) && isset($_POST['clipboard'])) {
         }
     }
 } else {
-    die("Missing parameter email or clipboard");
+    die("Missing parameter email");
 }
 
 function getUserIdWhenExitstAndActive($dbClipboarder, $email)
@@ -118,18 +118,14 @@ function getUserPassword($dbClipboarder, $email)
     }
 }
 
-function insertClipIntoDatabase($dbClipboarder, $iUserID, $sClipContent)
+function loadClipsFromDatabase($dbClipboarder, $iUserID)
 {
-    $sClipContent = mb_convert_encoding($sClipContent, "UTF-8");
-    $sql = "INSERT INTO `clipboarderclipboards`(`UserID`, `Content`, `CreateDate`) VALUES 
-          (
-          '" . $iUserID . "', 
-          '" . $sClipContent . "', 
-          '" . time() . "'
-          )";
-    if ($dbClipboarder->query($sql)) {
-        die ("Clip successfully created");
-    } else {
-        die("Error while creating");
+    $iCount = 0;
+    $sql = "SELECT * FROM `clipboarderclipboards` WHERE `UserID` = '" . $iUserID . "' ORDER BY `clipboarderclipboards`.`ID` DESC";
+    if ($result = $dbClipboarder->query($sql)) {
+        while ($row = $result->fetch_object()) {
+            $iCount ++;
+        }
     }
+    echo $iCount;
 }
