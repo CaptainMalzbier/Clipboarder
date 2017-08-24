@@ -71,7 +71,7 @@ if (isset($_POST['email']) && isset($_POST['clipboard'])) {
         }
     }
 } else {
-    die("Missing parameter email");
+    die("Missing parameter email or clipboard");
 }
 
 function getUserIdWhenExitstAndActive($dbClipboarder, $email)
@@ -124,10 +124,10 @@ function insertClipIntoDatabase($dbClipboarder, $iUserID, $sClipContent)
           (
           '" . $iUserID . "', 
           '" . $sClipContent . "', 
-          '" . time() . "',
+          '" . time() . "'
           )";
     if ($dbClipboarder->query($sql)) {
-        die ("Successfully activated");
+        die ("Clip successfully created");
     } else {
         die("Error while creating");
     }

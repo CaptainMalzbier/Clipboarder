@@ -25,7 +25,7 @@ if (isset($_POST['offset'])) {
 if (isset($_POST['number'])) {
     $iNumberOfElements = $_POST['number'];
 }
-if (isset($_POST['email']) && isset($_POST['clipboard'])) {
+if (isset($_POST['email'])) {
     $email = $_POST['email'];
     if ($bUseToken) {
         // login with token
@@ -68,7 +68,7 @@ if (isset($_POST['email']) && isset($_POST['clipboard'])) {
                 if (password_verify($password, $passwordFromDB)) {
                     //  password correct
                     //  load clips from User
-                    loadClipsFromDatabase($dbClipboarder, $iID, $iOffset, $iNumberOfElements)
+                    loadClipsFromDatabase($dbClipboarder, $iID, $iOffset, $iNumberOfElements);
                 } else {
                     die('Worng password.');
                 }
@@ -80,7 +80,7 @@ if (isset($_POST['email']) && isset($_POST['clipboard'])) {
         }
     }
 } else {
-    die("Missing parameter email or clipboard");
+    die("Missing parameter email");
 }
 
 function getUserIdWhenExitstAndActive($dbClipboarder, $email)
