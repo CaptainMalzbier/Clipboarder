@@ -16,48 +16,61 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
-import javafx.application.Platform;
 
 /**
  *
  * @author Philipp
  */
-public class SysTray {
+public class SysTray extends TrayIcon implements ActionListener {
 
-    public void createTrayIcon() throws AWTException {
-        if (!SystemTray.isSupported()) {
-            System.out.println("SystemTray is not supported, exiting!");
-            return;
-        }
+	private Clipboarder clipboarder;
 
-        PopupMenu pMenu = new PopupMenu();
+	public SysTray(Clipboarder clipboarder, Image image) {
+		super(image);
+		this.clipboarder = clipboarder;
+		setImageAutoSize(true);
+	}
 
-        List<String> menuItems = new ArrayList<String>();
+	public void createTrayIcon() throws AWTException {
+		if (!SystemTray.isSupported()) {
+			System.out.println("SystemTray is not supported, exiting!");
+			return;
+		}
 
-        menuItems.add("Einstellungen");
-        menuItems.add("Beenden");
+		PopupMenu pMenu = new PopupMenu();
 
-        for (String s : menuItems) {
-            MenuItem item = new MenuItem(s);
-            pMenu.add(item);
-        }
+		List<String> menuItems = new ArrayList<String>();
 
-        // if the user selects the default menu item (which includes the app name), 
-        // show the main app stage.
-        pMenu.getItem(0).addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Clipboarder.stage.show();
-                System.exit(0);
-            }
-        });
+		menuItems.add("Einstellungen");
+		menuItems.add("Beenden");
 
-        Image image = Toolkit.getDefaultToolkit().getImage(
-                SysTray.class.getResource("assets/images/logo.gif"));
-        TrayIcon trayIcon = new TrayIcon(image, "Java-Tray ", pMenu);
-        trayIcon.setImageAutoSize(true);
-        SystemTray tray = SystemTray.getSystemTray();
-        tray.add(trayIcon);
-    }
+		for (String s : menuItems) {
+			MenuItem item = new MenuItem(s);
+			pMenu.add(item);
+		}
+
+		// if the user selects the default menu item (which includes the app name),
+		// show the main app stage.
+		pMenu.getItem(0).addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				clipboarder.getStage().show();
+				System.exit(0);
+			}
+		});
+
+		Image image = Toolkit.getDefaultToolkit().getImage(SysTray.class.getResource("assets/images/logo.gif"));
+		TrayIcon trayIcon = new TrayIcon(image, "Java-Tray ", pMenu);
+		trayIcon.setImageAutoSize(true);
+		SystemTray tray = SystemTray.getSystemTray();
+		tray.add(trayIcon);
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// Clipboarder.showStage();
+		// Platform.runLater(Clipboarder::showStage);
+
+	}
 
 }

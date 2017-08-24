@@ -6,155 +6,162 @@
 package com.heikweber.clipboarder;
 
 import java.awt.AWTException;
-
+import java.awt.Font;
+import java.awt.MenuItem;
+import java.awt.PopupMenu;
 import java.awt.SystemTray;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.TrayIcon;
 import java.awt.event.MouseAdapter;
-import java.awt.event.MouseListener;
+import java.awt.event.MouseEvent;
+import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
+import javax.swing.SwingUtilities;
+
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
-import org.jnativehook.keyboard.NativeKeyEvent;
-import org.jnativehook.keyboard.NativeKeyListener;
 
-import java.io.*;
-import java.util.*;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.scene.Scene;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
-import javafx.scene.input.MouseEvent;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 /**
  *
  * @author Philipp
  */
-@SuppressWarnings("restriction")
 public class Clipboarder extends Application {
 
-	public static Scene scene; // in der Scene werden alle Elemente dargestellt
-	public static Properties prop = new Properties(); // Einstellungen / Pfade und Variablen
-	public static String configPath;
-	public static Stage stage;
+	private SceneModel model;
+	private Stage stage;
+	private Configuration config;
+
 	/**
 	 * @param args
 	 *            the command line arguments
+	 * @throws Exception
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
+		// HTTPRequest Test = new HTTPRequest();
+		// String Response = Test.register("David", "david@heik.info", "TestPW");
+		// Response = Test.activate("david@heik.info", "446591");
+		// System.out.println(Response);
 
 		// Clear previous logging configurations.
 		LogManager.getLogManager().reset();
-
 		// Get the logger for "org.jnativehook" and set the level to off.
 		Logger logger = Logger.getLogger(GlobalScreen.class.getPackage().getName());
 		logger.setLevel(Level.OFF);
+
+		if (!SystemTray.isSupported()) {
+			System.out.println("SystemTray is not supported");
+			System.exit(1);
+		}
 
 		// global keyboard listener
 		try {
 			GlobalScreen.registerNativeHook();
 		} catch (NativeHookException ex) {
-			// System.err.println("There was a problem registering the native hook.");
-			// System.err.println(ex.getMessage());
-			// System.exit(1);
+			System.err.println("There was a problem registering the native hook.");
+			System.err.println(ex.getMessage());
+			System.exit(1);
 		}
 
-		configPath = args[0]; // erhalte Pfad zur Konfigurationsdatei aus Startargumenten des Programms
-		File propertiesFile = new File(configPath);
-		try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(propertiesFile))) {
-			prop.load(bis);
-		} catch (Exception ex) {
+		if (args.length < 1) {
+			System.out.println("Usage: java Clipboarder <path-to-config-file>");
+			System.exit(1);
 		}
+
 		Application.launch(args);
-
-		// TODO code application logic here
-		if (!SystemTray.isSupported()) {
-			System.out.println("SystemTray is not supported");
-			return;
-		}
-
-		SysTray sysTray = new SysTray();
-		try {
-			sysTray.createTrayIcon();
-		} catch (AWTException ex) {
-			Logger.getLogger(Clipboarder.class.getName()).log(Level.SEVERE, null, ex);
-		}
-
 	}
 
 	@Override
 	public void start(final Stage stage) {
-		// stores a reference to the stage.
+		String configPath = getParameters().getRaw().get(0); // erhalte Pfad zur Konfigurationsdatei aus Startargumenten
+																// des Programms
+		try {
+			config = new Configuration(configPath);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			System.out.println("Failed to read configuration file: " + configPath);
+			System.exit(1);
+		}
+
 		this.stage = stage;
 		// instructs the javafx system not to exit implicitly when the last application
 		// window is shut.
 		Platform.setImplicitExit(false);
-		// sets up the tray icon (using awt code run on the swing thread).
-		javax.swing.SwingUtilities.invokeLater(this::addAppToTray);
-
 		// Funktion zum Starten des Fensters
-		scene = new SceneGenerator().createScene(configPath); // erhalte die Szene aus createScene() aus der Klasse
-																// SceneGenerator
-		// fuege Stylesheet zur Gestaltung per CSS zur Szene hinzu
-		scene.getStylesheets().add(new File(prop.getProperty("stylePath")).toURI().toString());
+		model = new SceneModel(config);
 		// setze eigenes Icon fuer das Fenster
-		stage.getIcons().add(new Image(new File(prop.getProperty("icon")).toURI().toString()));
+		stage.getIcons().add(new Image(new File(config.get("icon")).toURI().toString()));
 		stage.setFullScreen(false);
-		stage.setScene(scene); // setze Szene in Fenster ein
+		stage.setScene(model.getScene()); // setze Szene in Fenster ein
 		stage.setMaximized(false); // minimiere Fenster
-		stage.setMinWidth(Double.parseDouble(prop.getProperty("width"))); // setze Mindestbreite des Fensters bei
-		stage.setMinHeight(Double.parseDouble(prop.getProperty("height"))); // setze Mindesthoehe des Fensters bei
+		stage.setResizable(false);
+		if (Boolean.parseBoolean(config.get("alwaysontop"))) {
+			stage.setAlwaysOnTop(true);
+		}
+
+		Rectangle2D primaryScreenBounds = Screen.getPrimary().getBounds();
+		stage.setX(primaryScreenBounds.getMinX() + primaryScreenBounds.getWidth() - config.getWidth() - 20);
+		stage.setY(primaryScreenBounds.getMinY() + primaryScreenBounds.getHeight() - config.getHeight() - 80);
+		stage.initStyle(StageStyle.UNDECORATED);
+		stage.setMinWidth(config.getWidth()); // setze Mindestbreite des Fensters bei
+		stage.setMinHeight(config.getHeight()); // setze Mindesthoehe des Fensters bei
 
 		// add key listener
-		GlobalScreen.addNativeKeyListener(new KeyboardListener());
+		GlobalScreen.addNativeKeyListener(new KeyboardListener(this));
+
+		// sets up the tray icon (using awt code run on the swing thread).
+		SwingUtilities.invokeLater(this::addAppToTray);
 
 		// Verkleinerung
 		// stage.show(); // zeige Fenster
+		// showStage();
 	}
 
 	private void addAppToTray() {
 		try {
 			// ensure awt toolkit is initialized.
-			java.awt.Toolkit.getDefaultToolkit();
-
-			// app requires system tray support, just exit if there is no support.
-			if (!java.awt.SystemTray.isSupported()) {
-				System.out.println("No system tray support, application exiting.");
-				Platform.exit();
-			}
+			Toolkit.getDefaultToolkit();
 
 			// set up a system tray icon.
-			java.awt.SystemTray tray = java.awt.SystemTray.getSystemTray();
-			java.awt.Image image = Toolkit.getDefaultToolkit()
-					.getImage(prop.getProperty("trayicon"));
-			java.awt.TrayIcon trayIcon = new java.awt.TrayIcon(image);
-			trayIcon.setImageAutoSize(true);
+			SystemTray tray = SystemTray.getSystemTray();
+			java.awt.Image image = Toolkit.getDefaultToolkit().getImage(config.get("trayicon"));
+			TrayIcon trayIcon = new SysTray(this, image);
 
 			// if the user double-clicks on the tray icon, show the main app stage.
-			trayIcon.addActionListener(event -> Platform.runLater(this::showStage));
+			trayIcon.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					if (e.getButton() == MouseEvent.BUTTON1) {
+						Platform.runLater(() -> Clipboarder.this.showStage());
+					}
+				}
+			});
 
 			// if the user selects the default menu item (which includes the app name),
 			// show the main app stage.
-			java.awt.MenuItem openItem = new java.awt.MenuItem("hello, world");
-			openItem.addActionListener(event -> Platform.runLater(this::showStage));
+			MenuItem openItem = new MenuItem("Clipboarder");
+			// openItem.addActionListener(event -> Platform.runLater(this::showStage));
 
 			// the convention for tray icons seems to be to set the default icon for opening
 			// the application stage in a bold font.
-			java.awt.Font defaultFont = java.awt.Font.decode(null);
-			java.awt.Font boldFont = defaultFont.deriveFont(java.awt.Font.BOLD);
+			Font defaultFont = Font.decode(null);
+			Font boldFont = defaultFont.deriveFont(Font.BOLD);
 			openItem.setFont(boldFont);
 
 			// to really exit the application, the user must go to the system tray icon
 			// and select the exit option, this will shutdown JavaFX and remove the
 			// tray icon (removing the tray icon will also shut down AWT).
-			java.awt.MenuItem exitItem = new java.awt.MenuItem("Exit");
+			MenuItem exitItem = new MenuItem("Exit");
 			exitItem.addActionListener(event -> {
 				// notificationTimer.cancel();
 				Platform.exit();
@@ -163,32 +170,13 @@ public class Clipboarder extends Application {
 			});
 
 			// setup the popup menu for the application.
-			final java.awt.PopupMenu popup = new java.awt.PopupMenu();
+			final PopupMenu popup = new PopupMenu();
 			popup.add(openItem);
 			popup.addSeparator();
 			popup.add(exitItem);
 			trayIcon.setPopupMenu(popup);
-
-			// create a timer which periodically displays a notification message.
-			// notificationTimer.schedule(
-			// new TimerTask() {
-			// @Override
-			// public void run() {
-			// javax.swing.SwingUtilities.invokeLater(()
-			// -> trayIcon.displayMessage(
-			// "hello",
-			// "The time is now " + timeFormat.format(new Date()),
-			// java.awt.TrayIcon.MessageType.INFO
-			// )
-			// );
-			// }
-			// },
-			// 5_000,
-			// 60_000
-			// );
-			// add the application tray icon to the system tray.
 			tray.add(trayIcon);
-		} catch (java.awt.AWTException e) {
+		} catch (AWTException e) {
 			System.out.println("Unable to init system tray");
 			e.printStackTrace();
 		}
@@ -199,5 +187,13 @@ public class Clipboarder extends Application {
 			stage.show();
 			stage.toFront();
 		}
+	}
+
+	public SceneModel getModel() {
+		return model;
+	}
+
+	public Stage getStage() {
+		return stage;
 	}
 }
