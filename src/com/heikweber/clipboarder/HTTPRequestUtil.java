@@ -12,6 +12,9 @@ import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 
+import com.jsoniter.JsonIterator;
+import com.jsoniter.any.Any;
+
 public class HTTPRequestUtil {
 	private HTTPRequestUtil() {
 	}
@@ -160,13 +163,20 @@ public class HTTPRequestUtil {
 
 		try (InputStream is = conn.getInputStream()) {
 			// JsonIterator.deserialize("qwe").
-			// JsonIterator.deserialize("responseJson").get("data").asList().forEach(entry
-			// -> entry.get("token"));
+
+			// Behandlung der empfangenen Daten des JSON-Objektes
+			String json = IOUtils.toString(is, StandardCharsets.UTF_8);
+
+			// Objekt, das das iterierte JSON-Objekt enthält
+			Any obj = JsonIterator.deserialize(json);
+
+			// doppelt durch das JSON-Objekt iterieren und Inhalt in ein neues
+			// CopyEntry-Objekt speichern, das
+			// anschließend in der Liste CopyEntryList gespeichert wird.
+			obj.forEach(o -> o.get("data")
+					.forEach(anyEntry -> loadedEntries.add(new CopyEntry(anyEntry.get("Content").toString()))));
 
 			// return IOUtils.toString(is, StandardCharsets.UTF_8);
-		}
-		for (int i = 0; i < 15; i++) {
-			loadedEntries.add(new CopyEntry("Test #" + i));
 		}
 		return loadedEntries;
 
