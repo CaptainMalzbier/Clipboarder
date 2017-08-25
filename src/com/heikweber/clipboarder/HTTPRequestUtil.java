@@ -1,17 +1,22 @@
 package com.heikweber.clipboarder;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
-public class HTTPRequest {
-	public String register(String Username, String email, String Passwort) throws Exception {
-		String ServerResponse = "";
+import org.apache.commons.io.IOUtils;
+
+public class HTTPRequestUtil {
+	private HTTPRequestUtil() {
+	}
+
+	public static String register(String Username, String email, String Passwort) throws Exception {
 		URL url = new URL("https://notizbuch.online/Clipboarder/register.inc.php");
 		Map<String, Object> params = new LinkedHashMap<>();
 		params.put("password", Passwort);
@@ -35,21 +40,12 @@ public class HTTPRequest {
 		conn.setDoOutput(true);
 		conn.getOutputStream().write(postDataBytes);
 
-		Reader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
-
-		for (int c; (c = in.read()) >= 0;) {
-			if (ServerResponse == "") {
-				String cTest = new String(new char[] { (char) c });
-				ServerResponse = cTest;
-			} else {
-				ServerResponse += (char) c;
-			}
+		try (InputStream is = conn.getInputStream()) {
+			return IOUtils.toString(is, StandardCharsets.UTF_8);
 		}
-		return ServerResponse;
 	}
 
-	public String activate(String email, String Token) throws Exception {
-		String ServerResponse = "";
+	public static String activate(String email, String Token) throws Exception {
 		URL url = new URL("https://notizbuch.online/Clipboarder/activate.php?email=" + email + "&token=" + Token);
 		Map<String, Object> params = new LinkedHashMap<>();
 
@@ -70,21 +66,12 @@ public class HTTPRequest {
 		conn.setDoOutput(true);
 		conn.getOutputStream().write(postDataBytes);
 
-		Reader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
-
-		for (int c; (c = in.read()) >= 0;) {
-			if (ServerResponse == "") {
-				String cTest = new String(new char[] { (char) c });
-				ServerResponse = cTest;
-			} else {
-				ServerResponse += (char) c;
-			}
+		try (InputStream is = conn.getInputStream()) {
+			return IOUtils.toString(is, StandardCharsets.UTF_8);
 		}
-		return ServerResponse;
 	}
-	
-	public String addClipWithPassword(String email, String Password, String clip) throws Exception {
-		String ServerResponse = "";
+
+	public static String addClipWithPassword(String email, String Password, String clip) throws Exception {
 		URL url = new URL("https://notizbuch.online/Clipboarder/createClip.php");
 		Map<String, Object> params = new LinkedHashMap<>();
 		params.put("password", Password);
@@ -108,21 +95,12 @@ public class HTTPRequest {
 		conn.setDoOutput(true);
 		conn.getOutputStream().write(postDataBytes);
 
-		Reader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
-
-		for (int c; (c = in.read()) >= 0;) {
-			if (ServerResponse == "") {
-				String cTest = new String(new char[] { (char) c });
-				ServerResponse = cTest;
-			} else {
-				ServerResponse += (char) c;
-			}
+		try (InputStream is = conn.getInputStream()) {
+			return IOUtils.toString(is, StandardCharsets.UTF_8);
 		}
-		return ServerResponse;
 	}
-	
-	public String addClipWithToken(String email, String token, String clip) throws Exception {
-		String ServerResponse = "";
+
+	public static String addClipWithToken(String email, String token, String clip) throws Exception {
 		URL url = new URL("https://notizbuch.online/Clipboarder/createClip.php");
 		Map<String, Object> params = new LinkedHashMap<>();
 		params.put("token", token);
@@ -147,27 +125,19 @@ public class HTTPRequest {
 		conn.setDoOutput(true);
 		conn.getOutputStream().write(postDataBytes);
 
-		Reader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
-
-		for (int c; (c = in.read()) >= 0;) {
-			if (ServerResponse == "") {
-				String cTest = new String(new char[] { (char) c });
-				ServerResponse = cTest;
-			} else {
-				ServerResponse += (char) c;
-			}
+		try (InputStream is = conn.getInputStream()) {
+			return IOUtils.toString(is, StandardCharsets.UTF_8);
 		}
-		return ServerResponse;
 	}
-	
-	public String showClipWithPassword(String email, String Password, Integer offset) throws Exception {
-		String ServerResponse = "";
+
+	public static List<CopyEntry> getClipsWithPassword(String email, String Password, int offset, int number)
+			throws Exception {
 		URL url = new URL("https://notizbuch.online/Clipboarder/showClips.php");
 		Map<String, Object> params = new LinkedHashMap<>();
 		params.put("password", Password);
 		params.put("email", email);
 		params.put("offset", offset);
-		params.put("number", 10);
+		params.put("number", number);
 
 		StringBuilder postData = new StringBuilder();
 		for (Map.Entry<String, Object> param : params.entrySet()) {
@@ -186,20 +156,23 @@ public class HTTPRequest {
 		conn.setDoOutput(true);
 		conn.getOutputStream().write(postDataBytes);
 
-		Reader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+		List<CopyEntry> loadedEntries = new ArrayList<CopyEntry>();
 
-		for (int c; (c = in.read()) >= 0;) {
-			if (ServerResponse == "") {
-				String cTest = new String(new char[] { (char) c });
-				ServerResponse = cTest;
-			} else {
-				ServerResponse += (char) c;
-			}
+		try (InputStream is = conn.getInputStream()) {
+			// JsonIterator.deserialize("qwe").
+			// JsonIterator.deserialize("responseJson").get("data").asList().forEach(entry
+			// -> entry.get("token"));
+
+			// return IOUtils.toString(is, StandardCharsets.UTF_8);
 		}
-		return ServerResponse;
+		for (int i = 0; i < 15; i++) {
+			loadedEntries.add(new CopyEntry("Test #" + i));
+		}
+		return loadedEntries;
+
 	}
-	
-	public String showClipWithToken(String email, String token, Integer offset) throws Exception {
+
+	public static String getClipsWithToken(String email, String token, Integer offset) throws Exception {
 		String ServerResponse = "";
 		URL url = new URL("https://notizbuch.online/Clipboarder/showClips.php");
 		Map<String, Object> params = new LinkedHashMap<>();
@@ -226,16 +199,8 @@ public class HTTPRequest {
 		conn.setDoOutput(true);
 		conn.getOutputStream().write(postDataBytes);
 
-		Reader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
-
-		for (int c; (c = in.read()) >= 0;) {
-			if (ServerResponse == "") {
-				String cTest = new String(new char[] { (char) c });
-				ServerResponse = cTest;
-			} else {
-				ServerResponse += (char) c;
-			}
+		try (InputStream is = conn.getInputStream()) {
+			return IOUtils.toString(is, StandardCharsets.UTF_8);
 		}
-		return ServerResponse;
 	}
 }

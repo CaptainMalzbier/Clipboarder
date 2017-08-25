@@ -48,11 +48,10 @@ public class Clipboarder extends Application {
 	 * @throws Exception
 	 */
 	public static void main(String[] args) throws Exception {
-		 // HTTPRequest Test = new HTTPRequest();
+		// HTTPRequest Test = new HTTPRequest();
 		// String Response = Test.register("David", "david@heik.info", "TestPW");
 		// Response = Test.activate("david@heik.info", "446591");
-		 // String Response = Test.addClipWithPassword("david@heik.info", "TestPW",  "clip");
-		 // System.out.println(Response);
+		// System.out.println(Response);
 
 		// Clear previous logging configurations.
 		LogManager.getLogManager().reset();
@@ -185,9 +184,17 @@ public class Clipboarder extends Application {
 
 	public void showStage() {
 		if (stage != null) {
+			try {
+				model.refreshEntries();
+			} catch (IllegalStateException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			stage.show();
 			stage.toFront();
 		}
+
 	}
 
 	public SceneModel getModel() {

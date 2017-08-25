@@ -42,7 +42,6 @@ public class KeyboardListener extends NativeKeyAdapter {
 			clipboardText = string;
 			System.out.println(clipboardText);
 
-			
 			if (clipboardText == null)
 				return;
 
@@ -57,20 +56,18 @@ public class KeyboardListener extends NativeKeyAdapter {
 				return;
 
 			clipboarder.getModel().addCopyEntry(clipboardText);
-			
-			
-			// Dieser Aufruf ermöglicht es neue Elemente zu dem 
-			 HTTPRequest Test = new HTTPRequest();
-				// String Response = Test.register("David", "david@heik.info", "TestPW");
-				// Response = Test.activate("david@heik.info", "446591");
-				 String Response = null;
-				try {
-					Response = Test.addClipWithPassword("david@heik.info", "TestPW",  clipboardText);
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				 System.out.println("Strato: " + Response);
+
+			// Dieser Aufruf ermöglicht es neue Elemente zu dem
+			// String Response = Test.register("David", "david@heik.info", "TestPW");
+			// Response = Test.activate("david@heik.info", "446591");
+			String response = null;
+			try {
+				response = HTTPRequestUtil.addClipWithPassword("david@heik.info", "TestPW", clipboardText);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			System.out.println("Strato: " + response);
 		});
 	}
 

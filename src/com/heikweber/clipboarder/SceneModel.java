@@ -33,18 +33,19 @@ import javafx.scene.layout.VBox;
 public class SceneModel {
 
 	private Scene scene;
-
-	public SceneModel(Configuration config) {
-		scene = createScene(config);
-		scene.getStylesheets().add(new File(config.get("stylePath")).toURI().toString());
-	}
-
+	private Configuration config;
 	public static StackPane layout = new StackPane(); // Layout-Pane auf dem alles dargestellt wird
 	private List<CopyEntry> copyEntryList = new ArrayList<>();
 	private TabPane tabPane;
 	private int selectedEntry = 0;
-	private VBox menu;
 	private Pagination pagination;
+	private Tab tabHome;
+
+	public SceneModel(Configuration config) {
+		this.config = config;
+		scene = createScene(config);
+		scene.getStylesheets().add(new File(config.get("stylePath")).toURI().toString());
+	}
 
 	private Scene createScene(Configuration config) {
 		// Klasse zum Erzeugen der Szene
@@ -54,8 +55,12 @@ public class SceneModel {
 
 		BorderPane borderPane = new BorderPane();
 		Tab tabSettings = new Tab();
-		Tab tabHome = new Tab();
+		tabHome = new Tab();
+
+		// TODO show after logged in
+		// VBox vBoxStartScreen = startScreen();
 		AnchorPane vBoxHome = setupHomeMenu();
+
 		VBox vBoxSettings = setupSettingsMenu();
 		tabHome.setText("Home");
 		tabHome.setClosable(false);
@@ -78,10 +83,12 @@ public class SceneModel {
 		return new Scene(layout, config.getWidth(), config.getHeight());
 	}
 
-	private AnchorPane setupHomeMenu() {
-		// menu = new VBox();
-		// TODO Buttons von unten nach oben auftauchen.
+	private VBox startScreen() {
 
+		return new VBox();
+	}
+
+	private AnchorPane setupHomeMenu() {
 		pagination = new Pagination(1, 0);
 		pagination.setStyle("-fx-border-color:red;");
 		pagination.setPageFactory(pageIndex -> createPage(pageIndex));
@@ -93,7 +100,6 @@ public class SceneModel {
 		anchorPane.getChildren().addAll(pagination);
 
 		return anchorPane;
-		// return menu;
 	}
 
 	protected Node createPage(Integer pageIndex) {
@@ -142,6 +148,18 @@ public class SceneModel {
 		return button;
 	}
 
+	public void refreshEntries() throws IllegalStateException, Exception {
+		copyEntryList = HTTPRequestUtil.getClipsWithPassword(config.get("mail"), config.get("password"),
+				config.getInt("offset"), config.getInt("number"));
+		// System.out.println(response);
+		// TODO do something with the answer
+		//
+		// for (CopyEntry copyEntry : copyEntryList) {
+		// addCopyEntry(copyEntry.getContent());
+		// }
+
+	}
+
 	public int getSelectedEntryIndex() {
 		return selectedEntry;
 	}
@@ -179,7 +197,7 @@ public class SceneModel {
 		copyEntryList.add(0, copyEntry);
 		pagination.setPageFactory(idx -> createPage(idx));
 		tabPane.requestLayout();
-		if (copyEntryList.size() < 2) {
+		if (copyEntryList.size() < config.getInt("count")) {
 			pagination.setPageCount(pagination.getPageCount() + 1);
 		}
 	}
