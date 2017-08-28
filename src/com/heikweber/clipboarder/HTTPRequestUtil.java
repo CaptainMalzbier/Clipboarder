@@ -5,10 +5,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.IOUtils;
 
@@ -159,8 +159,6 @@ public class HTTPRequestUtil {
 		conn.setDoOutput(true);
 		conn.getOutputStream().write(postDataBytes);
 
-		List<CopyEntry> loadedEntries = new ArrayList<CopyEntry>();
-
 		try (InputStream is = conn.getInputStream()) {
 			// JsonIterator.deserialize("qwe").
 
@@ -170,16 +168,9 @@ public class HTTPRequestUtil {
 			// Objekt, das das iterierte JSON-Objekt enthält
 			Any obj = JsonIterator.deserialize(json);
 
-			// doppelt durch das JSON-Objekt iterieren und Inhalt in ein neues
-			// CopyEntry-Objekt speichern, das
-			// anschließend in der Liste CopyEntryList gespeichert wird.
-			obj.forEach(o -> o.get("data")
-					.forEach(anyEntry -> loadedEntries.add(new CopyEntry(anyEntry.get("Content").toString()))));
-
-			// return IOUtils.toString(is, StandardCharsets.UTF_8);
+			return obj.get("data").asList().stream().map(item -> new CopyEntry(item.get("Content").toString()))
+					.collect(Collectors.toList());
 		}
-		return loadedEntries;
-
 	}
 
 	public static String getClipsWithToken(String email, String token, Integer offset) throws Exception {

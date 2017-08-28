@@ -98,9 +98,13 @@ public class Clipboarder extends Application {
 		// window is shut.
 		Platform.setImplicitExit(false);
 		// Funktion zum Starten des Fensters
-		model = new SceneModel(config);
+		model = new SceneModel(stage, config);
 		// setze eigenes Icon fuer das Fenster
 		stage.getIcons().add(new Image(new File(config.get("icon")).toURI().toString()));
+
+		System.out.println(new File(config.get("icon")).toURI().toString());
+		System.out.println(new File(config.get("stylePath")).toURI().toString());
+
 		stage.setFullScreen(false);
 		stage.setScene(model.getScene()); // setze Szene in Fenster ein
 		stage.setMaximized(false); // minimiere Fenster
@@ -112,7 +116,7 @@ public class Clipboarder extends Application {
 		Rectangle2D primaryScreenBounds = Screen.getPrimary().getBounds();
 		stage.setX(primaryScreenBounds.getMinX() + primaryScreenBounds.getWidth() - config.getWidth() - 20);
 		stage.setY(primaryScreenBounds.getMinY() + primaryScreenBounds.getHeight() - config.getHeight() - 80);
-		stage.initStyle(StageStyle.UNDECORATED);
+		stage.initStyle(StageStyle.TRANSPARENT);
 		stage.setMinWidth(config.getWidth()); // setze Mindestbreite des Fensters bei
 		stage.setMinHeight(config.getHeight()); // setze Mindesthoehe des Fensters bei
 
@@ -183,18 +187,20 @@ public class Clipboarder extends Application {
 	}
 
 	public void showStage() {
-		if (stage != null) {
+		if (model.getSelectedTab() == 1) {
 			try {
 				model.refreshEntries();
+				model.setClipsLoaded(true);
 			} catch (IllegalStateException e) {
 				e.printStackTrace();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+		}
+		if (stage != null) {
 			stage.show();
 			stage.toFront();
 		}
-
 	}
 
 	public SceneModel getModel() {

@@ -47,7 +47,7 @@ public class KeyboardListener extends NativeKeyAdapter {
 
 			// TODO counter hochzählen bis 10
 			// In SceneModel -> getSelectedButton(), setSelectedButton(int), dann bei
-			// Knopfdruck selektion enstprechend setzen
+			// Knopfdruck Selektion ensprechend setzen
 			// Neue Methoden im SceneModel anlegen für das Hinzufügen eines Button
 			// mit Counter?
 
