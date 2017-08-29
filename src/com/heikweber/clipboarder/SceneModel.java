@@ -19,6 +19,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Pagination;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -171,10 +173,14 @@ public class SceneModel {
 		}
 		System.out.println(getSelectedTab());
 		HBox navigationPane = new HBox(5);
+		final Pane spacer = new Pane();
+		HBox.setHgrow(spacer, Priority.ALWAYS);
+		spacer.setMinSize(5, 1);
 
-		navigationPane.getChildren().addAll(getTabs().get(getSelectedTab()), getTabs().get(2), getTabs().get(3));
+		navigationPane.getChildren().addAll(getTabs().get(getSelectedTab()), getTabs().get(2), spacer,
+				getTabs().get(3));
 		// TODO automatically scale button width
-		navigationPane.getChildren().get(2).setTranslateX(22);
+		// navigationPane.getChildren().get(2).setTranslateX(30);
 
 		setNavigationPane(navigationPane);
 	}

@@ -1,12 +1,14 @@
 /*
-____________________________
-color    : light   | dark
-____________________________
-magentas : ff0033 | 9d0020
-reds     : ff3300 | aa2200
-blues    : 00bbff | 006688
-greens   : 029b62 | 016942
-____________________________
+________________________________________
+color    : light   | dark  | background
+________________________________________
+magentas : ff0033 | 9d0020 | 9d0020
+reds     : ff3300 | aa2200 | 9d0020
+blues    : 00bbff | 006688 | 9d0020
+greens   : 029b62 | 016942 | 9d0020
+woods	 : ff6600 | c2bf4e | 342921
+jungle   : ff7049 | eec05e | 342921 
+________________________________________
 */
 
 .root {
@@ -14,7 +16,7 @@ ____________________________
 /* 	-fx-background-color: #343838; */;
 /* 	-fx-background-color: #47362e; */
 	-fx-background-color: #342921;
-	-fx-border-color: #ff6600;
+	-fx-border-color: #ff7049;
 	-fx-border-width: 3px;
 	-fx-spacing: 20;
 }
@@ -26,48 +28,48 @@ ____________________________
 }
 
 #account{
-	-fx-background-color: #c2bf4e;
+	-fx-background-color: #eec05e;
 	-fx-border-radius:10;
 }
 
 #account .text{
-	-fx-fill:#333333;
+	-fx-fill:#342921;
 	-fx-effect: none;
 }
 
 #clips{
-	-fx-background-color: #c2bf4e;
+	-fx-background-color: #eec05e;
 }
 
 #clips .text{
-	-fx-fill:#333333;
+	-fx-fill:#342921;
 	-fx-effect: none;
 }
 
 #settings{
-	-fx-background-color: #c2bf4e;
+	-fx-background-color: #eec05e;
 }
 
 #settings .text{
-	-fx-fill:#333333;
+	-fx-fill:#342921;
 	-fx-effect: none;
 }
 
 #hide{
-	-fx-background-color: #c2bf4e;
+	-fx-background-color: #eec05e;
 }
 
 #hide .text{
-	-fx-fill:#333333;
+	-fx-fill:#342921;
 	-fx-effect: none;
 }
 
 #account:hover, #clips:hover,#settings:hover,#hide:hover{
-	-fx-background-color:#ff6600;	
+	-fx-background-color:#ff7049;	
 }
 
 #account:hover .text, #clips:hover .text,#settings:hover .text,#hide:hover .text{
-/* 	-fx-fill:##333333; */
+/* 	-fx-fill:#342921; */
 }
 
 .tab-pane .tab-header-area .tab-header-background {
@@ -234,7 +236,7 @@ ____________________________
 
 .button {
 	-fx-padding: 8;
-	-fx-background-color: #ff6600;
+	-fx-background-color: #ff7049;
 	-fx-background-radius:0;
 	-fx-font-weight: bold;
 	-fx-font-size: 1.1em;
@@ -251,7 +253,7 @@ ____________________________
 	-fx-cursor: hand;
 	-fx-text-fill: #343838;
 /* 	-fx-background-color: #F7E4BE; */
-	-fx-background-color: #c2bf4e;
+	-fx-background-color: #eec05e;
 }
 
 .button:hover .text{
