@@ -14,12 +14,13 @@ class CopyEntry {
 
 	private int id;
 	private String content = "";
+	private String shortContent = "";
 	private boolean status;
 	private Runnable listener = () -> {
 	};
 
 	CopyEntry(String content) {
-		this.content = content;
+		setContent(content);
 	}
 
 	public int getId() {
@@ -37,6 +38,14 @@ class CopyEntry {
 
 	public void setContent(String content) {
 		this.content = content != null ? content : "";
+
+		// shorten printed content of CopyEntry
+		if (content.length() >= 12) {
+			content = content.substring(0, 12) + "...";
+		}
+
+		setShortContent(content.trim());
+
 		listener.run();
 	}
 
@@ -51,6 +60,14 @@ class CopyEntry {
 
 	public void addListener(Runnable listener) {
 		this.listener = listener;
+	}
+
+	public String getShortContent() {
+		return shortContent;
+	}
+
+	public void setShortContent(String shortContent) {
+		this.shortContent = shortContent;
 	}
 
 }

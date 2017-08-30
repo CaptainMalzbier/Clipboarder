@@ -58,16 +58,16 @@ public class SceneModel {
 		scene.getStylesheets().add(new File(config.get("stylePath")).toURI().toString());
 
 		// set button actions (seen as tabs)
-		this.account.setOnAction(new NavigationHandler(this, 0));
-		this.clips.setOnAction(new NavigationHandler(this, 1));
-		this.settings.setOnAction(new NavigationHandler(this, 2));
-		this.hide.setOnAction(new NavigationHandler(this, 3));
+		int counter = 0;
+		for (Button b : getTabs()) {
+			b.setOnAction(new NavigationHandler(this, counter++));
+			b.getStyleClass().add("nav");
+		}
 
 		this.account.setId("account");
 		this.clips.setId("clips");
 		this.settings.setId("settings");
 		this.hide.setId("hide");
-
 	}
 
 	private Scene createScene(Configuration config) {
@@ -86,7 +86,7 @@ public class SceneModel {
 		setAccount(new Button("Account"));
 		setClips(new Button("Clips"));
 		setSettings(new Button("Settings"));
-		setHide(new Button("X"));
+		setHide(new Button("–"));
 
 		createNavigation();
 
@@ -171,16 +171,15 @@ public class SceneModel {
 		if (tabOne < 2) {
 			setSelectedTab(tabOne);
 		}
-		System.out.println(getSelectedTab());
+		// Navigationsleiste
 		HBox navigationPane = new HBox(5);
+		// Abstandshalter für die 3 Buttons in der Navigationsleiste
 		final Pane spacer = new Pane();
-		HBox.setHgrow(spacer, Priority.ALWAYS);
 		spacer.setMinSize(5, 1);
+		HBox.setHgrow(spacer, Priority.ALWAYS);
 
 		navigationPane.getChildren().addAll(getTabs().get(getSelectedTab()), getTabs().get(2), spacer,
 				getTabs().get(3));
-		// TODO automatically scale button width
-		// navigationPane.getChildren().get(2).setTranslateX(30);
 
 		setNavigationPane(navigationPane);
 	}
@@ -216,10 +215,17 @@ public class SceneModel {
 		for (int i = entryFrom; i < entryTo; ++i) {
 			// for (int i = entryFrom; i < entryTo; ++i) {
 			final CopyEntry copyEntry = copyEntryList.get(i);
-			final Button button = createButton(copyEntry);
-			page.getChildren().add(button);
+			final HBox entry = createEntry(copyEntry);
+			page.getChildren().add(entry);
 			copyEntry.addListener(() -> {
-				button.setText(copyEntry.getContent());
+				((Button) entry.getChildren().get(0)).setText(copyEntry.getContent());
+				((Button) entry.getChildren().get(1)).setOnAction(new EventHandler<ActionEvent>() {
+					@Override
+					public void handle(ActionEvent event) {
+						System.out.println(copyEntry.getId());
+					}
+
+				});
 				layoutPane.requestLayout();
 			});
 		}
@@ -227,17 +233,26 @@ public class SceneModel {
 		return page;
 	}
 
-	private Button createButton(CopyEntry copyEntry) {
-		Button button = new Button(copyEntry.getContent());
-		button.setMaxWidth(150);
-		button.setOnAction(new EventHandler<ActionEvent>() {
+	private HBox createEntry(CopyEntry copyEntry) {
+		HBox entry = new HBox(5);
+		Button entryContent = new Button(copyEntry.getShortContent());
+		entryContent.setPrefWidth(155);
+		entryContent.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
 				System.out.println(copyEntry.getContent());
 				SceneModel.this.selectedEntry = copyEntry.getId();
 			}
 		});
-		return button;
+
+		Button removeEntry = new Button("X");
+		removeEntry.getStyleClass().add("removeEntry");
+		removeEntry.setPrefWidth(20);
+
+		// removeEntry.setOnAction(value);
+
+		entry.getChildren().addAll(entryContent, removeEntry);
+		return entry;
 	}
 
 	public void refreshEntries() throws IllegalStateException, Exception {

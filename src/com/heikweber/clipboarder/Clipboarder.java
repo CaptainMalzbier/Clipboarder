@@ -24,6 +24,8 @@ import javax.swing.SwingUtilities;
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
 
+import com.sun.javafx.application.PlatformImpl;
+
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Rectangle2D;
@@ -52,7 +54,7 @@ public class Clipboarder extends Application {
 		// String Response = Test.register("David", "david@heik.info", "TestPW");
 		// Response = Test.activate("david@heik.info", "446591");
 		// System.out.println(Response);
-
+		PlatformImpl.setTaskbarApplication(false);
 		// Clear previous logging configurations.
 		LogManager.getLogManager().reset();
 		// Get the logger for "org.jnativehook" and set the level to off.
@@ -116,7 +118,7 @@ public class Clipboarder extends Application {
 		Rectangle2D primaryScreenBounds = Screen.getPrimary().getBounds();
 		stage.setX(primaryScreenBounds.getMinX() + primaryScreenBounds.getWidth() - config.getWidth() - 20);
 		stage.setY(primaryScreenBounds.getMinY() + primaryScreenBounds.getHeight() - config.getHeight() - 80);
-		stage.initStyle(StageStyle.TRANSPARENT);
+		stage.initStyle(StageStyle.UNDECORATED);
 		stage.setMinWidth(config.getWidth()); // setze Mindestbreite des Fensters bei
 		stage.setMinHeight(config.getHeight()); // setze Mindesthoehe des Fensters bei
 
@@ -146,7 +148,11 @@ public class Clipboarder extends Application {
 				@Override
 				public void mouseClicked(MouseEvent e) {
 					if (e.getButton() == MouseEvent.BUTTON1) {
-						Platform.runLater(() -> Clipboarder.this.showStage());
+						if (!stage.isShowing()) {
+							Platform.runLater(() -> Clipboarder.this.showStage());
+						} else {
+							Platform.runLater(() -> Clipboarder.this.hideStage());
+						}
 					}
 				}
 			});
@@ -180,26 +186,34 @@ public class Clipboarder extends Application {
 			popup.add(exitItem);
 			trayIcon.setPopupMenu(popup);
 			tray.add(trayIcon);
-		} catch (AWTException e) {
+		} catch (
+
+		AWTException e) {
 			System.out.println("Unable to init system tray");
 			e.printStackTrace();
 		}
 	}
 
 	public void showStage() {
-		if (model.getSelectedTab() == 1) {
-			try {
-				model.refreshEntries();
-				model.setClipsLoaded(true);
-			} catch (IllegalStateException e) {
-				e.printStackTrace();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
 		if (stage != null) {
+			if (model.getSelectedTab() == 1) {
+				try {
+					model.refreshEntries();
+					model.setClipsLoaded(true);
+				} catch (IllegalStateException e) {
+					e.printStackTrace();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
 			stage.show();
 			stage.toFront();
+		}
+	}
+
+	public void hideStage() {
+		if (stage != null) {
+			stage.hide();
 		}
 	}
 
