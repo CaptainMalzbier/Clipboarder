@@ -24,11 +24,10 @@ public class NavigationHandler implements EventHandler<ActionEvent> {
 		switch (getSelectedTab()) {
 		case 0:
 			model.setContentPane(model.setupAccountMenu());
-			model.setNavigation(0);
 			break;
 		case 1:
-			model.setContentPane(model.setupClipsMenu());
 			model.setNavigation(1);
+			model.setContentPane(model.setupClipsMenu());
 			if (!model.areClipsLoaded()) {
 				try {
 					model.refreshEntries();
@@ -45,8 +44,11 @@ public class NavigationHandler implements EventHandler<ActionEvent> {
 		default:
 			model.getStage().hide();
 		}
+
 		model.layoutPane.getChildren().clear();
 		model.layoutPane.getChildren().addAll(model.getNavigationPane(), model.getContentPane());
+		model.setSelectedTab(getSelectedTab());
+		model.layoutPane.requestLayout();
 	}
 
 	public SceneModel getModel() {

@@ -17,6 +17,8 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.Pagination;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
@@ -83,13 +85,15 @@ public class SceneModel {
 		createNavigation();
 
 		// TODO login
-		setLoggedIn(true);
+		setLoggedIn(false);
 
 		if (isLoggedIn()) {
 			setNavigation(1);
+			setSelectedTab(1);
 			setContentPane(setupClipsMenu());
 		} else {
 			setNavigation(0);
+			setSelectedTab(0);
 			setContentPane(setupAccountMenu());
 		}
 
@@ -115,22 +119,13 @@ public class SceneModel {
 
 	}
 
-	VBox setupAccountMenu() {
-
-		setSelectedTab(0);
-
-		VBox accountContent = new VBox();
-		Button register = new Button("Register");
-
-		accountContent.getChildren().add(register);
-
-		return accountContent;
-	}
-
 	void setNavigation(int tabOne) {
+
+		// leave it here for later usage when switching from account to clips
 		if (tabOne < 2) {
 			setSelectedTab(tabOne);
 		}
+
 		// Navigationsleiste
 		HBox navigationPane = new HBox(5);
 		// Abstandshalter für die 3 Buttons in der Navigationsleiste
@@ -144,7 +139,32 @@ public class SceneModel {
 		setNavigationPane(navigationPane);
 	}
 
+	VBox setupAccountMenu() {
+
+		VBox accountContent = new VBox(5);
+
+		Label accountStatus = new Label("Register / Login");
+
+		HBox accountButtons = new HBox(5);
+		Button register = new Button("Register");
+		Button login = new Button("Login");
+
+		// // TODO check login
+		setLoggedIn(true);
+		if (isLoggedIn()) {
+			login.setOnAction(new NavigationHandler(this, 1));
+		}
+
+		CheckBox rememberMe = new CheckBox("Remember me");
+		accountButtons.getChildren().addAll(register, login);
+
+		accountContent.getChildren().addAll(accountStatus, accountButtons, rememberMe);
+
+		return accountContent;
+	}
+
 	VBox setupClipsMenu() {
+
 		pagination = new Pagination(1, 0);
 		pagination.setPageFactory(pageIndex -> createPage(pageIndex));
 		// AnchorPane anchorPane = new AnchorPane();
@@ -155,6 +175,19 @@ public class SceneModel {
 		// anchorPane.getChildren().addAll(pagination);
 
 		return new VBox(pagination);
+	}
+
+	VBox setupSettingsMenu() {
+
+		setSelectedTab(2);
+
+		for (Button b : getTabs()) {
+			b.getStyleClass().forEach(s -> System.out.println(s.toString() + "\n"));
+		}
+
+		Button bExit = new Button("Exit");
+		bExit.setOnAction(actionEvent -> System.exit(0));
+		return new VBox(bExit);
 	}
 
 	protected Node createPage(Integer pageIndex) {
@@ -236,12 +269,6 @@ public class SceneModel {
 		return copyEntryList.get(selectedEntry);
 	}
 
-	VBox setupSettingsMenu() {
-		Button bExit = new Button("Exit");
-		bExit.setOnAction(actionEvent -> System.exit(0));
-		return new VBox(bExit);
-	}
-
 	public CopyEntry getCopyEntry(int index) {
 		return copyEntryList.get(index);
 	}
@@ -267,6 +294,17 @@ public class SceneModel {
 
 	public void setSelectedTab(int selectedTab) {
 		this.selectedTab = selectedTab;
+
+		// remove style class for non-active buttons
+		for (Button b : getTabs()) {
+			for (int i = 0; i < b.getStyleClass().size(); i++) {
+				if (b.getStyleClass().get(i).toString().equals("active")) {
+					b.getStyleClass().remove("active");
+				}
+			}
+		}
+
+		getTabs().get(selectedTab).getStyleClass().add("active");
 	}
 
 	public Button getAccount() {
