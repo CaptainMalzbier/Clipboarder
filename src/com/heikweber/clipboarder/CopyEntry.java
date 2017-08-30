@@ -19,8 +19,9 @@ class CopyEntry {
 	private Runnable listener = () -> {
 	};
 
-	CopyEntry(String content) {
+	CopyEntry(String content, String id) {
 		setContent(content);
+		setId(Integer.parseInt(id));
 	}
 
 	public int getId() {

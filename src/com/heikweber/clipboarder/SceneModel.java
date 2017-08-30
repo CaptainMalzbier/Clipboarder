@@ -81,7 +81,7 @@ public class SceneModel {
 		createNavigation();
 
 		// TODO login
-		setLoggedIn(false);
+		setLoggedIn(true);
 
 		if (isLoggedIn()) {
 			setNavigation(1);
@@ -175,17 +175,6 @@ public class SceneModel {
 			final CopyEntry copyEntry = copyEntryList.get(i);
 			final HBox entry = createEntry(copyEntry);
 			page.getChildren().add(entry);
-			copyEntry.addListener(() -> {
-				((Button) entry.getChildren().get(0)).setText(copyEntry.getContent());
-				((Button) entry.getChildren().get(1)).setOnAction(new EventHandler<ActionEvent>() {
-					@Override
-					public void handle(ActionEvent event) {
-						System.out.println(copyEntry.getId());
-					}
-
-				});
-				layoutPane.requestLayout();
-			});
 		}
 
 		return page;
@@ -199,6 +188,7 @@ public class SceneModel {
 			@Override
 			public void handle(ActionEvent event) {
 				System.out.println(copyEntry.getContent());
+				System.out.println(copyEntry.getId());
 				SceneModel.this.selectedEntry = copyEntry.getId();
 			}
 		});
@@ -206,6 +196,12 @@ public class SceneModel {
 		Button removeEntry = new Button("X");
 		removeEntry.getStyleClass().add("removeEntry");
 		removeEntry.setPrefWidth(20);
+		removeEntry.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				System.out.println(copyEntry.getId());
+			}
+		});
 
 		// removeEntry.setOnAction(value);
 

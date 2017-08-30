@@ -227,7 +227,8 @@ public class HTTPRequestUtil {
 			// Objekt, das das iterierte JSON-Objekt enthält
 			Any obj = JsonIterator.deserialize(json);
 
-			return obj.get("data").asList().stream().map(item -> new CopyEntry(item.get("Content").toString()))
+			return obj.get("data").asList().stream()
+					.map(item -> new CopyEntry(item.get("Content").toString(), item.get("ID").toString()))
 					.collect(Collectors.toList());
 		}
 	}
@@ -263,7 +264,8 @@ public class HTTPRequestUtil {
 			String json = IOUtils.toString(is, StandardCharsets.UTF_8);
 			// Objekt, das das iterierte JSON-Objekt enthält
 			Any obj = JsonIterator.deserialize(json);
-			return obj.get("data").asList().stream().map(item -> new CopyEntry(item.get("Content").toString()))
+			return obj.get("data").asList().stream()
+					.map(item -> new CopyEntry(item.get("Content").toString(), item.get("ID").toString()))
 					.collect(Collectors.toList());
 		}
 	}
