@@ -45,21 +45,10 @@ public class KeyboardListener extends NativeKeyAdapter {
 			if (clipboardText == null)
 				return;
 
-			// TODO counter hochzählen bis 10
-			// In SceneModel -> getSelectedButton(), setSelectedButton(int), dann bei
-			// Knopfdruck Selektion ensprechend setzen
-			// Neue Methoden im SceneModel anlegen für das Hinzufügen eines Button
-			// mit Counter?
-
 			CopyEntry latestEntry = clipboarder.getModel().getLatestCopyEntry();
 			if (latestEntry != null && latestEntry.getContent().equals(clipboardText))
 				return;
 
-			clipboarder.getModel().addCopyEntry(clipboardText);
-
-			// Dieser Aufruf ermöglicht es neue Elemente zu dem
-			// String Response = Test.register("David", "david@heik.info", "TestPW");
-			// Response = Test.activate("david@heik.info", "446591");
 			String response = null;
 			try {
 				response = HTTPRequestUtil.addClipWithPassword("david@heik.info", "TestPW", clipboardText);
@@ -68,6 +57,12 @@ public class KeyboardListener extends NativeKeyAdapter {
 				e.printStackTrace();
 			}
 			System.out.println("Strato: " + response);
+			try {
+				clipboarder.getModel().refreshEntries();
+			} catch (Exception e) {
+				System.out.println("Could not refresh.");
+				e.printStackTrace();
+			}
 		});
 	}
 

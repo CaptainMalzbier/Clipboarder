@@ -18,6 +18,8 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Pagination;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
@@ -188,8 +190,11 @@ public class SceneModel {
 			@Override
 			public void handle(ActionEvent event) {
 				System.out.println(copyEntry.getContent());
-				System.out.println(copyEntry.getId());
 				SceneModel.this.selectedEntry = copyEntry.getId();
+				final Clipboard clipboard = Clipboard.getSystemClipboard();
+				final ClipboardContent content = new ClipboardContent();
+				content.putString(copyEntry.getContent());
+				clipboard.setContent(content);
 			}
 		});
 
@@ -242,19 +247,6 @@ public class SceneModel {
 		if (copyEntryList.isEmpty())
 			return null;
 		return copyEntryList.get(0);
-	}
-
-	public void addCopyEntry(String content) {
-		System.out.println("adding copy entry");
-		int index = copyEntryList.size();
-		CopyEntry copyEntry = new CopyEntry(content);
-		copyEntry.setId(index);
-		copyEntryList.add(0, copyEntry);
-		pagination.setPageFactory(idx -> createPage(idx));
-		layoutPane.requestLayout();
-		if (copyEntryList.size() < config.getInt("count")) {
-			pagination.setPageCount(pagination.getPageCount() + 1);
-		}
 	}
 
 	public Scene getScene() {
