@@ -73,16 +73,6 @@ public class SceneModel {
 	private Scene createScene(Configuration config) {
 		// Klasse zum Erzeugen der Szene
 
-		// tabPane = new TabPane();
-
-		// BorderPane borderPane = new BorderPane();
-
-		// VBox layoutPane = new VBox();
-
-		// tabHome = new Tab();
-		// tabSettings = new Tab();
-		// tabHide = new Tab();
-
 		setAccount(new Button("Account"));
 		setClips(new Button("Clips"));
 		setSettings(new Button("Settings"));
@@ -91,7 +81,7 @@ public class SceneModel {
 		createNavigation();
 
 		// TODO login
-		setLoggedIn(true);
+		setLoggedIn(false);
 
 		if (isLoggedIn()) {
 			setNavigation(1);
@@ -106,38 +96,6 @@ public class SceneModel {
 		layoutPane.getChildren().addAll(getNavigationPane(), getContentPane());
 		StackPane.setMargin(layoutPane, new Insets(5));
 		layout.getChildren().add(layoutPane);
-
-		// VBox vBoxSettings = setupSettingsMenu();
-		// tabHome.setText("Home");
-		// tabHome.setClosable(false);
-		// tabSettings.setText("Settings");
-		// tabSettings.setClosable(false);
-		// tabHide.setText("X");
-		// tabHide.getStyleClass().add("hide");
-		// tabHide.setClosable(false);
-		// tabHide.setOnSelectionChanged(new EventHandler<Event>() {
-		// @Override
-		// public void handle(Event event) {
-		// stage.hide();
-		// tabPane.getSelectionModel().select(0);
-		// }
-		// });
-
-		// vBoxHome.getChildren().add(new Label("Tab" + i));
-		// vBoxHome.setAlignment(Pos.BASELINE_RIGHT);
-		// vBoxSettings.getChildren().add(new Label("Settings"));
-		// vBoxSettings.setAlignment(Pos.CENTER);
-		// tabHome.setContent(vBoxHome);
-		// tabSettings.setContent(vBoxSettings);
-		// tabPane.getTabs().add(tabHome);
-		// tabPane.getTabs().add(tabSettings);
-		// tabPane.getTabs().add(tabHide);
-		// layoutPane.getChildren().add(tabPane);
-
-		// borderPane.setRight(new Button("X"));
-
-		// layout.getChildren().add(vBox);
-		// layout.getChildren().add(layoutPane);
 
 		return new Scene(layout, config.getWidth(), config.getHeight());
 	}
