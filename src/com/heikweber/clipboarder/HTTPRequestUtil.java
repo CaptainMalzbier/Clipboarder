@@ -133,6 +133,65 @@ public class HTTPRequestUtil {
 		}
 	}
 
+	public static String deleteClipWithPassword(String email, String Password, int clipID) throws Exception {
+		URL url = new URL("https://notizbuch.online/Clipboarder/deleteClip.php");
+		Map<String, Object> params = new LinkedHashMap<>();
+		params.put("password", Password);
+		params.put("email", email);
+		params.put("clipid", clipID);
+
+		StringBuilder postData = new StringBuilder();
+		for (Map.Entry<String, Object> param : params.entrySet()) {
+			if (postData.length() != 0)
+				postData.append('&');
+			postData.append(URLEncoder.encode(param.getKey(), "UTF-8"));
+			postData.append('=');
+			postData.append(URLEncoder.encode(String.valueOf(param.getValue()), "UTF-8"));
+		}
+		byte[] postDataBytes = postData.toString().getBytes("UTF-8");
+
+		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+		conn.setRequestMethod("POST");
+		conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+		conn.setRequestProperty("Content-Length", String.valueOf(postDataBytes.length));
+		conn.setDoOutput(true);
+		conn.getOutputStream().write(postDataBytes);
+
+		try (InputStream is = conn.getInputStream()) {
+			return IOUtils.toString(is, StandardCharsets.UTF_8);
+		}
+	}
+
+	public static String deleteClipWithToken(String email, String token, int clipID) throws Exception {
+		URL url = new URL("https://notizbuch.online/Clipboarder/deleteClip.php");
+		Map<String, Object> params = new LinkedHashMap<>();
+		params.put("token", token);
+		params.put("usetoken", "1");
+		params.put("email", email);
+		params.put("clipid", clipID);
+
+		StringBuilder postData = new StringBuilder();
+		for (Map.Entry<String, Object> param : params.entrySet()) {
+			if (postData.length() != 0)
+				postData.append('&');
+			postData.append(URLEncoder.encode(param.getKey(), "UTF-8"));
+			postData.append('=');
+			postData.append(URLEncoder.encode(String.valueOf(param.getValue()), "UTF-8"));
+		}
+		byte[] postDataBytes = postData.toString().getBytes("UTF-8");
+
+		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+		conn.setRequestMethod("POST");
+		conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+		conn.setRequestProperty("Content-Length", String.valueOf(postDataBytes.length));
+		conn.setDoOutput(true);
+		conn.getOutputStream().write(postDataBytes);
+
+		try (InputStream is = conn.getInputStream()) {
+			return IOUtils.toString(is, StandardCharsets.UTF_8);
+		}
+	}
+
 	public static List<CopyEntry> getClipsWithPassword(String email, String Password, int offset, int number)
 			throws Exception {
 		URL url = new URL("https://notizbuch.online/Clipboarder/showClips.php");
