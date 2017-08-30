@@ -205,6 +205,14 @@ public class SceneModel {
 			@Override
 			public void handle(ActionEvent event) {
 				System.out.println(copyEntry.getId());
+				try {
+					HTTPRequestUtil.deleteClipWithPassword(config.get("mail"), config.get("password"),
+							copyEntry.getId());
+					refreshEntries();
+					layoutPane.requestLayout();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 		});
 
