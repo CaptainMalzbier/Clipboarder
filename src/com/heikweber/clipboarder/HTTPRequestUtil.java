@@ -173,8 +173,7 @@ public class HTTPRequestUtil {
 		}
 	}
 
-	public static String getClipsWithToken(String email, String token, Integer offset) throws Exception {
-		String ServerResponse = "";
+	public static List<CopyEntry> getClipsWithToken(String email, String token, Integer offset) throws Exception {
 		URL url = new URL("https://notizbuch.online/Clipboarder/showClips.php");
 		Map<String, Object> params = new LinkedHashMap<>();
 		params.put("token", token);
@@ -201,7 +200,12 @@ public class HTTPRequestUtil {
 		conn.getOutputStream().write(postDataBytes);
 
 		try (InputStream is = conn.getInputStream()) {
-			return IOUtils.toString(is, StandardCharsets.UTF_8);
+			// Behandlung der empfangenen Daten des JSON-Objektes
+			String json = IOUtils.toString(is, StandardCharsets.UTF_8);
+			// Objekt, das das iterierte JSON-Objekt enthält
+			Any obj = JsonIterator.deserialize(json);
+			return obj.get("data").asList().stream().map(item -> new CopyEntry(item.get("Content").toString()))
+					.collect(Collectors.toList());
 		}
 	}
 }
