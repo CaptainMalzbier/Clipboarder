@@ -20,6 +20,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Pagination;
+import javafx.scene.control.TextField;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.HBox;
@@ -27,7 +28,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 /**
@@ -55,7 +55,6 @@ public class SceneModel {
 	VBox layoutPane = new VBox(10);
 	private VBox contentPane;
 	private HBox navigationPane;
-	String[] fonts = new String[] {};
 
 	public SceneModel(Stage stage, Configuration config) throws IllegalStateException, Exception {
 		this.setStage(stage);
@@ -78,16 +77,12 @@ public class SceneModel {
 
 	private Scene createScene(Configuration config) throws IllegalStateException, Exception {
 		// Klasse zum Erzeugen der Szene
-		fonts = Font.getFamilies().toArray(fonts);
 		setAccount(new Button("Account"));
 		setClips(new Button("Clips"));
 		setSettings(new Button("Settings"));
 		setHide(new Button("–"));
 
 		createNavigation();
-
-		// TODO login
-		setLoggedIn(false);
 
 		if (isLoggedIn()) {
 			setNavigation(1);
@@ -143,15 +138,27 @@ public class SceneModel {
 
 	VBox setupAccountMenu() {
 
-		VBox accountContent = new VBox(5);
+		VBox accountContent = new VBox(10);
 
 		Label accountStatus = new Label("Register / Login");
+
+		HBox nameBox = new HBox(5);
+		HBox passwordBox = new HBox(5);
+		Label lName = new Label("Name");
+		lName.getStyleClass().add("fill-in");
+		Label lPassword = new Label("Password");
+		lPassword.getStyleClass().add("fill-in");
+		TextField name = new TextField();
+		TextField password = new TextField();
+
+		nameBox.getChildren().addAll(lName, name);
+		passwordBox.getChildren().addAll(lPassword, password);
 
 		HBox accountButtons = new HBox(5);
 		Button register = new Button("Register");
 		Button login = new Button("Login");
 
-		// // TODO check login
+		// TODO check login
 		setLoggedIn(true);
 		if (isLoggedIn()) {
 			login.setOnAction(new NavigationHandler(this, 1));
@@ -160,7 +167,7 @@ public class SceneModel {
 		CheckBox rememberMe = new CheckBox("Remember me");
 		accountButtons.getChildren().addAll(register, login);
 
-		accountContent.getChildren().addAll(accountStatus, accountButtons, rememberMe);
+		accountContent.getChildren().addAll(accountStatus, nameBox, passwordBox, accountButtons, rememberMe);
 
 		return accountContent;
 	}

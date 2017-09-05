@@ -127,21 +127,37 @@ ________________________________________
 }
 
 .check-box .box {
-
 	-fx-background-color: #342921;
 	-fx-border-color:#aad028;
 	-fx-border-radius:3px; 
-
 }
 
 .check-box:selected .mark {
-
--fx-background-color: #342921;
-
+	-fx-background-color: #342921;
 }
 
 .check-box:selected .box {
+	-fx-background-color: #aad028;
+}
 
--fx-background-color: #aad028;
+
+.fill-in{
+	-fx-font-size:1.0em;
+	-fx-pref-width:60;
+	-fx-pref-height:30;
+}
+
+.text-field {
+	-fx-background-color:transparent;
+    -fx-pref-width: 118;
+    -fx-border-width: 0 0 1 0; 
+    -fx-border-color: #aad028;
+    -fx-text-fill: #aad028;
+	-fx-font-size:1.2em;
+	-fx-font-weight:bold;
+}
+
+.text-field:focused {
+/*     -fx-background-color: #a9a9a9 , #342921 , #342921; */
 }
 
