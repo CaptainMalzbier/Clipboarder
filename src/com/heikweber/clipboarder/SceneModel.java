@@ -27,6 +27,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 /**
@@ -54,8 +55,9 @@ public class SceneModel {
 	VBox layoutPane = new VBox(10);
 	private VBox contentPane;
 	private HBox navigationPane;
+	String[] fonts = new String[] {};
 
-	public SceneModel(Stage stage, Configuration config) {
+	public SceneModel(Stage stage, Configuration config) throws IllegalStateException, Exception {
 		this.setStage(stage);
 		this.config = config;
 		scene = createScene(config);
@@ -74,9 +76,9 @@ public class SceneModel {
 		this.hide.setId("hide");
 	}
 
-	private Scene createScene(Configuration config) {
+	private Scene createScene(Configuration config) throws IllegalStateException, Exception {
 		// Klasse zum Erzeugen der Szene
-
+		fonts = Font.getFamilies().toArray(fonts);
 		setAccount(new Button("Account"));
 		setClips(new Button("Clips"));
 		setSettings(new Button("Settings"));
@@ -163,10 +165,15 @@ public class SceneModel {
 		return accountContent;
 	}
 
-	VBox setupClipsMenu() {
+	VBox setupClipsMenu() throws IllegalStateException, Exception {
 
-		pagination = new Pagination(1, 0);
+		int itemsPerPage = 10;
+
+		refreshEntries(false);
+
+		pagination = new Pagination(copyEntryList.size() / itemsPerPage, 0);
 		pagination.setPageFactory(pageIndex -> createPage(pageIndex));
+		pagination.setCurrentPageIndex(0);
 		// AnchorPane anchorPane = new AnchorPane();
 		// AnchorPane.setTopAnchor(pagination, 10.0);
 		// AnchorPane.setRightAnchor(pagination, 5.0);
@@ -192,6 +199,9 @@ public class SceneModel {
 
 	protected Node createPage(Integer pageIndex) {
 		System.out.println("creating page " + pageIndex);
+
+		System.out.println(copyEntryList.size());
+
 		final VBox page = new VBox(5);
 
 		if (pageIndex == null || copyEntryList.isEmpty())
@@ -241,7 +251,7 @@ public class SceneModel {
 				try {
 					HTTPRequestUtil.deleteClipWithPassword(config.get("mail"), config.get("password"),
 							copyEntry.getId());
-					refreshEntries();
+					refreshEntries(true);
 					layoutPane.requestLayout();
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -255,10 +265,11 @@ public class SceneModel {
 		return entry;
 	}
 
-	public void refreshEntries() throws IllegalStateException, Exception {
+	public void refreshEntries(boolean createNewPage) throws IllegalStateException, Exception {
 		copyEntryList = HTTPRequestUtil.getClipsWithPassword(config.get("mail"), config.get("password"),
 				config.getInt("offset"), config.getInt("number"));
-		pagination.setPageFactory(idx -> createPage(idx));
+		if (createNewPage)
+			pagination.setPageFactory(idx -> createPage(idx));
 	}
 
 	public int getSelectedEntryIndex() {

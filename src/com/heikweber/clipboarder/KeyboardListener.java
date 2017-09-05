@@ -58,7 +58,7 @@ public class KeyboardListener extends NativeKeyAdapter {
 			}
 			System.out.println("Strato: " + response);
 			try {
-				clipboarder.getModel().refreshEntries();
+				clipboarder.getModel().refreshEntries(true);
 			} catch (Exception e) {
 				System.out.println("Could not refresh.");
 				e.printStackTrace();

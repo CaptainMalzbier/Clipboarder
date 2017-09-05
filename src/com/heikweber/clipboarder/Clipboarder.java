@@ -84,7 +84,7 @@ public class Clipboarder extends Application {
 	}
 
 	@Override
-	public void start(final Stage stage) {
+	public void start(final Stage stage) throws IllegalStateException, Exception {
 		String configPath = getParameters().getRaw().get(0); // erhalte Pfad zur Konfigurationsdatei aus Startargumenten
 																// des Programms
 		try {
@@ -198,7 +198,7 @@ public class Clipboarder extends Application {
 		if (stage != null) {
 			if (model.getSelectedTab() == 1) {
 				try {
-					model.refreshEntries();
+					model.refreshEntries(true);
 					model.setClipsLoaded(true);
 				} catch (IllegalStateException e) {
 					e.printStackTrace();

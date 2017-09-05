@@ -27,10 +27,15 @@ public class NavigationHandler implements EventHandler<ActionEvent> {
 			break;
 		case 1:
 			model.setNavigation(1);
-			model.setContentPane(model.setupClipsMenu());
+			try {
+				model.setContentPane(model.setupClipsMenu());
+			} catch (Exception e1) {
+				e1.printStackTrace();
+				System.out.println("Could not load Clips");
+			}
 			if (!model.areClipsLoaded()) {
 				try {
-					model.refreshEntries();
+					model.refreshEntries(true);
 					model.setClipsLoaded(true);
 				} catch (Exception e) {
 					System.out.println("Unable to refresh Clips");
