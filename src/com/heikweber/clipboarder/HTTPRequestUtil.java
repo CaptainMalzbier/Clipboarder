@@ -74,6 +74,63 @@ public class HTTPRequestUtil {
 		}
 	}
 
+	public static String loginWithPassword(String email, String Password) throws Exception {
+		URL url = new URL("https://notizbuch.online/Clipboarder/login.inc.php");
+		Map<String, Object> params = new LinkedHashMap<>();
+		params.put("password", Password);
+		params.put("email", email);
+
+		StringBuilder postData = new StringBuilder();
+		for (Map.Entry<String, Object> param : params.entrySet()) {
+			if (postData.length() != 0)
+				postData.append('&');
+			postData.append(URLEncoder.encode(param.getKey(), "UTF-8"));
+			postData.append('=');
+			postData.append(URLEncoder.encode(String.valueOf(param.getValue()), "UTF-8"));
+		}
+		byte[] postDataBytes = postData.toString().getBytes("UTF-8");
+
+		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+		conn.setRequestMethod("POST");
+		conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+		conn.setRequestProperty("Content-Length", String.valueOf(postDataBytes.length));
+		conn.setDoOutput(true);
+		conn.getOutputStream().write(postDataBytes);
+
+		try (InputStream is = conn.getInputStream()) {
+			return IOUtils.toString(is, StandardCharsets.UTF_8);
+		}
+	}
+
+	public static String loginWithToken(String email, String token) throws Exception {
+		URL url = new URL("https://notizbuch.online/Clipboarder/loginClip.php");
+		Map<String, Object> params = new LinkedHashMap<>();
+		params.put("token", token);
+		params.put("usetoken", "1");
+		params.put("email", email);
+
+		StringBuilder postData = new StringBuilder();
+		for (Map.Entry<String, Object> param : params.entrySet()) {
+			if (postData.length() != 0)
+				postData.append('&');
+			postData.append(URLEncoder.encode(param.getKey(), "UTF-8"));
+			postData.append('=');
+			postData.append(URLEncoder.encode(String.valueOf(param.getValue()), "UTF-8"));
+		}
+		byte[] postDataBytes = postData.toString().getBytes("UTF-8");
+
+		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+		conn.setRequestMethod("POST");
+		conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+		conn.setRequestProperty("Content-Length", String.valueOf(postDataBytes.length));
+		conn.setDoOutput(true);
+		conn.getOutputStream().write(postDataBytes);
+
+		try (InputStream is = conn.getInputStream()) {
+			return IOUtils.toString(is, StandardCharsets.UTF_8);
+		}
+	}
+
 	public static String addClipWithPassword(String email, String Password, String clip) throws Exception {
 		URL url = new URL("https://notizbuch.online/Clipboarder/createClip.php");
 		Map<String, Object> params = new LinkedHashMap<>();
