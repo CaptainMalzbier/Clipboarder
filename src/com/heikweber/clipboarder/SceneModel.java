@@ -159,10 +159,10 @@ public class SceneModel {
 		Button login = new Button("Login");
 
 		// TODO check login
-		setLoggedIn(true);
-		if (isLoggedIn()) {
-			login.setOnAction(new NavigationHandler(this, 1));
-		}
+		// setLoggedIn(true);
+		// if (isLoggedIn()) {
+		login.setOnAction(new NavigationHandler(this, 1));
+		// }
 
 		CheckBox rememberMe = new CheckBox("Remember me");
 		accountButtons.getChildren().addAll(register, login);
@@ -195,10 +195,6 @@ public class SceneModel {
 
 		setSelectedTab(2);
 
-		for (Button b : getTabs()) {
-			b.getStyleClass().forEach(s -> System.out.println(s.toString() + "\n"));
-		}
-
 		Button bExit = new Button("Exit");
 		bExit.setOnAction(actionEvent -> System.exit(0));
 		return new VBox(bExit);
@@ -223,7 +219,6 @@ public class SceneModel {
 			entryTo = copyEntryList.size();
 
 		for (int i = entryFrom; i < entryTo; ++i) {
-			// for (int i = entryFrom; i < entryTo; ++i) {
 			final CopyEntry copyEntry = copyEntryList.get(i);
 			final HBox entry = createEntry(copyEntry);
 			page.getChildren().add(entry);
@@ -254,7 +249,6 @@ public class SceneModel {
 		removeEntry.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				System.out.println(copyEntry.getId());
 				try {
 					HTTPRequestUtil.deleteClipWithPassword(config.get("mail"), config.get("password"),
 							copyEntry.getId());
