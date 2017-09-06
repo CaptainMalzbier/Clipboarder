@@ -38,13 +38,16 @@ public class SceneModel {
 
 	private Stage stage;
 	private Scene scene;
-	private Configuration config;
+	Configuration config;
 	public static StackPane layout = new StackPane(); // Layout-Pane auf dem alles dargestellt wird
 	private List<CopyEntry> copyEntryList = new ArrayList<>();
 	private int selectedEntry = 0;
 	private int selectedTab = 0;
 	private boolean loggedIn = false;
 	private boolean clipsLoaded = false;
+	private String mail;
+	private String password;
+	private boolean rememberMe;
 	private Pagination pagination;
 	private List<Button> tabs;
 	private List<VBox> contents;
@@ -144,27 +147,44 @@ public class SceneModel {
 
 		HBox nameBox = new HBox(5);
 		HBox passwordBox = new HBox(5);
-		Label lName = new Label("Name");
+		Label lName = new Label("E-Mail");
 		lName.getStyleClass().add("fill-in");
 		Label lPassword = new Label("Password");
 		lPassword.getStyleClass().add("fill-in");
-		TextField name = new TextField();
+		TextField mail = new TextField();
 		TextField password = new TextField();
 
-		nameBox.getChildren().addAll(lName, name);
+		mail.setText("david@heik.info");
+		password.setText("TestPW");
+
+		nameBox.getChildren().addAll(lName, mail);
 		passwordBox.getChildren().addAll(lPassword, password);
 
 		HBox accountButtons = new HBox(5);
 		Button register = new Button("Register");
 		Button login = new Button("Login");
-
-		// TODO check login
-		// setLoggedIn(true);
-		// if (isLoggedIn()) {
-		login.setOnAction(new NavigationHandler(this, 1));
-		// }
-
 		CheckBox rememberMe = new CheckBox("Remember me");
+
+		rememberMe.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				if (!isRememberMe()) {
+					setRememberMe(true);
+				} else {
+					setRememberMe(false);
+				}
+			}
+		});
+
+		mail.textProperty().addListener((observable, oldMail, newMail) -> {
+			setMail(newMail);
+		});
+		password.textProperty().addListener((observable, oldPassword, newPassword) -> {
+			setPassword(newPassword);
+		});
+
+		login.setOnAction(new NavigationHandler(this, 1));
+
 		accountButtons.getChildren().addAll(register, login);
 
 		accountContent.getChildren().addAll(accountStatus, nameBox, passwordBox, accountButtons, rememberMe);
@@ -250,8 +270,7 @@ public class SceneModel {
 			@Override
 			public void handle(ActionEvent event) {
 				try {
-					HTTPRequestUtil.deleteClipWithPassword(config.get("mail"), config.get("password"),
-							copyEntry.getId());
+					HTTPRequestUtil.deleteClipWithPassword(getMail(), getPassword(), copyEntry.getId());
 					refreshEntries(true);
 					layoutPane.requestLayout();
 				} catch (Exception e) {
@@ -267,8 +286,13 @@ public class SceneModel {
 	}
 
 	public void refreshEntries(boolean createNewPage) throws IllegalStateException, Exception {
-		copyEntryList = HTTPRequestUtil.getClipsWithPassword(config.get("mail"), config.get("password"),
-				config.getInt("offset"), config.getInt("number"));
+		if (isRememberMe()) {
+			copyEntryList = HTTPRequestUtil.getClipsWithToken(config.get("mail"), config.get("token"),
+					config.getInt("offset"), config.getInt("number"));
+		} else {
+			copyEntryList = HTTPRequestUtil.getClipsWithPassword(getMail(), getPassword(), config.getInt("offset"),
+					config.getInt("number"));
+		}
 		if (createNewPage)
 			pagination.setPageFactory(idx -> createPage(idx));
 	}
@@ -405,5 +429,29 @@ public class SceneModel {
 
 	public void setClipsLoaded(boolean clipsLoaded) {
 		this.clipsLoaded = clipsLoaded;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public boolean isRememberMe() {
+		return rememberMe;
+	}
+
+	public void setRememberMe(boolean rememberMe) {
+		this.rememberMe = rememberMe;
+	}
+
+	public String getMail() {
+		return mail;
+	}
+
+	public void setMail(String mail) {
+		this.mail = mail;
 	}
 }

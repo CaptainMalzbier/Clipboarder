@@ -1,24 +1,45 @@
 package com.heikweber.clipboarder;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Properties;
+
+import org.apache.commons.configuration2.PropertiesConfiguration;
+import org.apache.commons.configuration2.PropertiesConfigurationLayout;
+import org.apache.commons.configuration2.ex.ConfigurationException;
 
 public class Configuration {
 	private Properties props;
+	PropertiesConfiguration config;
+	PropertiesConfigurationLayout layout;
+	private String path;
 	private double width;
 	private double height;
 
-	public Configuration(String path) throws FileNotFoundException, IOException, IllegalStateException {
-		props = new Properties();
-		File propertiesFile = new File(path);
-		try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(propertiesFile))) {
-			props.load(bis);
-		}
+	public Configuration(String path)
+			throws FileNotFoundException, IOException, IllegalStateException, ConfigurationException {
+		// props = new Properties();
+		this.path = path;
+		// File propertiesFile = new File(path);
+		// try (BufferedInputStream bis = new BufferedInputStream(new
+		// FileInputStream(propertiesFile))) {
+		// props.load(bis);
+		// }
+		// load();
+
+		File file = new File(path);
+
+		config = new PropertiesConfiguration();
+		layout = new PropertiesConfigurationLayout();
+		layout.load(config, new InputStreamReader(new FileInputStream(file)));
+
+		config.getString("token");
 		load();
+
 	}
 
 	private void load() throws IllegalStateException {
@@ -31,12 +52,24 @@ public class Configuration {
 	}
 
 	private void assertKey(String key) {
-		if (!props.containsKey(key))
+		if (!config.containsKey(key))
 			throw new IllegalStateException("Key does not exist in configuration: " + key);
 	}
 
+	public void set(String key, String value) {
+		config.setProperty(key, value);
+	}
+
 	public String get(String key) {
-		return props.getProperty(key);
+		return (String) config.getProperty(key);
+	}
+
+	public Boolean isEmpty(String key) {
+		if (config.containsKey(key)) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	public int getInt(String key) throws IllegalStateException {
@@ -65,5 +98,14 @@ public class Configuration {
 
 	public double getHeight() {
 		return height;
+	}
+
+	public String getPath() {
+		return path;
+	}
+
+	public void saveConfig() throws IOException, ConfigurationException {
+		// FileOutputStream fr = new FileOutputStream(new File(this.getPath()));
+		layout.save(config, new FileWriter(path, false));
 	}
 }

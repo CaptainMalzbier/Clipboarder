@@ -74,11 +74,12 @@ public class HTTPRequestUtil {
 		}
 	}
 
-	public static String loginWithPassword(String email, String Password) throws Exception {
+	public static String loginWithPassword(String email, String Password, Boolean rememberMe) throws Exception {
 		URL url = new URL("https://notizbuch.online/Clipboarder/login.inc.php");
 		Map<String, Object> params = new LinkedHashMap<>();
 		params.put("password", Password);
 		params.put("email", email);
+		params.put("remindme", rememberMe);
 
 		StringBuilder postData = new StringBuilder();
 		for (Map.Entry<String, Object> param : params.entrySet()) {
@@ -290,14 +291,17 @@ public class HTTPRequestUtil {
 		}
 	}
 
-	public static List<CopyEntry> getClipsWithToken(String email, String token, Integer offset) throws Exception {
+	public static List<CopyEntry> getClipsWithToken(String email, String token, int offset, int number)
+			throws Exception {
 		URL url = new URL("https://notizbuch.online/Clipboarder/showClips.php");
 		Map<String, Object> params = new LinkedHashMap<>();
 		params.put("token", token);
 		params.put("usetoken", "1");
 		params.put("email", email);
 		params.put("offset", offset);
-		params.put("number", 10);
+		params.put("number", number);
+		System.out.println("HIER " + email);
+		System.out.println("HIER " + token);
 
 		StringBuilder postData = new StringBuilder();
 		for (Map.Entry<String, Object> param : params.entrySet()) {
