@@ -23,9 +23,11 @@ public class NavigationHandler implements EventHandler<ActionEvent> {
 		SceneModel model = getModel();
 		switch (getSelectedTab()) {
 		case 0:
+			// Authentication Pane
 			model.setContentPane(model.setupAccountMenu());
 			break;
 		case 1:
+			// Login Action
 			try {
 				if (!model.config.isEmpty("token")) {
 					String response = HTTPRequestUtil.loginWithToken(model.config.get("mail"),
@@ -58,7 +60,12 @@ public class NavigationHandler implements EventHandler<ActionEvent> {
 			}
 			break;
 		case 2:
+			//
 			model.setContentPane(model.setupSettingsMenu());
+			break;
+		case 3:
+			// Render Register
+			model.setContentPane(model.setupRegisterMenu());
 			break;
 		default:
 			model.getStage().hide();

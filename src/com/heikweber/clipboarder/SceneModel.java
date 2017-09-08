@@ -45,6 +45,7 @@ public class SceneModel {
 	private int selectedTab = 0;
 	private boolean loggedIn = false;
 	private boolean clipsLoaded = false;
+	private String name;
 	private String mail;
 	private String password;
 	private boolean rememberMe;
@@ -143,12 +144,12 @@ public class SceneModel {
 
 		VBox accountContent = new VBox(10);
 
-		Label accountStatus = new Label("Register / Login");
+		Label accountStatus = new Label("Authentication");
 
-		HBox nameBox = new HBox(5);
+		HBox mailBox = new HBox(5);
 		HBox passwordBox = new HBox(5);
-		Label lName = new Label("E-Mail");
-		lName.getStyleClass().add("fill-in");
+		Label lMail = new Label("E-Mail");
+		lMail.getStyleClass().add("fill-in");
 		Label lPassword = new Label("Password");
 		lPassword.getStyleClass().add("fill-in");
 		TextField mail = new TextField();
@@ -157,12 +158,15 @@ public class SceneModel {
 		mail.setText("david@heik.info");
 		password.setText("TestPW");
 
-		nameBox.getChildren().addAll(lName, mail);
+		mailBox.getChildren().addAll(lMail, mail);
 		passwordBox.getChildren().addAll(lPassword, password);
 
+		HBox loginButton = new HBox(5);
 		HBox accountButtons = new HBox(5);
 		Button register = new Button("Register");
 		Button login = new Button("Login");
+		Button forgetPassword = new Button("Forgot Password");
+
 		CheckBox rememberMe = new CheckBox("Remember me");
 
 		rememberMe.setOnAction(new EventHandler<ActionEvent>() {
@@ -184,12 +188,62 @@ public class SceneModel {
 		});
 
 		login.setOnAction(new NavigationHandler(this, 1));
+		register.setOnAction(new NavigationHandler(this, 3));
 
-		accountButtons.getChildren().addAll(register, login);
+		loginButton.getChildren().addAll(login);
 
-		accountContent.getChildren().addAll(accountStatus, nameBox, passwordBox, accountButtons, rememberMe);
+		accountButtons.getChildren().addAll(register, forgetPassword);
+
+		accountContent.getChildren().addAll(accountStatus, mailBox, passwordBox, rememberMe, loginButton,
+				accountButtons);
 
 		return accountContent;
+	}
+
+	VBox setupRegisterMenu() {
+
+		VBox registerContent = new VBox(10);
+
+		Label registertStatus = new Label("Registration");
+
+		HBox nameBox = new HBox(5);
+		HBox mailBox = new HBox(5);
+		HBox passwordBox = new HBox(5);
+		Label lName = new Label("Firstname");
+		lName.getStyleClass().add("fill-in");
+		Label lMail = new Label("E-Mail");
+		lMail.getStyleClass().add("fill-in");
+		Label lPassword = new Label("Password");
+		lPassword.getStyleClass().add("fill-in");
+		TextField name = new TextField();
+		TextField mail = new TextField();
+		TextField password = new TextField();
+
+		nameBox.getChildren().addAll(lName, name);
+		mailBox.getChildren().addAll(lMail, mail);
+		passwordBox.getChildren().addAll(lPassword, password);
+
+		HBox registerButton = new HBox(5);
+		Button register = new Button("Register");
+
+		name.textProperty().addListener((observable, oldName, newName) -> {
+			setName(newName);
+		});
+
+		mail.textProperty().addListener((observable, oldMail, newMail) -> {
+			setMail(newMail);
+		});
+		password.textProperty().addListener((observable, oldPassword, newPassword) -> {
+			setPassword(newPassword);
+		});
+
+		register.setOnAction(new NavigationHandler(this, 3));
+
+		registerButton.getChildren().addAll(register);
+
+		registerContent.getChildren().addAll(registertStatus, nameBox, mailBox, passwordBox, registerButton);
+
+		return registerContent;
 	}
 
 	VBox setupClipsMenu() throws IllegalStateException, Exception {
@@ -453,5 +507,13 @@ public class SceneModel {
 
 	public void setMail(String mail) {
 		this.mail = mail;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 }
