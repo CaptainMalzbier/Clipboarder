@@ -342,16 +342,19 @@ public class HTTPRequestUtil {
 			Any obj = JsonIterator.deserialize(json);
 
 			// TODO: Repair Login, Whats happens, when no record is set
-			System.out.println("JSON->Data:");
-			System.out.println(obj.get("data").toString());
-			if (obj.get("data").toString() == null || obj.get("data").toString().isEmpty()) {
-				System.out.println("JSON->Data ist leer");
-				String iniData = "[{\"ID\":\"543\",\"UserID\":\"29\",\"Content\":\"Execute registration\",\"CreateDate\":\"1505031692\"}]";
-				return obj.get("data").asList().stream().map(item -> new CopyEntry("Test Entry", "1"))
-						.collect(Collectors.toList());
-			}
-			System.out.println("JSON->Data:");
-			System.out.println(obj.get("data").toString());
+			// System.out.println("JSON->Data:");
+			// System.out.println(obj.get("data").toString());
+			// if (obj.get("data").toString() == null ||
+			// obj.get("data").toString().isEmpty()) {
+			// System.out.println("JSON->Data ist leer");
+			// String iniData = "[{\"ID\":\"543\",\"UserID\":\"29\",\"Content\":\"Execute
+			// registration\",\"CreateDate\":\"1505031692\"}]";
+			// return obj.get("data").asList().stream().map(item -> new CopyEntry("Test
+			// Entry", "1"))
+			// .collect(Collectors.toList());
+			// }
+			// System.out.println("JSON->Data:");
+			// System.out.println(obj.get("data").toString());
 			return obj.get("data").asList().stream()
 					.map(item -> new CopyEntry(item.get("Content").toString(), item.get("ID").toString()))
 					.collect(Collectors.toList());
