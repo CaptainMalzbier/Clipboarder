@@ -26,10 +26,6 @@ public class HTTPRequestUtil {
 		params.put("username", Username);
 		params.put("email", email);
 
-		System.out.println(Username);
-		System.out.println(email);
-		System.out.println(Passwort);
-
 		StringBuilder postData = new StringBuilder();
 		for (Map.Entry<String, Object> param : params.entrySet()) {
 			if (postData.length() != 0)
@@ -48,7 +44,6 @@ public class HTTPRequestUtil {
 		conn.getOutputStream().write(postDataBytes);
 
 		try (InputStream is = conn.getInputStream()) {
-			System.out.println(is);
 			return IOUtils.toString(is, StandardCharsets.UTF_8);
 		}
 	}
@@ -69,6 +64,62 @@ public class HTTPRequestUtil {
 
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 		conn.setRequestMethod("GET");
+		conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+		conn.setRequestProperty("Content-Length", String.valueOf(postDataBytes.length));
+		conn.setDoOutput(true);
+		conn.getOutputStream().write(postDataBytes);
+
+		try (InputStream is = conn.getInputStream()) {
+			return IOUtils.toString(is, StandardCharsets.UTF_8);
+		}
+	}
+
+	public static String forgotPassword(String email) throws Exception {
+		URL url = new URL("https://notizbuch.online/Clipboarder/forgotPassword.php");
+		Map<String, Object> params = new LinkedHashMap<>();
+		params.put("email", email);
+
+		StringBuilder postData = new StringBuilder();
+		for (Map.Entry<String, Object> param : params.entrySet()) {
+			if (postData.length() != 0)
+				postData.append('&');
+			postData.append(URLEncoder.encode(param.getKey(), "UTF-8"));
+			postData.append('=');
+			postData.append(URLEncoder.encode(String.valueOf(param.getValue()), "UTF-8"));
+		}
+		byte[] postDataBytes = postData.toString().getBytes("UTF-8");
+
+		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+		conn.setRequestMethod("POST");
+		conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+		conn.setRequestProperty("Content-Length", String.valueOf(postDataBytes.length));
+		conn.setDoOutput(true);
+		conn.getOutputStream().write(postDataBytes);
+
+		try (InputStream is = conn.getInputStream()) {
+			return IOUtils.toString(is, StandardCharsets.UTF_8);
+		}
+	}
+
+	public static String resetPassword(String email, String token, String password) throws Exception {
+		URL url = new URL("https://notizbuch.online/Clipboarder/resetPassword.php");
+		Map<String, Object> params = new LinkedHashMap<>();
+		params.put("email", email);
+		params.put("token", token);
+		params.put("password", password);
+
+		StringBuilder postData = new StringBuilder();
+		for (Map.Entry<String, Object> param : params.entrySet()) {
+			if (postData.length() != 0)
+				postData.append('&');
+			postData.append(URLEncoder.encode(param.getKey(), "UTF-8"));
+			postData.append('=');
+			postData.append(URLEncoder.encode(String.valueOf(param.getValue()), "UTF-8"));
+		}
+		byte[] postDataBytes = postData.toString().getBytes("UTF-8");
+
+		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+		conn.setRequestMethod("POST");
 		conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 		conn.setRequestProperty("Content-Length", String.valueOf(postDataBytes.length));
 		conn.setDoOutput(true);

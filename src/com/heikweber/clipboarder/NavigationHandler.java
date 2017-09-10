@@ -89,6 +89,53 @@ public class NavigationHandler implements EventHandler<ActionEvent> {
 			// Render Register Pane
 			model.setContentPane(model.setupRegisterMenu());
 			break;
+		case 6:
+			System.out.println("Execute Forgot Password");
+			// Execute Forgot Password
+			try {
+				String response = HTTPRequestUtil.forgotPassword(model.getMail());
+				System.out.println(response);
+				if (response.contains("Successfully")) {
+					model.setContentPane(model.setupMessageDisplay(response, 9)); // Render Set new Password Pane
+					System.out.println(response);
+				} else {
+					model.setContentPane(model.setupMessageDisplay(response, 7)); // Repeat: Render Forgot Password Pane
+					System.out.println(response);
+				}
+			} catch (Exception e) {
+				System.out.println("Could not request a new password");
+				e.printStackTrace();
+			}
+			break;
+		case 7:
+			System.out.println("Render Forgot Password Pane");
+			// Render Forgot Password Pane
+			model.setContentPane(model.setupForgotPassword());
+			break;
+		case 8:
+			System.out.println("Execute Set new Password");
+			// Execute Set new Password
+			try {
+				String response = HTTPRequestUtil.resetPassword(model.getMail(), model.getToken(), model.getPassword());
+				System.out.println(response);
+				if (response.contains("Password changed")) {
+					model.setContentPane(model.setupMessageDisplay(response, 0)); // Login
+					System.out.println(response);
+				} else {
+					model.setContentPane(model.setupMessageDisplay(response, 9)); // Tray again, Render Set new Password
+																					// Pane
+					System.out.println(response);
+				}
+			} catch (Exception e) {
+				System.out.println("Could not setup a new password");
+				e.printStackTrace();
+			}
+			break;
+		case 9:
+			System.out.println("Render Set new Password Pane");
+			// Render Set new Password Pane
+			model.setContentPane(model.setupNewPassword());
+			break;
 		default:
 			model.getStage().hide();
 		}

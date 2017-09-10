@@ -46,6 +46,7 @@ public class SceneModel {
 	private boolean loggedIn = false;
 	private boolean clipsLoaded = false;
 	private String name;
+	private String token;
 	private String mail;
 	private String password;
 	private boolean rememberMe;
@@ -205,6 +206,7 @@ public class SceneModel {
 
 		login.setOnAction(new NavigationHandler(this, 1));
 		register.setOnAction(new NavigationHandler(this, 5));
+		forgetPassword.setOnAction(new NavigationHandler(this, 7));
 
 		loginButton.getChildren().addAll(login);
 
@@ -260,6 +262,83 @@ public class SceneModel {
 		registerContent.getChildren().addAll(registertStatus, nameBox, mailBox, passwordBox, registerButton);
 
 		return registerContent;
+	}
+
+	VBox setupForgotPassword() {
+
+		VBox forgotPasswordContent = new VBox(10);
+
+		Label forgotPasswordStatus = new Label("Reset your password");
+
+		HBox mailBox = new HBox(5);
+
+		Label lMail = new Label("E-Mail");
+		lMail.getStyleClass().add("fill-in");
+		TextField mail = new TextField();
+
+		mailBox.getChildren().addAll(lMail, mail);
+
+		HBox forgotPasswordButton = new HBox(5);
+		Button forgotPassword = new Button("Confirm");
+
+		mail.textProperty().addListener((observable, oldMail, newMail) -> {
+			setMail(newMail);
+		});
+
+		forgotPassword.setOnAction(new NavigationHandler(this, 6));
+
+		forgotPasswordButton.getChildren().addAll(forgotPassword);
+
+		forgotPasswordContent.getChildren().addAll(forgotPasswordStatus, mailBox, forgotPasswordButton);
+
+		return forgotPasswordContent;
+	}
+
+	VBox setupNewPassword() {
+
+		VBox newPasswordContent = new VBox(10);
+
+		Label newPasswordStatus = new Label("Setup new password");
+
+		HBox mailBox = new HBox(5);
+		HBox tokenBox = new HBox(5);
+		HBox passwordBox = new HBox(5);
+		Label lMail = new Label("E-Mail");
+		lMail.getStyleClass().add("fill-in");
+		Label lToken = new Label("Token");
+		lToken.getStyleClass().add("fill-in");
+		Label lPassword = new Label("New password");
+		lPassword.getStyleClass().add("fill-in");
+		TextField mail = new TextField();
+		TextField token = new TextField();
+		TextField password = new TextField();
+
+		mailBox.getChildren().addAll(lMail, mail);
+		tokenBox.getChildren().addAll(lToken, token);
+		passwordBox.getChildren().addAll(lPassword, password);
+
+		HBox newPasswordButton = new HBox(5);
+		Button newPasswordB = new Button("Confirm");
+
+		token.textProperty().addListener((observable, oldToken, newToken) -> {
+			setToken(newToken);
+		});
+
+		mail.textProperty().addListener((observable, oldMail, newMail) -> {
+			setMail(newMail);
+		});
+
+		password.textProperty().addListener((observable, oldPassword, newPassword) -> {
+			setPassword(newPassword);
+		});
+
+		newPasswordB.setOnAction(new NavigationHandler(this, 8));
+
+		newPasswordButton.getChildren().addAll(newPasswordB);
+
+		newPasswordContent.getChildren().addAll(newPasswordStatus, mailBox, tokenBox, passwordBox, newPasswordButton);
+
+		return newPasswordContent;
 	}
 
 	VBox setupClipsMenu() throws IllegalStateException, Exception {
@@ -531,5 +610,13 @@ public class SceneModel {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
 	}
 }
