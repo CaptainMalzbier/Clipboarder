@@ -73,10 +73,10 @@ public class SceneModel {
 			b.getStyleClass().add("nav");
 		}
 
-		this.account.setId("account");
-		this.clips.setId("clips");
-		this.settings.setId("settings");
-		this.hide.setId("hide");
+		this.account.setId("account"); // 0
+		this.clips.setId("clips"); // 1
+		this.settings.setId("settings"); // 2
+		this.hide.setId("hide"); // 3
 	}
 
 	private Scene createScene(Configuration config) throws IllegalStateException, Exception {
@@ -140,6 +140,22 @@ public class SceneModel {
 		setNavigationPane(navigationPane);
 	}
 
+	VBox setupMessageDisplay(String diplayMassage, int confirmAction) {
+		VBox messageContent = new VBox(10);
+		Label messageStatus = new Label(diplayMassage);
+
+		HBox messageConfirmButton = new HBox(5);
+		Button messageConfirm = new Button("Okay");
+
+		messageConfirm.setOnAction(new NavigationHandler(this, confirmAction));
+
+		messageConfirmButton.getChildren().addAll(messageConfirm);
+
+		messageContent.getChildren().addAll(messageStatus, messageConfirmButton);
+
+		return messageContent;
+	}
+
 	VBox setupAccountMenu() {
 
 		VBox accountContent = new VBox(10);
@@ -188,7 +204,7 @@ public class SceneModel {
 		});
 
 		login.setOnAction(new NavigationHandler(this, 1));
-		register.setOnAction(new NavigationHandler(this, 3));
+		register.setOnAction(new NavigationHandler(this, 5));
 
 		loginButton.getChildren().addAll(login);
 
@@ -237,7 +253,7 @@ public class SceneModel {
 			setPassword(newPassword);
 		});
 
-		register.setOnAction(new NavigationHandler(this, 3));
+		register.setOnAction(new NavigationHandler(this, 4));
 
 		registerButton.getChildren().addAll(register);
 

@@ -64,7 +64,29 @@ public class NavigationHandler implements EventHandler<ActionEvent> {
 			model.setContentPane(model.setupSettingsMenu());
 			break;
 		case 3:
-			// Render Register
+			model.getStage().hide();
+			break;
+		case 4:
+			// Execute registration
+			System.out.println("Execute registration");
+			try {
+				String response = HTTPRequestUtil.register(model.getName(), model.getMail(), model.getPassword());
+				System.out.println(response);
+				if (response.contains("User created")) {
+					model.setContentPane(model.setupMessageDisplay(response, 0)); // Login
+					System.out.println(response);
+				} else {
+					model.setContentPane(model.setupMessageDisplay(response, 5)); // Render Register Pane
+					System.out.println(response);
+				}
+			} catch (Exception e) {
+				System.out.println("Could not registed");
+				e.printStackTrace();
+			}
+			break;
+		case 5:
+			System.out.println("Render Register Pane");
+			// Render Register Pane
 			model.setContentPane(model.setupRegisterMenu());
 			break;
 		default:
@@ -73,7 +95,7 @@ public class NavigationHandler implements EventHandler<ActionEvent> {
 
 		model.layoutPane.getChildren().clear();
 		model.layoutPane.getChildren().addAll(model.getNavigationPane(), model.getContentPane());
-		model.setSelectedTab(getSelectedTab());
+		// model.setSelectedTab(getSelectedTab());
 		model.layoutPane.requestLayout();
 	}
 

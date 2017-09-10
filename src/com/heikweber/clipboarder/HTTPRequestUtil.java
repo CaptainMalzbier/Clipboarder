@@ -26,6 +26,10 @@ public class HTTPRequestUtil {
 		params.put("username", Username);
 		params.put("email", email);
 
+		System.out.println(Username);
+		System.out.println(email);
+		System.out.println(Passwort);
+
 		StringBuilder postData = new StringBuilder();
 		for (Map.Entry<String, Object> param : params.entrySet()) {
 			if (postData.length() != 0)
@@ -44,6 +48,7 @@ public class HTTPRequestUtil {
 		conn.getOutputStream().write(postDataBytes);
 
 		try (InputStream is = conn.getInputStream()) {
+			System.out.println(is);
 			return IOUtils.toString(is, StandardCharsets.UTF_8);
 		}
 	}
