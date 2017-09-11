@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.heikweber.clipboarder;
 
 import java.awt.AWTException;
@@ -38,6 +33,7 @@ import javafx.stage.StageStyle;
  *
  * @author Philipp, David
  */
+
 public class Clipboarder extends Application {
 
 	private SceneModel model;

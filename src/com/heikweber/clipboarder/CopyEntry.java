@@ -1,15 +1,11 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.heikweber.clipboarder;
 
 /**
  * Object class for entries in copy history
  *
- * @author Philipp
+ * @author Philipp, David
  */
+
 class CopyEntry {
 
 	private int id;

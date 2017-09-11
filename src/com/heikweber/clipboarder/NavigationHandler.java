@@ -9,6 +9,12 @@ import javafx.event.EventHandler;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
+/**
+ * Object class for entries in copy history
+ *
+ * @author Philipp, David
+ */
+
 public class NavigationHandler implements EventHandler<ActionEvent> {
 
 	private SceneModel model;
@@ -40,6 +46,7 @@ public class NavigationHandler implements EventHandler<ActionEvent> {
 					if (response.contains("true")) {
 						login();
 					} else {
+						model.setContentPane(model.setupMessageDisplay(response, 0)); // Try Again: Render Login Pane
 						System.out.println(response);
 					}
 				} else {
@@ -57,12 +64,14 @@ public class NavigationHandler implements EventHandler<ActionEvent> {
 						}
 						login();
 					} else {
+						model.setContentPane(model.setupMessageDisplay(response, 0)); // Try Again: Render Login Pane
 						System.out.println(response);
 					}
 				}
 			} catch (Exception e) {
+				model.setContentPane(model.setupMessageDisplay("Could not log in", 0)); // Try Again: Render Login Pane
 				System.out.println("Could not log in");
-				e.printStackTrace();
+				// e.printStackTrace();
 			}
 			break;
 		case 2:
@@ -184,7 +193,8 @@ public class NavigationHandler implements EventHandler<ActionEvent> {
 				e.printStackTrace();
 			}
 
-			model.setContentPane(model.setupAccountMenu());
+			model.setContentPane(model.setupMessageDisplay("Your login data has been removed", 0)); // Try Again: Render
+																									// Login Pane
 			break;
 		default:
 			model.getStage().hide();

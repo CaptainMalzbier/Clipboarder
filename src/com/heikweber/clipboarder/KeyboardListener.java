@@ -11,6 +11,12 @@ import org.jnativehook.keyboard.NativeKeyEvent;
 import javafx.application.Platform;
 import javafx.scene.input.Clipboard;
 
+/**
+ * Object class for entries in copy history
+ *
+ * @author Philipp, David
+ */
+
 public class KeyboardListener extends NativeKeyAdapter {
 
 	private Clipboarder clipboarder;

@@ -15,6 +15,12 @@ import org.apache.commons.io.IOUtils;
 import com.jsoniter.JsonIterator;
 import com.jsoniter.any.Any;
 
+/**
+ * Object class for entries in copy history
+ *
+ * @author David
+ */
+
 public class HTTPRequestUtil {
 	private HTTPRequestUtil() {
 	}
