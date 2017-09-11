@@ -38,40 +38,49 @@ public class NavigationHandler implements EventHandler<ActionEvent> {
 			break;
 		case 1:
 			// Login Action
-			try {
-				if (model.config.get("token").toString() != null && !model.config.get("token").toString().isEmpty()) {
-					System.out.println("Login with Token");
-					String response = HTTPRequestUtil.loginWithToken(model.config.get("mail"),
-							model.config.get("token"));
-					if (response.contains("true")) {
-						login();
-					} else {
-						model.setContentPane(model.setupMessageDisplay(response, 0)); // Try Again: Render Login Pane
-						System.out.println(response);
-					}
-				} else {
-					System.out.println("Login with Password");
-					String response = HTTPRequestUtil.loginWithPassword(model.getMail(), model.getPassword(),
-							model.isRememberMe());
-
-					if (response.contains("true")) {
-						if (model.isRememberMe()) {
+			if (model.isLoggedIn()) {
+				login();
+			} else {
+				try {
+					if (model.config.get("token").toString() != null
+							&& !model.config.get("token").toString().isEmpty()) {
+						System.out.println("Login with Token");
+						String response = HTTPRequestUtil.loginWithToken(model.config.get("mail"),
+								model.config.get("token"));
+						if (response.contains("true")) {
+							login();
+						} else {
+							model.setContentPane(model.setupMessageDisplay(response, 0)); // Try Again: Render Login
+																							// Pane
 							System.out.println(response);
-							response = response.split(",")[1];
-							model.config.set("mail", model.getMail());
-							model.config.set("token", response);
-							model.config.saveConfig();
 						}
-						login();
 					} else {
-						model.setContentPane(model.setupMessageDisplay(response, 0)); // Try Again: Render Login Pane
-						System.out.println(response);
+						System.out.println("Login with Password");
+						String response = HTTPRequestUtil.loginWithPassword(model.getMail(), model.getPassword(),
+								model.isRememberMe());
+
+						if (response.contains("true")) {
+							if (model.isRememberMe()) {
+								System.out.println(response);
+								response = response.split(",")[1];
+								model.config.set("mail", model.getMail());
+								model.config.set("token", response);
+								model.config.saveConfig();
+							}
+							login();
+						} else {
+							model.setContentPane(model.setupMessageDisplay(response, 0)); // Try Again: Render Login
+																							// Pane
+							System.out.println(response);
+						}
 					}
+				} catch (Exception e) {
+					model.setContentPane(model.setupMessageDisplay("Could not log in", 0)); // Try Again: Render Login
+																							// Pane
+					System.out.println("Could not log in");
+					// e.printStackTrace();
 				}
-			} catch (Exception e) {
-				model.setContentPane(model.setupMessageDisplay("Could not log in", 0)); // Try Again: Render Login Pane
-				System.out.println("Could not log in");
-				// e.printStackTrace();
+
 			}
 			break;
 		case 2:

@@ -22,6 +22,7 @@ import com.jsoniter.any.Any;
  */
 
 public class HTTPRequestUtil {
+
 	private HTTPRequestUtil() {
 	}
 
@@ -312,8 +313,8 @@ public class HTTPRequestUtil {
 		}
 	}
 
-	public static List<CopyEntry> getClipsWithPassword(String email, String Password, int offset, int number)
-			throws Exception {
+	public static List<CopyEntry> getClipsWithPassword(String email, String Password, int offset, int number,
+			SceneModel model) throws Exception {
 		URL url = new URL("https://notizbuch.online/Clipboarder/showClips.php");
 		Map<String, Object> params = new LinkedHashMap<>();
 		params.put("password", Password);
@@ -361,6 +362,10 @@ public class HTTPRequestUtil {
 			// }
 			// System.out.println("JSON->Data:");
 			// System.out.println(obj.get("data").toString());
+
+			System.out.println("HIER " + obj.get("count").toInt());
+			model.setNumberOfClips(obj.get("count").toInt());
+
 			return obj.get("data").asList().stream()
 					.map(item -> new CopyEntry(item.get("Content").toString(), item.get("ID").toString()))
 					.collect(Collectors.toList());
@@ -368,8 +373,8 @@ public class HTTPRequestUtil {
 		}
 	}
 
-	public static List<CopyEntry> getClipsWithToken(String email, String token, int offset, int number)
-			throws Exception {
+	public static List<CopyEntry> getClipsWithToken(String email, String token, int offset, int number,
+			SceneModel model) throws Exception {
 		URL url = new URL("https://notizbuch.online/Clipboarder/showClips.php");
 		Map<String, Object> params = new LinkedHashMap<>();
 		params.put("token", token);
@@ -404,6 +409,10 @@ public class HTTPRequestUtil {
 			String json = IOUtils.toString(is, StandardCharsets.UTF_8);
 			// Objekt, das das iterierte JSON-Objekt enthält
 			Any obj = JsonIterator.deserialize(json);
+
+			System.out.println("HIER " + obj.get("count").toInt());
+			model.setNumberOfClips(obj.get("count").toInt());
+
 			return obj.get("data").asList().stream()
 					.map(item -> new CopyEntry(item.get("Content").toString(), item.get("ID").toString()))
 					.collect(Collectors.toList());

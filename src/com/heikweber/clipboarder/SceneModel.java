@@ -42,6 +42,7 @@ public class SceneModel {
 	private List<CopyEntry> copyEntryList = new ArrayList<>();
 	private int selectedEntry = 0;
 	private int selectedTab = 0;
+	private int numberOfClips = 1;
 	private boolean loggedIn = false;
 	private boolean userWantsToUploadClips = false;
 	private boolean clipsLoaded = false;
@@ -559,17 +560,19 @@ public class SceneModel {
 	public void refreshEntries(boolean createNewPage) throws IllegalStateException, Exception {
 
 		int number = config.getInt("number");
-		if (copyEntryList.size() < number) {
-			number = copyEntryList.size();
-		}
+		System.out.println("refresh " + getNumberOfClips());
+		// if (copyEntryList.size() < number) {
+		// number = copyEntryList.size();
+		// }
 
 		if (config.get("token").toString() != null && !config.get("token").toString().isEmpty()) {
 			copyEntryList = HTTPRequestUtil.getClipsWithToken(config.get("mail"), config.get("token"),
-					config.getInt("offset"), number);
+					config.getInt("offset"), number, this);
 		} else {
 			copyEntryList = HTTPRequestUtil.getClipsWithPassword(getMail(), getPassword(), config.getInt("offset"),
-					config.getInt("number"));
+					number, this);
 		}
+		System.out.println("refresh " + getNumberOfClips());
 		if (createNewPage)
 			pagination.setPageFactory(idx -> createPage(idx));
 	}
@@ -763,4 +766,13 @@ public class SceneModel {
 	public void setActivateToken(String activateToken) {
 		this.activateToken = activateToken;
 	}
+
+	public int getNumberOfClips() {
+		return numberOfClips;
+	}
+
+	public void setNumberOfClips(int numberOfClips) {
+		this.numberOfClips = numberOfClips;
+	}
+
 }

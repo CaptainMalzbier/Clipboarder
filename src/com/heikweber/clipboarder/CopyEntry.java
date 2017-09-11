@@ -41,6 +41,8 @@ class CopyEntry {
 			content = content.substring(0, 12) + "...";
 		}
 
+		content = content.replaceAll("[\\r\\n\\t]", "");
+
 		setShortContent(content.trim());
 
 		listener.run();
