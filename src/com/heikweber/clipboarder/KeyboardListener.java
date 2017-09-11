@@ -14,22 +14,31 @@ import javafx.scene.input.Clipboard;
 public class KeyboardListener extends NativeKeyAdapter {
 
 	private Clipboarder clipboarder;
+	private SceneModel model;
 
 	// Inject dependency clipboarder
-	public KeyboardListener(Clipboarder clipboarder) {
+	public KeyboardListener(Clipboarder clipboarder, SceneModel model) {
 		this.clipboarder = clipboarder;
+		this.model = model;
 	}
 
 	@Override
 	public void nativeKeyPressed(NativeKeyEvent e) {
 		if (e.getKeyCode() == NativeKeyEvent.VC_C) {
 			if ((e.getModifiers() & NativeInputEvent.CTRL_L_MASK) != 0) {
-				try {
-					copyToClipboarder();
-				} catch (HeadlessException | UnsupportedFlavorException | IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+				System.out.println(model.getUserWantsToUploadClips());
+				System.out.println(model.isLoggedIn());
+				if (model.getUserWantsToUploadClips()) {
+					if (model.isLoggedIn()) {
+						try {
+							copyToClipboarder();
+						} catch (HeadlessException | UnsupportedFlavorException | IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}
 				}
+
 			}
 		}
 	}

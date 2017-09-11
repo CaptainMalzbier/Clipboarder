@@ -44,6 +44,7 @@ public class SceneModel {
 	private int selectedEntry = 0;
 	private int selectedTab = 0;
 	private boolean loggedIn = false;
+	private boolean userWantsToUploadClips = false;
 	private boolean clipsLoaded = false;
 	private String name;
 	private String token;
@@ -392,9 +393,31 @@ public class SceneModel {
 
 		setSelectedTab(2);
 
+		VBox settingContent = new VBox(10);
+		Label settingStatus = new Label("Setting");
+
+		CheckBox uploadClips = new CheckBox("Upload Clips");
+
+		uploadClips.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				if (!getUserWantsToUploadClips()) {
+					setUserWantsToUploadClips(true);
+				} else {
+					setUserWantsToUploadClips(false);
+				}
+			}
+		});
+
+		HBox settingButton = new HBox(5);
 		Button bExit = new Button("Exit");
 		bExit.setOnAction(actionEvent -> System.exit(0));
-		return new VBox(bExit);
+
+		settingButton.getChildren().addAll(bExit);
+		settingContent.getChildren().addAll(settingStatus, uploadClips, settingButton);
+
+		return settingContent;
+
 	}
 
 	protected Node createPage(Integer pageIndex) {
@@ -598,6 +621,14 @@ public class SceneModel {
 
 	public void setLoggedIn(boolean loggedIn) {
 		this.loggedIn = loggedIn;
+	}
+
+	public boolean getUserWantsToUploadClips() {
+		return userWantsToUploadClips;
+	}
+
+	public void setUserWantsToUploadClips(boolean userWantsToUploadClips) {
+		this.userWantsToUploadClips = userWantsToUploadClips;
 	}
 
 	public boolean areClipsLoaded() {

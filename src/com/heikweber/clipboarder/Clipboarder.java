@@ -50,10 +50,6 @@ public class Clipboarder extends Application {
 	 * @throws Exception
 	 */
 	public static void main(String[] args) throws Exception {
-		// HTTPRequest Test = new HTTPRequest();
-		// String Response = Test.register("David", "david@heik.info", "TestPW");
-		// Response = Test.activate("david@heik.info", "446591");
-		// System.out.println(Response);
 		PlatformImpl.setTaskbarApplication(false);
 		// Clear previous logging configurations.
 		LogManager.getLogManager().reset();
@@ -123,7 +119,7 @@ public class Clipboarder extends Application {
 		stage.setMinHeight(config.getHeight()); // setze Mindesthoehe des Fensters bei
 
 		// add key listener
-		GlobalScreen.addNativeKeyListener(new KeyboardListener(this));
+		GlobalScreen.addNativeKeyListener(new KeyboardListener(this, model));
 
 		// sets up the tray icon (using awt code run on the swing thread).
 		SwingUtilities.invokeLater(this::addAppToTray);

@@ -60,10 +60,11 @@ public class NavigationHandler implements EventHandler<ActionEvent> {
 			}
 			break;
 		case 2:
-			//
+			// Setting Pane
 			model.setContentPane(model.setupSettingsMenu());
 			break;
 		case 3:
+			// Hide Stage
 			model.getStage().hide();
 			break;
 		case 4:
@@ -171,6 +172,7 @@ public class NavigationHandler implements EventHandler<ActionEvent> {
 	}
 
 	private void login() {
+		model.setLoggedIn(true);
 		model.setNavigation(1);
 		try {
 			model.setContentPane(model.setupClipsMenu());
