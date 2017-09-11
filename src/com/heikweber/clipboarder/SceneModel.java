@@ -6,8 +6,11 @@
 package com.heikweber.clipboarder;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.commons.configuration2.ex.ConfigurationException;
 
 import com.sun.istack.internal.Nullable;
 
@@ -48,6 +51,7 @@ public class SceneModel {
 	private boolean clipsLoaded = false;
 	private String name;
 	private String token;
+	private String activateToken;
 	private String mail;
 	private String password;
 	private boolean rememberMe;
@@ -90,6 +94,28 @@ public class SceneModel {
 
 		createNavigation();
 
+		// check if set token and mail in config
+		if (config.get("token").toString() != null && !config.get("token").toString().isEmpty()) {
+			setToken(config.get("token").toString());
+			if (config.get("mail").toString() != null && !config.get("mail").toString().isEmpty()) {
+				setMail(config.get("mail").toString());
+
+				// both is set -> so we can try to login
+				// model.setSelectedTab(1); // Login Action
+				// new NavigationHandler(model, 1);
+				// System.out.println("Login with Token");
+				String response = HTTPRequestUtil.loginWithToken(config.get("mail"), config.get("token"));
+				System.out.println(response);
+				if (response.contains("true")) {
+					setLoggedIn(true);
+				} else {
+					System.out.println(response);
+				}
+			}
+		}
+
+		System.out.println("SIND WIR EINGELOGGT? " + isLoggedIn());
+
 		if (isLoggedIn()) {
 			setNavigation(1);
 			setSelectedTab(1);
@@ -98,6 +124,13 @@ public class SceneModel {
 			setNavigation(0);
 			setSelectedTab(0);
 			setContentPane(setupAccountMenu());
+		}
+
+		// init from config
+		if (config.get("uploadclips").toString().equals("true")) {
+			setUserWantsToUploadClips(true);
+		} else {
+			setUserWantsToUploadClips(false);
 		}
 
 		layout.getChildren().clear();
@@ -281,7 +314,7 @@ public class SceneModel {
 		Button activation = new Button("Activat");
 
 		token.textProperty().addListener((observable, oldToken, newToken) -> {
-			setToken(newToken);
+			setActivateToken(newToken);
 		});
 
 		activation.setOnAction(new NavigationHandler(this, 10)); // // Execute Activation
@@ -376,7 +409,14 @@ public class SceneModel {
 
 		refreshEntries(false);
 
-		pagination = new Pagination(copyEntryList.size() / itemsPerPage, 0);
+		System.out.println("Größe der Liste: " + copyEntryList.size());
+
+		int pageCount = 1;
+		if (copyEntryList.size() >= 10) {
+			pageCount = copyEntryList.size() / itemsPerPage;
+		}
+
+		pagination = new Pagination(pageCount, 0);
 		pagination.setPageFactory(pageIndex -> createPage(pageIndex));
 		pagination.setCurrentPageIndex(0);
 		// AnchorPane anchorPane = new AnchorPane();
@@ -398,13 +438,26 @@ public class SceneModel {
 
 		CheckBox uploadClips = new CheckBox("Upload Clips");
 
+		uploadClips.setSelected(getUserWantsToUploadClips());
 		uploadClips.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
 				if (!getUserWantsToUploadClips()) {
 					setUserWantsToUploadClips(true);
+					config.set("uploadclips", "true");
+					try {
+						config.saveConfig();
+					} catch (IOException | ConfigurationException e) {
+						e.printStackTrace();
+					}
 				} else {
 					setUserWantsToUploadClips(false);
+					config.set("uploadclips", "false");
+					try {
+						config.saveConfig();
+					} catch (IOException | ConfigurationException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		});
@@ -414,7 +467,16 @@ public class SceneModel {
 		bExit.setOnAction(actionEvent -> System.exit(0));
 
 		settingButton.getChildren().addAll(bExit);
+
 		settingContent.getChildren().addAll(settingStatus, uploadClips, settingButton);
+
+		if (isLoggedIn()) {
+			HBox logoutButton = new HBox(5);
+			Button bLogout = new Button("Logout");
+			bLogout.setOnAction(new NavigationHandler(this, 12)); // Logout
+			logoutButton.getChildren().addAll(bLogout);
+			settingContent.getChildren().addAll(logoutButton);
+		}
 
 		return settingContent;
 
@@ -486,9 +548,15 @@ public class SceneModel {
 	}
 
 	public void refreshEntries(boolean createNewPage) throws IllegalStateException, Exception {
-		if (isRememberMe()) {
+
+		int number = config.getInt("number");
+		if (copyEntryList.size() < number) {
+			number = copyEntryList.size();
+		}
+
+		if (config.get("token").toString() != null && !config.get("token").toString().isEmpty()) {
 			copyEntryList = HTTPRequestUtil.getClipsWithToken(config.get("mail"), config.get("token"),
-					config.getInt("offset"), config.getInt("number"));
+					config.getInt("offset"), number);
 		} else {
 			copyEntryList = HTTPRequestUtil.getClipsWithPassword(getMail(), getPassword(), config.getInt("offset"),
 					config.getInt("number"));
@@ -677,5 +745,13 @@ public class SceneModel {
 
 	public void setToken(String token) {
 		this.token = token;
+	}
+
+	public String getActivateToken() {
+		return activateToken;
+	}
+
+	public void setActivateToken(String activateToken) {
+		this.activateToken = activateToken;
 	}
 }

@@ -36,7 +36,7 @@ import javafx.stage.StageStyle;
 
 /**
  *
- * @author Philipp
+ * @author Philipp, David
  */
 public class Clipboarder extends Application {
 
@@ -77,6 +77,7 @@ public class Clipboarder extends Application {
 		}
 
 		Application.launch(args);
+
 	}
 
 	@Override

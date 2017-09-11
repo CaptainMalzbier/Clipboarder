@@ -160,7 +160,7 @@ public class HTTPRequestUtil {
 	}
 
 	public static String loginWithToken(String email, String token) throws Exception {
-		URL url = new URL("https://notizbuch.online/Clipboarder/loginClip.php");
+		URL url = new URL("https://notizbuch.online/Clipboarder/login.inc.php");
 		Map<String, Object> params = new LinkedHashMap<>();
 		params.put("token", token);
 		params.put("usetoken", "1");
@@ -373,6 +373,8 @@ public class HTTPRequestUtil {
 		params.put("number", number);
 		System.out.println("HIER " + email);
 		System.out.println("HIER " + token);
+		System.out.println("HIER " + offset);
+		System.out.println("HIER " + number);
 
 		StringBuilder postData = new StringBuilder();
 		for (Map.Entry<String, Object> param : params.entrySet()) {

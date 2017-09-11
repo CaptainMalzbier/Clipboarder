@@ -1,5 +1,9 @@
 package com.heikweber.clipboarder;
 
+import java.io.IOException;
+
+import org.apache.commons.configuration2.ex.ConfigurationException;
+
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.layout.HBox;
@@ -29,7 +33,8 @@ public class NavigationHandler implements EventHandler<ActionEvent> {
 		case 1:
 			// Login Action
 			try {
-				if (!model.config.isEmpty("token")) {
+				if (model.config.get("token").toString() != null && !model.config.get("token").toString().isEmpty()) {
+					System.out.println("Login with Token");
 					String response = HTTPRequestUtil.loginWithToken(model.config.get("mail"),
 							model.config.get("token"));
 					if (response.contains("true")) {
@@ -38,6 +43,7 @@ public class NavigationHandler implements EventHandler<ActionEvent> {
 						System.out.println(response);
 					}
 				} else {
+					System.out.println("Login with Password");
 					String response = HTTPRequestUtil.loginWithPassword(model.getMail(), model.getPassword(),
 							model.isRememberMe());
 
@@ -141,7 +147,7 @@ public class NavigationHandler implements EventHandler<ActionEvent> {
 			System.out.println("Execute Activation");
 			// Execute Activation
 			try {
-				String response = HTTPRequestUtil.activate(model.getMail(), model.getToken());
+				String response = HTTPRequestUtil.activate(model.getMail(), model.getActivateToken());
 				System.out.println(response);
 				if (response.contains("Successfully activated")) {
 					model.setContentPane(model.setupMessageDisplay(response, 0)); // Render Login Pane
@@ -160,6 +166,25 @@ public class NavigationHandler implements EventHandler<ActionEvent> {
 			System.out.println("Render Activation Pane");
 			// Render Activation Pane
 			model.setContentPane(model.setupActivationMenu());
+			break;
+		case 12:
+			System.out.println("Render Activation Pane");
+			// Render Logout Pane
+			model.setLoggedIn(false);
+			model.setMail("");
+			model.setActivateToken("");
+			model.setPassword("");
+			model.setToken("");
+			model.config.set("mail", "");
+			model.config.set("token", "");
+			model.config.set("uploadclips", "true");
+			try {
+				model.config.saveConfig();
+			} catch (IOException | ConfigurationException e) {
+				e.printStackTrace();
+			}
+
+			model.setContentPane(model.setupAccountMenu());
 			break;
 		default:
 			model.getStage().hide();
