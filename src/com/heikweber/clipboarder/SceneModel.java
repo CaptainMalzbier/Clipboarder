@@ -207,9 +207,6 @@ public class SceneModel {
 		TextField mail = new TextField();
 		TextField password = new TextField();
 
-		mail.setText("david@heik.info");
-		password.setText("TestPW");
-
 		mailBox.getChildren().addAll(lMail, mail);
 		passwordBox.getChildren().addAll(lPassword, password);
 

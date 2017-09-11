@@ -96,8 +96,10 @@ public class NavigationHandler implements EventHandler<ActionEvent> {
 					System.out.println(response);
 				}
 			} catch (Exception e) {
+				model.setContentPane(model.setupMessageDisplay("Could not registed", 5)); // Try Again: Render Register
+																							// Pane
 				System.out.println("Could not registed");
-				e.printStackTrace();
+				// e.printStackTrace();
 			}
 			break;
 		case 5:
@@ -120,7 +122,10 @@ public class NavigationHandler implements EventHandler<ActionEvent> {
 				}
 			} catch (Exception e) {
 				System.out.println("Could not request a new password");
-				e.printStackTrace();
+				model.setContentPane(model.setupMessageDisplay("Could not request a new password", 7)); // Repeat:
+																										// Render Forgot
+																										// Password Pane
+				// e.printStackTrace();
 			}
 			break;
 		case 7:
@@ -143,8 +148,12 @@ public class NavigationHandler implements EventHandler<ActionEvent> {
 					System.out.println(response);
 				}
 			} catch (Exception e) {
+				model.setContentPane(model.setupMessageDisplay("Could not setup a new password", 9)); // Tray again,
+																										// Render Set
+																										// new Password
+																										// Pane
 				System.out.println("Could not setup a new password");
-				e.printStackTrace();
+				// e.printStackTrace();
 			}
 			break;
 		case 9:
@@ -168,7 +177,11 @@ public class NavigationHandler implements EventHandler<ActionEvent> {
 				}
 			} catch (Exception e) {
 				System.out.println("Could not request a new password");
-				e.printStackTrace();
+				model.setContentPane(model.setupMessageDisplay("Could not request a new password", 11)); // Repeat:
+																											// Render
+																											// Forgot
+																											// Password
+				// e.printStackTrace();
 			}
 			break;
 		case 11:
