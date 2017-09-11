@@ -18,6 +18,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Pagination;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
@@ -206,7 +207,7 @@ public class SceneModel {
 		Label lPassword = new Label("Password");
 		lPassword.getStyleClass().add("fill-in");
 		TextField mail = new TextField();
-		TextField password = new TextField();
+		PasswordField password = new PasswordField();
 
 		mailBox.getChildren().addAll(lMail, mail);
 		passwordBox.getChildren().addAll(lPassword, password);
