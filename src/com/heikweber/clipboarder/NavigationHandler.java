@@ -73,10 +73,10 @@ public class NavigationHandler implements EventHandler<ActionEvent> {
 				String response = HTTPRequestUtil.register(model.getName(), model.getMail(), model.getPassword());
 				System.out.println(response);
 				if (response.contains("User created")) {
-					model.setContentPane(model.setupMessageDisplay(response, 0)); // Login
+					model.setContentPane(model.setupMessageDisplay("Check your mails", 11)); // Render Activation Pane
 					System.out.println(response);
 				} else {
-					model.setContentPane(model.setupMessageDisplay(response, 5)); // Render Register Pane
+					model.setContentPane(model.setupMessageDisplay(response, 5)); // Try Again: Render Register Pane
 					System.out.println(response);
 				}
 			} catch (Exception e) {
@@ -135,6 +135,30 @@ public class NavigationHandler implements EventHandler<ActionEvent> {
 			System.out.println("Render Set new Password Pane");
 			// Render Set new Password Pane
 			model.setContentPane(model.setupNewPassword());
+			break;
+		case 10:
+			System.out.println("Execute Activation");
+			// Execute Activation
+			try {
+				String response = HTTPRequestUtil.activate(model.getMail(), model.getToken());
+				System.out.println(response);
+				if (response.contains("Successfully activated")) {
+					model.setContentPane(model.setupMessageDisplay(response, 0)); // Render Login Pane
+					System.out.println(response);
+				} else {
+					model.setContentPane(model.setupMessageDisplay(response, 11)); // Repeat: Render Forgot Password
+																					// Pane
+					System.out.println(response);
+				}
+			} catch (Exception e) {
+				System.out.println("Could not request a new password");
+				e.printStackTrace();
+			}
+			break;
+		case 11:
+			System.out.println("Render Activation Pane");
+			// Render Activation Pane
+			model.setContentPane(model.setupActivationMenu());
 			break;
 		default:
 			model.getStage().hide();

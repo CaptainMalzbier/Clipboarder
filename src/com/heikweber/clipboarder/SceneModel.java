@@ -264,6 +264,34 @@ public class SceneModel {
 		return registerContent;
 	}
 
+	VBox setupActivationMenu() {
+
+		VBox activationContent = new VBox(10);
+		Label activationStatus = new Label("Activation");
+
+		HBox tokenBox = new HBox(5);
+		Label lToken = new Label("Token");
+		lToken.getStyleClass().add("fill-in");
+		TextField token = new TextField();
+
+		tokenBox.getChildren().addAll(lToken, token);
+
+		HBox activationButton = new HBox(5);
+		Button activation = new Button("Activat");
+
+		token.textProperty().addListener((observable, oldToken, newToken) -> {
+			setToken(newToken);
+		});
+
+		activation.setOnAction(new NavigationHandler(this, 10)); // // Execute Activation
+
+		activationButton.getChildren().addAll(activation);
+
+		activationContent.getChildren().addAll(activationStatus, tokenBox, activationButton);
+
+		return activationContent;
+	}
+
 	VBox setupForgotPassword() {
 
 		VBox forgotPasswordContent = new VBox(10);
