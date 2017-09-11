@@ -168,8 +168,8 @@ public class NavigationHandler implements EventHandler<ActionEvent> {
 			model.setContentPane(model.setupActivationMenu());
 			break;
 		case 12:
-			System.out.println("Render Activation Pane");
 			// Render Logout Pane
+			System.out.println("Render Forgot me Pane");
 			model.setLoggedIn(false);
 			model.setMail("");
 			model.setActivateToken("");

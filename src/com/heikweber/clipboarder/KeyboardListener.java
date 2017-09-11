@@ -59,10 +59,22 @@ public class KeyboardListener extends NativeKeyAdapter {
 				return;
 
 			String response = null;
+
 			try {
-				response = HTTPRequestUtil.addClipWithPassword("david@heik.info", "TestPW", clipboardText);
+				// check if set token and mail in config
+				if (model.config.get("token").toString() != null && !model.config.get("token").toString().isEmpty()) {
+					if (model.config.get("mail").toString() != null && !model.config.get("mail").toString().isEmpty()) {
+						System.out.println("Add Clip with Token");
+						// both is set -> so we can try to addClipWithtoken
+						response = HTTPRequestUtil.addClipWithToken(model.config.get("mail").toString(),
+								model.config.get("token").toString(), clipboardText);
+					}
+				} else {
+					System.out.println("Add Clip with Password");
+					response = HTTPRequestUtil.addClipWithPassword(model.getMail(), model.getPassword(), clipboardText);
+				}
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
+				System.out.println("Could not add Clip");
 				e.printStackTrace();
 			}
 			System.out.println("Strato: " + response);

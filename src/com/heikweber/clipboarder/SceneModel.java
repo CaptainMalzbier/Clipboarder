@@ -94,24 +94,29 @@ public class SceneModel {
 
 		createNavigation();
 
-		// check if set token and mail in config
-		if (config.get("token").toString() != null && !config.get("token").toString().isEmpty()) {
-			setToken(config.get("token").toString());
-			if (config.get("mail").toString() != null && !config.get("mail").toString().isEmpty()) {
-				setMail(config.get("mail").toString());
+		try {
+			// check if set token and mail in config
+			if (config.get("token").toString() != null && !config.get("token").toString().isEmpty()) {
+				setToken(config.get("token").toString());
+				if (config.get("mail").toString() != null && !config.get("mail").toString().isEmpty()) {
+					setMail(config.get("mail").toString());
 
-				// both is set -> so we can try to login
-				// model.setSelectedTab(1); // Login Action
-				// new NavigationHandler(model, 1);
-				// System.out.println("Login with Token");
-				String response = HTTPRequestUtil.loginWithToken(config.get("mail"), config.get("token"));
-				System.out.println(response);
-				if (response.contains("true")) {
-					setLoggedIn(true);
-				} else {
+					// both is set -> so we can try to login
+					// model.setSelectedTab(1); // Login Action
+					// new NavigationHandler(model, 1);
+					// System.out.println("Login with Token");
+					String response = HTTPRequestUtil.loginWithToken(config.get("mail"), config.get("token"));
 					System.out.println(response);
+					if (response.contains("true")) {
+						setLoggedIn(true);
+					} else {
+						System.out.println(response);
+					}
 				}
 			}
+		} catch (Exception e) {
+			System.out.println("Could not automatically login");
+			e.printStackTrace();
 		}
 
 		System.out.println("SIND WIR EINGELOGGT? " + isLoggedIn());
@@ -249,6 +254,18 @@ public class SceneModel {
 		accountContent.getChildren().addAll(accountStatus, mailBox, passwordBox, rememberMe, loginButton,
 				accountButtons);
 
+		if (config.get("token").toString() != null && !config.get("token").toString().isEmpty()) {
+			// In config exist a token -> render try Again button
+
+			Label spaceStatus = new Label("");
+			Label tokenStatus = new Label("Login with token");
+
+			Button loginWithToken = new Button("Try again");
+			loginWithToken.setOnAction(new NavigationHandler(this, 1));
+
+			accountContent.getChildren().addAll(spaceStatus, tokenStatus, loginWithToken);
+		}
+
 		return accountContent;
 	}
 
@@ -318,7 +335,6 @@ public class SceneModel {
 		});
 
 		activation.setOnAction(new NavigationHandler(this, 10)); // // Execute Activation
-
 		activationButton.getChildren().addAll(activation);
 
 		activationContent.getChildren().addAll(activationStatus, tokenBox, activationButton);
@@ -470,10 +486,10 @@ public class SceneModel {
 
 		settingContent.getChildren().addAll(settingStatus, uploadClips, settingButton);
 
-		if (isLoggedIn()) {
+		if (config.get("token").toString() != null && !config.get("token").toString().isEmpty()) {
 			HBox logoutButton = new HBox(5);
-			Button bLogout = new Button("Logout");
-			bLogout.setOnAction(new NavigationHandler(this, 12)); // Logout
+			Button bLogout = new Button("Forget me");
+			bLogout.setOnAction(new NavigationHandler(this, 12)); // Forget me
 			logoutButton.getChildren().addAll(bLogout);
 			settingContent.getChildren().addAll(logoutButton);
 		}
