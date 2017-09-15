@@ -69,4 +69,9 @@ class CopyEntry {
 		this.shortContent = shortContent;
 	}
 
+	@Override
+	public String toString() {
+		return String.format("CopyEntry(id=%s,short=%s,content=%s)", this.id, this.shortContent, this.content);
+	}
+
 }

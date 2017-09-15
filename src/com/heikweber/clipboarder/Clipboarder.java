@@ -193,6 +193,7 @@ public class Clipboarder extends Application {
 				try {
 					model.refreshEntries(true);
 					model.setClipsLoaded(true);
+					model.setupClipsMenu();
 				} catch (IllegalStateException e) {
 					e.printStackTrace();
 				} catch (Exception e) {

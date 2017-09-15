@@ -9,6 +9,7 @@ import org.jnativehook.keyboard.NativeKeyAdapter;
 import org.jnativehook.keyboard.NativeKeyEvent;
 
 import javafx.application.Platform;
+import javafx.scene.Node;
 import javafx.scene.input.Clipboard;
 
 /**
@@ -85,7 +86,14 @@ public class KeyboardListener extends NativeKeyAdapter {
 			}
 			System.out.println("Strato: " + response);
 			try {
-				clipboarder.getModel().refreshEntries(true);
+				// clipboarder.getModel().refreshEntries(true);
+				model.layoutPane.getChildren().clear();
+				Node contentPane = clipboarder.getModel().setupClipsMenu(true);
+
+				// clipboarder.getModel().layout.requestLayout();
+				model.layoutPane.getChildren().addAll(model.getNavigationPane(), contentPane);
+				// model.setSelectedTab(getSelectedTab());
+				model.layoutPane.requestLayout();
 			} catch (Exception e) {
 				System.out.println("Could not refresh.");
 				e.printStackTrace();

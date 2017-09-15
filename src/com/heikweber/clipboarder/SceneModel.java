@@ -77,6 +77,8 @@ public class SceneModel {
 			b.getStyleClass().add("nav");
 		}
 
+		pagination = new Pagination(1, 0);
+
 		this.account.setId("account"); // 0
 		this.clips.setId("clips"); // 1
 		this.settings.setId("settings"); // 2
@@ -415,21 +417,29 @@ public class SceneModel {
 	}
 
 	VBox setupClipsMenu() throws IllegalStateException, Exception {
+		return setupClipsMenu(false);
+	}
+
+	VBox setupClipsMenu(boolean createPage) throws IllegalStateException, Exception {
 
 		int itemsPerPage = 10;
 
-		refreshEntries(false);
+		refreshEntries(createPage);
 
 		System.out.println("Größe der Liste: " + copyEntryList.size());
 
 		int pageCount = 1;
 		if (copyEntryList.size() >= 10) {
-			pageCount = copyEntryList.size() / itemsPerPage;
+			pageCount = (int) Math.ceil(copyEntryList.size() / (float) itemsPerPage);
 		}
 
-		pagination = new Pagination(pageCount, 0);
-		pagination.setPageFactory(pageIndex -> createPage(pageIndex));
+		System.out.println("pageCount: " + pageCount);
+
+		// pagination = new Pagination(pageCount, 0);
+		Pagination pagination = new Pagination();
+		pagination.setPageCount(pageCount);
 		pagination.setCurrentPageIndex(0);
+		pagination.setPageFactory(pageIndex -> createPage(pageIndex));
 		// AnchorPane anchorPane = new AnchorPane();
 		// AnchorPane.setTopAnchor(pagination, 10.0);
 		// AnchorPane.setRightAnchor(pagination, 5.0);
@@ -545,6 +555,12 @@ public class SceneModel {
 				try {
 					HTTPRequestUtil.deleteClipWithPassword(getMail(), getPassword(), copyEntry.getId());
 					refreshEntries(true);
+					// setClipsLoaded(true);
+					layoutPane.getChildren().clear();
+					Node contentPane = setupClipsMenu(true);
+					// clipboarder.getModel().layout.requestLayout();
+					layoutPane.getChildren().addAll(getNavigationPane(), contentPane);
+					// model.setSelectedTab(getSelectedTab());
 					layoutPane.requestLayout();
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -561,6 +577,7 @@ public class SceneModel {
 	public void refreshEntries(boolean createNewPage) throws IllegalStateException, Exception {
 
 		int number = config.getInt("number");
+		System.out.println("number-2 " + number);
 		System.out.println("refresh " + getNumberOfClips());
 		// if (copyEntryList.size() < number) {
 		// number = copyEntryList.size();
