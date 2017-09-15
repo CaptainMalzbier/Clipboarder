@@ -30,7 +30,12 @@ ________________________________________
 .pagination {
 	-fx-border-width:0;
 	-fx-page-information-visible: false;
+/* 	-fx-rotate:180; */
 }
+
+/* .pagination .pagination-control { -fx-rotate:180; } */
+/* .pagination .page { -fx-rotate:180; } */
+
 
 .pagination .control-box {
 	-fx-spacing: 2;

@@ -22,6 +22,8 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
@@ -60,9 +62,10 @@ public class SceneModel {
 	private Button clips;
 	private Button settings;
 	private Button hide;
-	VBox layoutPane = new VBox(10);
-	private VBox contentPane;
+	BorderPane layoutPane = new BorderPane();
+	private Node contentPane;
 	private HBox navigationPane;
+	private Insets insets = new Insets(0, 0, 10, 0);
 
 	public SceneModel(Stage stage, Configuration config) throws IllegalStateException, Exception {
 		this.setStage(stage);
@@ -123,11 +126,9 @@ public class SceneModel {
 
 		if (isLoggedIn()) {
 			setNavigation(1);
-			setSelectedTab(1);
 			setContentPane(setupClipsMenu());
 		} else {
 			setNavigation(0);
-			setSelectedTab(0);
 			setContentPane(setupAccountMenu());
 		}
 
@@ -140,7 +141,12 @@ public class SceneModel {
 
 		layout.getChildren().clear();
 
-		layoutPane.getChildren().addAll(getNavigationPane(), getContentPane());
+		layoutPane.setTop(getNavigationPane());
+		BorderPane.setMargin(getNavigationPane(), insets);
+		layoutPane.setCenter(getContentPane());
+
+		// layoutPane.getChildren().addAll(getNavigationPane(), getContentPane());
+
 		StackPane.setMargin(layoutPane, new Insets(5));
 		layout.getChildren().add(layoutPane);
 
@@ -200,7 +206,7 @@ public class SceneModel {
 
 		VBox accountContent = new VBox(10);
 
-		Label accountStatus = new Label("Authentication");
+		Label accountStatus = new Label("Authentification");
 
 		HBox mailBox = new HBox(5);
 		HBox passwordBox = new HBox(5);
@@ -283,7 +289,7 @@ public class SceneModel {
 		lPassword.getStyleClass().add("fill-in");
 		TextField name = new TextField();
 		TextField mail = new TextField();
-		TextField password = new TextField();
+		PasswordField password = new PasswordField();
 
 		nameBox.getChildren().addAll(lName, name);
 		mailBox.getChildren().addAll(lMail, mail);
@@ -416,11 +422,11 @@ public class SceneModel {
 		return newPasswordContent;
 	}
 
-	VBox setupClipsMenu() throws IllegalStateException, Exception {
+	AnchorPane setupClipsMenu() throws IllegalStateException, Exception {
 		return setupClipsMenu(false);
 	}
 
-	VBox setupClipsMenu(boolean createPage) throws IllegalStateException, Exception {
+	AnchorPane setupClipsMenu(boolean createPage) throws IllegalStateException, Exception {
 
 		int itemsPerPage = 10;
 
@@ -440,14 +446,14 @@ public class SceneModel {
 		pagination.setPageCount(pageCount);
 		pagination.setCurrentPageIndex(0);
 		pagination.setPageFactory(pageIndex -> createPage(pageIndex));
-		// AnchorPane anchorPane = new AnchorPane();
-		// AnchorPane.setTopAnchor(pagination, 10.0);
-		// AnchorPane.setRightAnchor(pagination, 5.0);
-		// AnchorPane.setBottomAnchor(pagination, 2.0);
-		// AnchorPane.setLeftAnchor(pagination, 5.0);
-		// anchorPane.getChildren().addAll(pagination);
+		AnchorPane anchorPane = new AnchorPane();
+		AnchorPane.setTopAnchor(pagination, 0.0);
+		AnchorPane.setRightAnchor(pagination, 0.0);
+		AnchorPane.setBottomAnchor(pagination, 5.0);
+		AnchorPane.setLeftAnchor(pagination, 0.0);
+		anchorPane.getChildren().addAll(pagination);
 
-		return new VBox(pagination);
+		return anchorPane;
 	}
 
 	VBox setupSettingsMenu() {
@@ -455,7 +461,7 @@ public class SceneModel {
 		setSelectedTab(2);
 
 		VBox settingContent = new VBox(10);
-		Label settingStatus = new Label("Setting");
+		Label settingStatus = new Label("Settings");
 
 		CheckBox uploadClips = new CheckBox("Upload Clips");
 
@@ -559,7 +565,10 @@ public class SceneModel {
 					layoutPane.getChildren().clear();
 					Node contentPane = setupClipsMenu(true);
 					// clipboarder.getModel().layout.requestLayout();
-					layoutPane.getChildren().addAll(getNavigationPane(), contentPane);
+					layoutPane.setTop(getNavigationPane());
+					BorderPane.setMargin(getNavigationPane(), getInsets());
+					layoutPane.setCenter(contentPane);
+					// layoutPane.getChildren().addAll(getNavigationPane(), contentPane);
 					// model.setSelectedTab(getSelectedTab());
 					layoutPane.requestLayout();
 				} catch (Exception e) {
@@ -689,11 +698,11 @@ public class SceneModel {
 		this.tabs = tabs;
 	}
 
-	public VBox getContentPane() {
+	public Node getContentPane() {
 		return contentPane;
 	}
 
-	public void setContentPane(VBox contentPane) {
+	public void setContentPane(Node contentPane) {
 		this.contentPane = contentPane;
 	}
 
@@ -791,6 +800,14 @@ public class SceneModel {
 
 	public void setNumberOfClips(int numberOfClips) {
 		this.numberOfClips = numberOfClips;
+	}
+
+	public Insets getInsets() {
+		return insets;
+	}
+
+	public void setInsets(Insets insets) {
+		this.insets = insets;
 	}
 
 }

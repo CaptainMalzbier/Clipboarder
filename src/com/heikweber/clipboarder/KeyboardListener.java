@@ -11,6 +11,7 @@ import org.jnativehook.keyboard.NativeKeyEvent;
 import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.input.Clipboard;
+import javafx.scene.layout.BorderPane;
 
 /**
  * Object class for entries in copy history
@@ -91,7 +92,11 @@ public class KeyboardListener extends NativeKeyAdapter {
 				Node contentPane = clipboarder.getModel().setupClipsMenu(true);
 
 				// clipboarder.getModel().layout.requestLayout();
-				model.layoutPane.getChildren().addAll(model.getNavigationPane(), contentPane);
+				model.layoutPane.setTop(model.getNavigationPane());
+				BorderPane.setMargin(model.getNavigationPane(), model.getInsets());
+				model.layoutPane.setCenter(contentPane);
+				// model.layoutPane.getChildren().addAll(model.getNavigationPane(),
+				// contentPane);
 				// model.setSelectedTab(getSelectedTab());
 				model.layoutPane.requestLayout();
 			} catch (Exception e) {

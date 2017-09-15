@@ -6,6 +6,7 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -34,6 +35,7 @@ public class NavigationHandler implements EventHandler<ActionEvent> {
 		switch (getSelectedTab()) {
 		case 0:
 			// Authentication Pane
+			model.setNavigation(0);
 			model.setContentPane(model.setupAccountMenu());
 			break;
 		case 1:
@@ -223,7 +225,11 @@ public class NavigationHandler implements EventHandler<ActionEvent> {
 		}
 
 		model.layoutPane.getChildren().clear();
-		model.layoutPane.getChildren().addAll(model.getNavigationPane(), model.getContentPane());
+		model.layoutPane.setTop(model.getNavigationPane());
+		BorderPane.setMargin(model.getNavigationPane(), model.getInsets());
+		model.layoutPane.setCenter(model.getContentPane());
+		// model.layoutPane.getChildren().addAll(model.getNavigationPane(),
+		// model.getContentPane());
 		// model.setSelectedTab(getSelectedTab());
 		model.layoutPane.requestLayout();
 	}
