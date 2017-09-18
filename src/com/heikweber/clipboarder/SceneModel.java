@@ -65,7 +65,7 @@ public class SceneModel {
 	BorderPane layoutPane = new BorderPane();
 	private Node contentPane;
 	private HBox navigationPane;
-	private Insets insets = new Insets(0, 0, 10, 0);
+	private Insets insets = new Insets(0, 0, 5, 0);
 
 	public SceneModel(Stage stage, Configuration config) throws IllegalStateException, Exception {
 		this.setStage(stage);
@@ -126,7 +126,7 @@ public class SceneModel {
 
 		if (isLoggedIn()) {
 			setNavigation(1);
-			setContentPane(setupClipsMenu());
+			setContentPane(setupClipsMenu(false));
 		} else {
 			setNavigation(0);
 			setContentPane(setupAccountMenu());
@@ -186,22 +186,6 @@ public class SceneModel {
 		setNavigationPane(navigationPane);
 	}
 
-	VBox setupMessageDisplay(String diplayMassage, int confirmAction) {
-		VBox messageContent = new VBox(10);
-		Label messageStatus = new Label(diplayMassage);
-
-		HBox messageConfirmButton = new HBox(5);
-		Button messageConfirm = new Button("Okay");
-
-		messageConfirm.setOnAction(new NavigationHandler(this, confirmAction));
-
-		messageConfirmButton.getChildren().addAll(messageConfirm);
-
-		messageContent.getChildren().addAll(messageStatus, messageConfirmButton);
-
-		return messageContent;
-	}
-
 	VBox setupAccountMenu() {
 
 		VBox accountContent = new VBox(10);
@@ -221,10 +205,10 @@ public class SceneModel {
 		passwordBox.getChildren().addAll(lPassword, password);
 
 		HBox loginButton = new HBox(5);
-		HBox accountButtons = new HBox(5);
+		VBox accountButtons = new VBox(5);
 		Button register = new Button("Register");
 		Button login = new Button("Login");
-		Button forgetPassword = new Button("Forgot Password");
+		Button forgotPassword = new Button("Forgot Password");
 
 		CheckBox rememberMe = new CheckBox("Remember me");
 
@@ -248,12 +232,17 @@ public class SceneModel {
 
 		login.setOnAction(new NavigationHandler(this, 1));
 		register.setOnAction(new NavigationHandler(this, 5));
-		forgetPassword.setOnAction(new NavigationHandler(this, 7));
+		forgotPassword.setOnAction(new NavigationHandler(this, 7));
 
-		loginButton.getChildren().addAll(login);
+		HBox upperAccountButtons = new HBox(5);
+		HBox.setHgrow(register, Priority.ALWAYS);
+		HBox.setHgrow(login, Priority.ALWAYS);
+		register.setMaxWidth(Double.MAX_VALUE);
+		login.setMaxWidth(Double.MAX_VALUE);
+		forgotPassword.setMaxWidth(Double.MAX_VALUE);
+		upperAccountButtons.getChildren().addAll(register, login);
 
-		accountButtons.getChildren().addAll(register, forgetPassword);
-
+		accountButtons.getChildren().addAll(upperAccountButtons, forgotPassword);
 		accountContent.getChildren().addAll(accountStatus, mailBox, passwordBox, rememberMe, loginButton,
 				accountButtons);
 
@@ -295,8 +284,9 @@ public class SceneModel {
 		mailBox.getChildren().addAll(lMail, mail);
 		passwordBox.getChildren().addAll(lPassword, password);
 
-		HBox registerButton = new HBox(5);
+		// HBox registerButton = new HBox(5);
 		Button register = new Button("Register");
+		register.setMaxWidth(Double.MAX_VALUE);
 
 		name.textProperty().addListener((observable, oldName, newName) -> {
 			setName(newName);
@@ -311,9 +301,9 @@ public class SceneModel {
 
 		register.setOnAction(new NavigationHandler(this, 4));
 
-		registerButton.getChildren().addAll(register);
+		// registerButton.getChildren().addAll(register);
 
-		registerContent.getChildren().addAll(registertStatus, nameBox, mailBox, passwordBox, registerButton);
+		registerContent.getChildren().addAll(registertStatus, nameBox, mailBox, passwordBox, register);
 
 		return registerContent;
 	}
@@ -331,7 +321,7 @@ public class SceneModel {
 		tokenBox.getChildren().addAll(lToken, token);
 
 		HBox activationButton = new HBox(5);
-		Button activation = new Button("Activat");
+		Button activation = new Button("Activate");
 
 		token.textProperty().addListener((observable, oldToken, newToken) -> {
 			setActivateToken(newToken);
@@ -422,9 +412,9 @@ public class SceneModel {
 		return newPasswordContent;
 	}
 
-	AnchorPane setupClipsMenu() throws IllegalStateException, Exception {
-		return setupClipsMenu(false);
-	}
+	// AnchorPane setupClipsMenu() throws IllegalStateException, Exception {
+	// return setupClipsMenu(false);
+	// }
 
 	AnchorPane setupClipsMenu(boolean createPage) throws IllegalStateException, Exception {
 
@@ -449,7 +439,7 @@ public class SceneModel {
 		AnchorPane anchorPane = new AnchorPane();
 		AnchorPane.setTopAnchor(pagination, 0.0);
 		AnchorPane.setRightAnchor(pagination, 0.0);
-		AnchorPane.setBottomAnchor(pagination, 5.0);
+		AnchorPane.setBottomAnchor(pagination, 0.0);
 		AnchorPane.setLeftAnchor(pagination, 0.0);
 		anchorPane.getChildren().addAll(pagination);
 
@@ -489,24 +479,40 @@ public class SceneModel {
 			}
 		});
 
-		HBox settingButton = new HBox(5);
+		HBox settingButtons = new HBox(5);
 		Button bExit = new Button("Exit");
+		HBox.setHgrow(bExit, Priority.ALWAYS);
+		bExit.setMaxWidth(Double.MAX_VALUE);
 		bExit.setOnAction(actionEvent -> System.exit(0));
 
-		settingButton.getChildren().addAll(bExit);
+		settingButtons.getChildren().add(bExit);
 
-		settingContent.getChildren().addAll(settingStatus, uploadClips, settingButton);
+		settingContent.getChildren().addAll(settingStatus, uploadClips, settingButtons);
 
 		if (config.get("token").toString() != null && !config.get("token").toString().isEmpty()) {
-			HBox logoutButton = new HBox(5);
 			Button bLogout = new Button("Forget me");
+			HBox.setHgrow(bLogout, Priority.ALWAYS);
+			bLogout.setMaxWidth(Double.MAX_VALUE);
 			bLogout.setOnAction(new NavigationHandler(this, 12)); // Forget me
-			logoutButton.getChildren().addAll(bLogout);
-			settingContent.getChildren().addAll(logoutButton);
+			settingButtons.getChildren().add(bLogout);
 		}
 
 		return settingContent;
 
+	}
+
+	VBox setupMessageDisplay(String diplayMessage, int confirmAction) {
+		VBox messageContent = new VBox(10);
+		Label messageStatus = new Label(diplayMessage);
+
+		Button messageConfirm = new Button("Okay");
+		messageConfirm.setMaxWidth(Double.MAX_VALUE);
+
+		messageConfirm.setOnAction(new NavigationHandler(this, confirmAction));
+
+		messageContent.getChildren().addAll(messageStatus, messageConfirm);
+
+		return messageContent;
 	}
 
 	protected Node createPage(Integer pageIndex) {

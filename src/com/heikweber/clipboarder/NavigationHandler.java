@@ -238,7 +238,7 @@ public class NavigationHandler implements EventHandler<ActionEvent> {
 		model.setLoggedIn(true);
 		model.setNavigation(1);
 		try {
-			model.setContentPane(model.setupClipsMenu());
+			model.setContentPane(model.setupClipsMenu(true));
 		} catch (Exception e1) {
 			System.out.println("Could not load Clips");
 			e1.printStackTrace();

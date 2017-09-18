@@ -23,11 +23,10 @@ import com.jsoniter.any.Any;
 
 public class HTTPRequestUtil {
 
-	private HTTPRequestUtil() {
-	}
+	private static String globalURL;
 
 	public static String register(String Username, String email, String Passwort) throws Exception {
-		URL url = new URL("https://notizbuch.online/Clipboarder/register.inc.php");
+		URL url = new URL(globalURL + "register.inc.php");
 		Map<String, Object> params = new LinkedHashMap<>();
 		params.put("password", Passwort);
 		params.put("username", Username);
@@ -56,7 +55,7 @@ public class HTTPRequestUtil {
 	}
 
 	public static String activate(String email, String Token) throws Exception {
-		URL url = new URL("https://notizbuch.online/Clipboarder/activate.php?email=" + email + "&token=" + Token);
+		URL url = new URL(globalURL + "activate.php?email=" + email + "&token=" + Token);
 		Map<String, Object> params = new LinkedHashMap<>();
 
 		StringBuilder postData = new StringBuilder();
@@ -109,7 +108,7 @@ public class HTTPRequestUtil {
 	}
 
 	public static String resetPassword(String email, String token, String password) throws Exception {
-		URL url = new URL("https://notizbuch.online/Clipboarder/resetPassword.php");
+		URL url = new URL(globalURL + "resetPassword.php");
 		Map<String, Object> params = new LinkedHashMap<>();
 		params.put("email", email);
 		params.put("token", token);
@@ -417,5 +416,9 @@ public class HTTPRequestUtil {
 					.map(item -> new CopyEntry(item.get("Content").toString(), item.get("ID").toString()))
 					.collect(Collectors.toList());
 		}
+	}
+
+	public static void setGlobalURL(String globalURL) {
+		HTTPRequestUtil.globalURL = globalURL;
 	}
 }

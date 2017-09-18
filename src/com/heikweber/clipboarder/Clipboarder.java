@@ -121,6 +121,9 @@ public class Clipboarder extends Application {
 		// sets up the tray icon (using awt code run on the swing thread).
 		SwingUtilities.invokeLater(this::addAppToTray);
 
+		// set global URL for HTTPRequestUtil to Website where PHP scripts are executed.
+		HTTPRequestUtil.setGlobalURL(config.get("globalurl"));
+
 		// Verkleinerung
 		// stage.show(); // zeige Fenster
 		showStage();
@@ -193,7 +196,7 @@ public class Clipboarder extends Application {
 				try {
 					model.refreshEntries(true);
 					model.setClipsLoaded(true);
-					model.setupClipsMenu();
+					model.setupClipsMenu(true);
 				} catch (IllegalStateException e) {
 					e.printStackTrace();
 				} catch (Exception e) {
