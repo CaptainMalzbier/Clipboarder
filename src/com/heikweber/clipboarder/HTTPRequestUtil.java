@@ -81,7 +81,7 @@ public class HTTPRequestUtil {
 	}
 
 	public static String forgotPassword(String email) throws Exception {
-		URL url = new URL("https://notizbuch.online/Clipboarder/forgotPassword.php");
+		URL url = new URL(globalURL + "forgotPassword.php");
 		Map<String, Object> params = new LinkedHashMap<>();
 		params.put("email", email);
 
@@ -137,7 +137,7 @@ public class HTTPRequestUtil {
 	}
 
 	public static String loginWithPassword(String email, String Password, Boolean rememberMe) throws Exception {
-		URL url = new URL("https://notizbuch.online/Clipboarder/login.inc.php");
+		URL url = new URL(globalURL + "login.inc.php");
 		Map<String, Object> params = new LinkedHashMap<>();
 		params.put("password", Password);
 		params.put("email", email);
@@ -166,7 +166,7 @@ public class HTTPRequestUtil {
 	}
 
 	public static String loginWithToken(String email, String token) throws Exception {
-		URL url = new URL("https://notizbuch.online/Clipboarder/login.inc.php");
+		URL url = new URL(globalURL + "login.inc.php");
 		Map<String, Object> params = new LinkedHashMap<>();
 		params.put("token", token);
 		params.put("usetoken", "1");
@@ -195,7 +195,7 @@ public class HTTPRequestUtil {
 	}
 
 	public static String addClipWithPassword(String email, String Password, String clip) throws Exception {
-		URL url = new URL("https://notizbuch.online/Clipboarder/createClip.php");
+		URL url = new URL(globalURL + "createClip.php");
 		Map<String, Object> params = new LinkedHashMap<>();
 		params.put("password", Password);
 		params.put("email", email);
@@ -224,7 +224,7 @@ public class HTTPRequestUtil {
 	}
 
 	public static String addClipWithToken(String email, String token, String clip) throws Exception {
-		URL url = new URL("https://notizbuch.online/Clipboarder/createClip.php");
+		URL url = new URL(globalURL + "createClip.php");
 		Map<String, Object> params = new LinkedHashMap<>();
 		params.put("token", token);
 		params.put("usetoken", "1");
@@ -254,7 +254,7 @@ public class HTTPRequestUtil {
 	}
 
 	public static String deleteClipWithPassword(String email, String Password, int clipID) throws Exception {
-		URL url = new URL("https://notizbuch.online/Clipboarder/deleteClip.php");
+		URL url = new URL(globalURL + "deleteClip.php");
 		Map<String, Object> params = new LinkedHashMap<>();
 		params.put("password", Password);
 		params.put("email", email);
@@ -283,7 +283,7 @@ public class HTTPRequestUtil {
 	}
 
 	public static String deleteClipWithToken(String email, String token, int clipID) throws Exception {
-		URL url = new URL("https://notizbuch.online/Clipboarder/deleteClip.php");
+		URL url = new URL(globalURL + "deleteClip.php");
 		Map<String, Object> params = new LinkedHashMap<>();
 		params.put("token", token);
 		params.put("usetoken", "1");
@@ -314,7 +314,7 @@ public class HTTPRequestUtil {
 
 	public static List<CopyEntry> getClipsWithPassword(String email, String Password, int offset, int number,
 			SceneModel model) throws Exception {
-		URL url = new URL("https://notizbuch.online/Clipboarder/showClips.php");
+		URL url = new URL(globalURL + "showClips.php");
 		Map<String, Object> params = new LinkedHashMap<>();
 		params.put("password", Password);
 		params.put("email", email);
@@ -374,7 +374,7 @@ public class HTTPRequestUtil {
 
 	public static List<CopyEntry> getClipsWithToken(String email, String token, int offset, int number,
 			SceneModel model) throws Exception {
-		URL url = new URL("https://notizbuch.online/Clipboarder/showClips.php");
+		URL url = new URL(globalURL + "showClips.php");
 		Map<String, Object> params = new LinkedHashMap<>();
 		params.put("token", token);
 		params.put("usetoken", "1");
