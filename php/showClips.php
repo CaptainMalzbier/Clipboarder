@@ -1,6 +1,7 @@
 <?php
 require_once 'config.inc.php';
 require_once 'token.inc.php';
+require_once 'tokenUsed.php';
 
 //$_POST['email'] = "david-heik@web.de";
 //$_POST['password'] = "TestPW";
@@ -33,30 +34,31 @@ if (isset($_POST['email'])) {
             $token = $_POST['token'];
             $iID = getUserIdWhenExitstAndActive($dbClipboarder, $email);
             if ($iID) {
-                $sql = "SELECT * FROM `clipboarderlogin` WHERE `UserID` = '" . $iID . "'";
+                $sql = "SELECT * FROM `clipboarderlogin` WHERE `UserID` = '" . $iID . "' and  `Token` = '" . $token . "'";
                 if ($result = $dbClipboarder->query($sql)) {
                     while ($row = $result->fetch_object()) {
                         if (!$iCountToken) {
                             $iCountToken = 1;
                             $sDbToken = ($row->Token);
                         } else {
+                            createErrorJson("Token not set", "");
                             die("Error");
                         }
                     }
                 }
                 if ($sDbToken == $token) {
                     //  token correct
+                    tokenUsed($dbClipboarder, $iID, $token);
                     //  load clips from User
                     loadClipsFromDatabase($dbClipboarder, $iID, $iOffset, $iNumberOfElements);
-
                 } else {
-                    die("token incorrect");
+                    createErrorJson("Token incorrect", "");
                 }
             } else {
-                die("User does not exists or is not activated");
+                createErrorJson("User does not exist or is not activated", "");
             }
         } else {
-            die('Token not set');
+            createErrorJson("Token not set", "");
         }
     } else {
         //login with email and password
@@ -70,17 +72,17 @@ if (isset($_POST['email'])) {
                     //  load clips from User
                     loadClipsFromDatabase($dbClipboarder, $iID, $iOffset, $iNumberOfElements);
                 } else {
-                    die('Worng password.');
+                    createErrorJson("Wrong password", "");
                 }
             } else {
-                die("User does not exists or is not activated");
+                createErrorJson("User does not exist or is not activated", "");
             }
         } else {
-            die("Missing parameter password");
+            createErrorJson("Missing parameter: password", "");
         }
     }
 } else {
-    die("Missing parameter email");
+    createErrorJson("Missing parameter: email", "");
 }
 
 function getUserIdWhenExitstAndActive($dbClipboarder, $email)
@@ -94,14 +96,14 @@ function getUserIdWhenExitstAndActive($dbClipboarder, $email)
                 $iID = ($row->ID);
             } else {
                 // found more than one record
-                die("Error");
+                createErrorJson("Found more than one record", "");
             }
         }
     }
     if ($iID) {
         return $iID;
     } else {
-        die("User does not exists or is not activated");
+        createErrorJson("User does not exist or is not activated", "");
     }
 }
 
@@ -116,14 +118,14 @@ function getUserPassword($dbClipboarder, $email)
                 $sPassword = ($row->Password);
             } else {
                 // found more than one record
-                die("Error");
+                createErrorJson("Found more than one record", "");
             }
         }
     }
     if ($sPassword) {
         return $sPassword;
     } else {
-        die("User does not exists or is not activated");
+        createErrorJson("User does not exist or is not activated", "");
     }
 }
 
@@ -135,10 +137,59 @@ function loadClipsFromDatabase($dbClipboarder, $iUserID, $iOffset, $iNumberOfEle
             $aDbRowData[] = [
                 "ID" => $row->ID,
                 "UserID" => $row->UserID,
-                "Content" =>  ($row->Content),
+                "Content" => ($row->Content),
                 "CreateDate" => $row->CreateDate,
             ];
         }
+        if (isset($aDbRowData)) {
+            $aMessage = [
+                "status" => "ok",
+                "message" => "",
+                "count" => countClipsFromDatabase($dbClipboarder, $iUserID),
+                "data" => $aDbRowData
+            ];
+            echo json_encode($aMessage);
+            die();
+        } else {
+            $aDbRowData[] = [
+                "ID" => "0",
+                "UserID" => $iUserID,
+                "Content" => "Example clip",
+                "CreateDate" => time(),
+            ];
+            $aMessage = [
+                "status" => "ok",
+                "message" => "No Clipboards found",
+                "count" => "1",
+                "data" => $aDbRowData
+            ];
+            echo json_encode($aMessage);
+            die();
+            // createErrorJson("No Clipboards found", "");
+        }
+    } else {
+        createErrorJson("Unable to execute query", "");
     }
-    echo json_encode($aDbRowData);
+}
+
+function countClipsFromDatabase($dbClipboarder, $iUserID)
+{
+    $iCount = 0;
+    $sql = "SELECT * FROM `clipboarderclipboards` WHERE `UserID` = '" . $iUserID . "' ORDER BY `clipboarderclipboards`.`ID` DESC";
+    if ($result = $dbClipboarder->query($sql)) {
+        while ($row = $result->fetch_object()) {
+            $iCount++;
+        }
+    }
+    return $iCount;
+}
+
+function createErrorJson($message, $data)
+{
+    $aMessage = [
+        "status" => "error",
+        "message" => $message,
+        "data" => $data
+    ];
+    die(json_encode($aMessage));
 }

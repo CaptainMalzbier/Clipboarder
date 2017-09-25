@@ -31,18 +31,17 @@ if (isset($_POST['username']) && isset($_POST['password']) && isset($_POST['emai
           )";
 
         if ($dbClipboarder->query($sql)) {
-            echo "User Create";
+            echo "User created";
             sendMail($email, $username, $token);
-
         } else {
             echo "Error while creating";
         }
 
     } else {
-        echo "User exitis";
+        echo "User exists";
     }
 
-}else{
+} else {
     echo "Missing parameters";
 }
 
@@ -51,15 +50,14 @@ function sendMail($email, $username, $token)
     $sInhalt = "";
     $sInhalt = $sInhalt . "Hallo " . $username . "," . "\n";
     $sInhalt = $sInhalt . "\n";
-    $sInhalt = $sInhalt . "um Deine Registierung abzuschließen aktivier bitte dein Benutzerkonto." . "\n";
-    $sInhalt = $sInhalt . "Klicke auf auf den link: https://notizbuch.online/Clipboarder/activate.php?email=" . $email . "&token=" . $token . " oder gib deinen sechsstelligen Aktivierungsschluessel: " . $token . " in der Desktopanwendung ein". "\n";
+    $sInhalt = $sInhalt . "Um Deine Registierung zu vollenden, aktiviere bitte dein Benutzerkonto." . "\n";
+    $sInhalt = $sInhalt . "Gib dazu deinen sechsstelligen Aktivierungsschluessel: " . $token . " in die Desktopanwendung ein" . "\n";
     $sInhalt = $sInhalt . "\n";
     $sInhalt = $sInhalt . "\n";
-    $sInhalt = $sInhalt . "Dein Clipboarder Team" . "\n";
+    $sInhalt = $sInhalt . "Dein Clipboarder-Team" . "\n";
 
-    // $empfaenger = $email;
-    $empfaenger = "david-heik@web.de";  // TODO: Bevor entfernt wird, black list einrichten und unsubsribe
-    $betreff = "Ihre Clipboarder Aktivierung";
+    $empfaenger = $email;  // TODO: Bevor entfernt wird, black list einrichten und unsubsribe
+    $betreff = "Deine Clipboarder-Aktivierung";
     $from = "From: Clipboarder <clipboarder@notizbuch.online>";
 
     mail($empfaenger, $betreff, $sInhalt, $from);

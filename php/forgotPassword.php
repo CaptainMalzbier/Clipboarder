@@ -25,7 +25,7 @@ if (isset($_POST['email'])) {
     if ($iID) {
         $sql = "UPDATE `clipboarderuser` SET `PasswordReset`= '" . $token . "' WHERE `ID` = '" . $iID . "'";
         if ($dbClipboarder->query($sql)) {
-            echo "Successfully";
+            echo "Successfully request, check your mails to change ";
             sendMail($email, $username, $token);
         } else {
             echo "Error while password ";
@@ -48,7 +48,7 @@ function sendMail($email, $username, $token)
     $sInhalt = $sInhalt . "Dein Clipboarder Team" . "\n";
 
     // $empfaenger = $email;
-    $empfaenger = "david-heik@web.de";  // TODO: Bevor entfernt wird, black list einrichten und unsubsribe
+    $empfaenger = $email;
     $betreff = "Clipboarder Passwort vergessen";
     $from = "From: Clipboarder <clipboarder@notizbuch.online>";
 

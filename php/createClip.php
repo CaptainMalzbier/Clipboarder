@@ -1,6 +1,7 @@
 <?php
 require_once 'config.inc.php';
 require_once 'token.inc.php';
+require_once 'tokenUsed.php';
 
 //$_POST['email'] = "david-heik@web.de";
 //$_POST['password'] = "TestPW";
@@ -25,7 +26,7 @@ if (isset($_POST['email']) && isset($_POST['clipboard'])) {
             $token = $_POST['token'];
             $iID = getUserIdWhenExitstAndActive($dbClipboarder, $email);
             if ($iID) {
-                $sql = "SELECT * FROM `clipboarderlogin` WHERE `UserID` = '" . $iID . "'";
+                $sql = "SELECT * FROM `clipboarderlogin` WHERE `UserID` = '" . $iID . "' and  `Token` = '" . $token . "'";
                 if ($result = $dbClipboarder->query($sql)) {
                     while ($row = $result->fetch_object()) {
                         if (!$iCountToken) {
@@ -38,13 +39,14 @@ if (isset($_POST['email']) && isset($_POST['clipboard'])) {
                 }
                 if ($sDbToken == $token) {
                     //  token correct
+                    tokenUsed($dbClipboarder, $iID, $token);
                     //  insert clip
                     insertClipIntoDatabase($dbClipboarder, $iID, $_POST['clipboard']);
                 } else {
-                    die("token incorrect");
+                    die("Token incorrect");
                 }
             } else {
-                die("User does not exists or is not activated");
+                die("User does not exist or is not activated");
             }
         } else {
             die('Token not set');
@@ -61,17 +63,17 @@ if (isset($_POST['email']) && isset($_POST['clipboard'])) {
                     //  insert clip
                     insertClipIntoDatabase($dbClipboarder, $iID, $_POST['clipboard']);
                 } else {
-                    die('Worng password.');
+                    die('Wrong password.');
                 }
             } else {
-                die("User does not exists or is not activated");
+                die("User does not exist or is not activated");
             }
         } else {
-            die("Missing parameter password");
+            die("Missing parameter: password");
         }
     }
 } else {
-    die("Missing parameter email or clipboard");
+    die("Missing parameter: email or Clipboard-ID");
 }
 
 function getUserIdWhenExitstAndActive($dbClipboarder, $email)
@@ -92,7 +94,7 @@ function getUserIdWhenExitstAndActive($dbClipboarder, $email)
     if ($iID) {
         return $iID;
     } else {
-        die("User does not exists or is not activated");
+        die("User does not exist or is not activated");
     }
 }
 
@@ -114,7 +116,7 @@ function getUserPassword($dbClipboarder, $email)
     if ($sPassword) {
         return $sPassword;
     } else {
-        die("User does not exists or is not activated");
+        die("User does not exist or is not activated");
     }
 }
 

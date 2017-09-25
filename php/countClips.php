@@ -24,7 +24,7 @@ if (isset($_POST['email'])) {
             $token = $_POST['token'];
             $iID = getUserIdWhenExitstAndActive($dbClipboarder, $email);
             if ($iID) {
-                $sql = "SELECT * FROM `clipboarderlogin` WHERE `UserID` = '" . $iID . "'";
+                $sql = "SELECT * FROM `clipboarderlogin` WHERE `UserID` = '" . $iID . "' and  `Token` = '" . $token . "'";
                 if ($result = $dbClipboarder->query($sql)) {
                     while ($row = $result->fetch_object()) {
                         if (!$iCountToken) {
@@ -41,10 +41,10 @@ if (isset($_POST['email'])) {
                     loadClipsFromDatabase($dbClipboarder, $iID, $iOffset, $iNumberOfElements);
 
                 } else {
-                    die("token incorrect");
+                    die("Token incorrect");
                 }
             } else {
-                die("User does not exists or is not activated");
+                die("User does not exist or is not activated");
             }
         } else {
             die('Token not set');
@@ -61,17 +61,17 @@ if (isset($_POST['email'])) {
                     //  load clips from User
                     loadClipsFromDatabase($dbClipboarder, $iID);
                 } else {
-                    die('Worng password.');
+                    die('Wrong password.');
                 }
             } else {
-                die("User does not exists or is not activated");
+                die("User does not exist or is not activated");
             }
         } else {
-            die("Missing parameter password");
+            die("Missing parameter: password");
         }
     }
 } else {
-    die("Missing parameter email");
+    die("Missing parameter: email");
 }
 
 function getUserIdWhenExitstAndActive($dbClipboarder, $email)
@@ -92,7 +92,7 @@ function getUserIdWhenExitstAndActive($dbClipboarder, $email)
     if ($iID) {
         return $iID;
     } else {
-        die("User does not exists or is not activated");
+        die("User does not exist or is not activated");
     }
 }
 
@@ -114,7 +114,7 @@ function getUserPassword($dbClipboarder, $email)
     if ($sPassword) {
         return $sPassword;
     } else {
-        die("User does not exists or is not activated");
+        die("User does not exist or is not activated");
     }
 }
 

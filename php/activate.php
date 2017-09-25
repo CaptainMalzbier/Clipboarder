@@ -78,7 +78,7 @@ function sendMail($email, $username)
     $sInhalt = $sInhalt . "Dein Clipboarder Team" . "\n";
 
     // $empfaenger = $email;
-    $empfaenger = "david-heik@web.de";  // TODO: Bevor entfernt wird, black list einrichten und unsubsribe
+    $empfaenger = $email;
     $betreff = "Ihre Clipboarder Benutzerkonto wurde freigeschaltet";
     $from = "From: Clipboarder <clipboarder@notizbuch.online>";
 
