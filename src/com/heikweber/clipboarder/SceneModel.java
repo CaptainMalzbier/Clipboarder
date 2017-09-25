@@ -382,7 +382,7 @@ public class SceneModel {
 		lPassword.getStyleClass().add("fill-in");
 		TextField mail = new TextField();
 		TextField token = new TextField();
-		TextField password = new TextField();
+		TextField password = new PasswordField();
 
 		mailBox.getChildren().addAll(lMail, mail);
 		tokenBox.getChildren().addAll(lToken, token);
