@@ -34,9 +34,9 @@ public class KeyboardListener extends NativeKeyAdapter {
 	public void nativeKeyPressed(NativeKeyEvent e) {
 		if (e.getKeyCode() == NativeKeyEvent.VC_C) {
 			if ((e.getModifiers() & NativeInputEvent.CTRL_L_MASK) != 0) {
-				System.out.println(model.getUserWantsToUploadClips());
+				System.out.println(model.isRecording());
 				System.out.println(model.isLoggedIn());
-				if (model.getUserWantsToUploadClips()) {
+				if (model.isRecording()) {
 					if (model.isLoggedIn()) {
 						try {
 							copyToClipboarder();

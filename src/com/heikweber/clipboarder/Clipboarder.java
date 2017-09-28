@@ -88,6 +88,9 @@ public class Clipboarder extends Application {
 			System.exit(1);
 		}
 
+		// set global URL for HTTPRequestUtil to Website where PHP scripts are executed.
+		HTTPRequestUtil.setGlobalURL(config.get("globalurl"));
+
 		this.stage = stage;
 		// instructs the javafx system not to exit implicitly when the last application
 		// window is shut.
@@ -96,9 +99,6 @@ public class Clipboarder extends Application {
 		model = new SceneModel(stage, config);
 		// setze eigenes Icon fuer das Fenster
 		stage.getIcons().add(new Image(new File(config.get("icon")).toURI().toString()));
-
-		System.out.println(new File(config.get("icon")).toURI().toString());
-		System.out.println(new File(config.get("stylePath")).toURI().toString());
 
 		stage.setFullScreen(false);
 		stage.setScene(model.getScene()); // setze Szene in Fenster ein
@@ -122,9 +122,6 @@ public class Clipboarder extends Application {
 
 		// sets up the tray icon (using awt code run on the swing thread).
 		SwingUtilities.invokeLater(this::addAppToTray);
-
-		// set global URL for HTTPRequestUtil to Website where PHP scripts are executed.
-		HTTPRequestUtil.setGlobalURL(config.get("globalurl"));
 
 		// Verkleinerung
 		// stage.show(); // zeige Fenster

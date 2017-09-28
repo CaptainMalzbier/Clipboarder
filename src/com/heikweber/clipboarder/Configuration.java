@@ -6,14 +6,12 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Properties;
 
 import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.configuration2.PropertiesConfigurationLayout;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 
 public class Configuration {
-	private Properties props;
 	PropertiesConfiguration config;
 	PropertiesConfigurationLayout layout;
 	private String path;
@@ -58,6 +56,11 @@ public class Configuration {
 
 	public void set(String key, String value) {
 		config.setProperty(key, value);
+		try {
+			saveConfig();
+		} catch (IOException | ConfigurationException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public String get(String key) {

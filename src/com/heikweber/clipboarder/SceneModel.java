@@ -1,14 +1,12 @@
 package com.heikweber.clipboarder;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.configuration2.ex.ConfigurationException;
-
 import com.sun.istack.internal.Nullable;
 
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -16,6 +14,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.PasswordField;
@@ -47,7 +46,7 @@ public class SceneModel {
 	private int selectedTab = 0;
 	private int numberOfClips = 1;
 	private boolean loggedIn = false;
-	private boolean userWantsToUploadClips = false;
+	private boolean isRecording = false;
 	private boolean clipsLoaded = false;
 	private String name;
 	private String token;
@@ -71,7 +70,8 @@ public class SceneModel {
 		this.setStage(stage);
 		this.config = config;
 		scene = createScene(config);
-		scene.getStylesheets().add(new File(config.get("stylePath")).toURI().toString());
+		scene.getStylesheets()
+				.add(new File(config.get("stylePath")).toURI().toString() + config.get("style").toString());
 
 		// set button actions (seen as tabs)
 		int counter = 0;
@@ -134,9 +134,9 @@ public class SceneModel {
 
 		// init from config
 		if (config.get("uploadclips").toString().equals("true")) {
-			setUserWantsToUploadClips(true);
+			setRecording(true);
 		} else {
-			setUserWantsToUploadClips(false);
+			setRecording(false);
 		}
 
 		layout.getChildren().clear();
@@ -204,8 +204,8 @@ public class SceneModel {
 		mailBox.getChildren().addAll(lMail, mail);
 		passwordBox.getChildren().addAll(lPassword, password);
 
-		HBox loginButton = new HBox(5);
-		VBox accountButtons = new VBox(5);
+		VBox accountButtons = new VBox(20);
+		VBox secondAccountButtons = new VBox(5);
 		Button register = new Button("Register");
 		Button login = new Button("Login");
 		Button forgotPassword = new Button("Forgot Password");
@@ -234,17 +234,18 @@ public class SceneModel {
 		register.setOnAction(new NavigationHandler(this, 5));
 		forgotPassword.setOnAction(new NavigationHandler(this, 7));
 
-		HBox upperAccountButtons = new HBox(5);
-		HBox.setHgrow(register, Priority.ALWAYS);
-		HBox.setHgrow(login, Priority.ALWAYS);
+		// HBox upperAccountButtons = new HBox(5);
+		// HBox.setHgrow(register, Priority.ALWAYS);
+		// HBox.setHgrow(login, Priority.ALWAYS);
+
 		register.setMaxWidth(Double.MAX_VALUE);
 		login.setMaxWidth(Double.MAX_VALUE);
 		forgotPassword.setMaxWidth(Double.MAX_VALUE);
-		upperAccountButtons.getChildren().addAll(register, login);
 
-		accountButtons.getChildren().addAll(upperAccountButtons, forgotPassword);
-		accountContent.getChildren().addAll(accountStatus, mailBox, passwordBox, rememberMe, loginButton,
-				accountButtons);
+		secondAccountButtons.getChildren().addAll(register, forgotPassword);
+
+		accountButtons.getChildren().addAll(login, secondAccountButtons);
+		accountContent.getChildren().addAll(accountStatus, mailBox, passwordBox, rememberMe, accountButtons);
 
 		if (config.get("token").toString() != null && !config.get("token").toString().isEmpty()) {
 			// In config exist a token -> render try Again button
@@ -349,8 +350,8 @@ public class SceneModel {
 
 		mailBox.getChildren().addAll(lMail, mail);
 
-		HBox forgotPasswordButton = new HBox(5);
 		Button forgotPassword = new Button("Confirm");
+		forgotPassword.setMaxWidth(Double.MAX_VALUE);
 
 		mail.textProperty().addListener((observable, oldMail, newMail) -> {
 			setMail(newMail);
@@ -358,9 +359,7 @@ public class SceneModel {
 
 		forgotPassword.setOnAction(new NavigationHandler(this, 6));
 
-		forgotPasswordButton.getChildren().addAll(forgotPassword);
-
-		forgotPasswordContent.getChildren().addAll(forgotPasswordStatus, mailBox, forgotPasswordButton);
+		forgotPasswordContent.getChildren().addAll(forgotPasswordStatus, mailBox, forgotPassword);
 
 		return forgotPasswordContent;
 	}
@@ -450,62 +449,73 @@ public class SceneModel {
 
 		setSelectedTab(2);
 
-		VBox settingContent = new VBox(10);
-		Label settingStatus = new Label("Settings");
+		VBox settingsContent = new VBox(10);
+		Label settingsStatus = new Label("Settings");
 
-		CheckBox uploadClips = new CheckBox("Upload Clips");
+		CheckBox uploadClips = new CheckBox("Enable Recording");
 
-		uploadClips.setSelected(getUserWantsToUploadClips());
-		uploadClips.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent event) {
-				if (!getUserWantsToUploadClips()) {
-					setUserWantsToUploadClips(true);
-					config.set("uploadclips", "true");
-					try {
-						config.saveConfig();
-					} catch (IOException | ConfigurationException e) {
-						e.printStackTrace();
-					}
-				} else {
-					setUserWantsToUploadClips(false);
-					config.set("uploadclips", "false");
-					try {
-						config.saveConfig();
-					} catch (IOException | ConfigurationException e) {
-						e.printStackTrace();
-					}
-				}
-			}
+		String stylePath = config.get("stylePath");
+		if (stylePath.isEmpty()) {
+			stylePath = "c:/";
+		}
+
+		TextField stylePathField = new TextField(config.get("stylePath"));
+		Button stylePathChooser = new Button("Choose");
+
+		ComboBox<String> styleChooser = new ComboBox<>();
+
+		collectStyles(styleChooser);
+
+		uploadClips.setSelected(isRecording());
+		uploadClips.setOnAction(new SettingsHandler(0, null, this, null, null));
+
+		stylePathChooser
+				.setOnAction(new SettingsHandler(1, stage, this, scene, new Node[] { stylePathField, styleChooser }));
+
+		styleChooser.valueProperty().addListener((ObservableValue<? extends String> ov, String t, String t1) -> {
+			System.out.println(ov + "___" +t + "___" +t1);
 		});
 
-		HBox settingButtons = new HBox(5);
+		VBox settingsButtons = new VBox(20);
 		Button bExit = new Button("Exit");
-		HBox.setHgrow(bExit, Priority.ALWAYS);
+		settingsButtons.setMaxWidth(Double.MAX_VALUE);
 		bExit.setMaxWidth(Double.MAX_VALUE);
 		bExit.setOnAction(actionEvent -> System.exit(0));
 
-		settingButtons.getChildren().add(bExit);
+		settingsButtons.getChildren().add(bExit);
 
-		settingContent.getChildren().addAll(settingStatus, uploadClips, settingButtons);
+		settingsContent.getChildren().addAll(settingsStatus, uploadClips, stylePathField, stylePathChooser,
+				styleChooser, settingsButtons);
 
 		if (config.get("token").toString() != null && !config.get("token").toString().isEmpty()) {
 			Button bLogout = new Button("Forget me");
 			HBox.setHgrow(bLogout, Priority.ALWAYS);
 			bLogout.setMaxWidth(Double.MAX_VALUE);
 			bLogout.setOnAction(new NavigationHandler(this, 12)); // Forget me
-			settingButtons.getChildren().add(bLogout);
+			settingsButtons.getChildren().add(bLogout);
 		}
 
-		return settingContent;
+		return settingsContent;
 
 	}
 
-	VBox setupMessageDisplay(String diplayMessage, int confirmAction) {
+	VBox setupMessageDisplay(String displayMessage, int confirmAction) {
 		VBox messageContent = new VBox(10);
-		Label messageStatus = new Label(diplayMessage);
 
-		Button messageConfirm = new Button("Okay");
+		// split message String into pieces of each 20 characters length for better
+		// displaying
+		String[] message = displayMessage.split("(?<=\\G.{20})");
+
+		displayMessage = "";
+
+		// collect all messageParts and setup a new displayMessage String
+		for (String messagePart : message) {
+			displayMessage += messagePart + "\n";
+		}
+
+		Label messageStatus = new Label(displayMessage);
+
+		Button messageConfirm = new Button("OK");
 		messageConfirm.setMaxWidth(Double.MAX_VALUE);
 
 		messageConfirm.setOnAction(new NavigationHandler(this, confirmAction));
@@ -656,6 +666,19 @@ public class SceneModel {
 		getTabs().get(selectedTab).getStyleClass().add("active");
 	}
 
+	void collectStyles(ComboBox<String> comboBox) {
+		File[] files = new File(config.get("stylePath")).listFiles();
+		// If this pathname does not denote a directory, then listFiles() returns null.
+
+		comboBox.getItems().clear();
+
+		for (File file : files) {
+			if (file.isFile() && file.getName().endsWith(".css")) {
+				comboBox.getItems().add(file.getName());
+			}
+		}
+	}
+
 	public Button getAccount() {
 		return account;
 	}
@@ -736,12 +759,12 @@ public class SceneModel {
 		this.loggedIn = loggedIn;
 	}
 
-	public boolean getUserWantsToUploadClips() {
-		return userWantsToUploadClips;
+	public boolean isRecording() {
+		return isRecording;
 	}
 
-	public void setUserWantsToUploadClips(boolean userWantsToUploadClips) {
-		this.userWantsToUploadClips = userWantsToUploadClips;
+	public void setRecording(boolean userWantsToUploadClips) {
+		this.isRecording = userWantsToUploadClips;
 	}
 
 	public boolean areClipsLoaded() {
