@@ -461,10 +461,13 @@ public class SceneModel {
 
 		TextField stylePathField = new TextField(config.get("stylePath"));
 		Button stylePathChooser = new Button("Choose");
+		stylePathChooser.setMaxWidth(Double.MAX_VALUE);
 
 		ComboBox<String> styleChooser = new ComboBox<>();
 
 		collectStyles(styleChooser);
+		styleChooser.getSelectionModel().select(config.get("style"));
+		styleChooser.setMaxWidth(Double.MAX_VALUE);
 
 		uploadClips.setSelected(isRecording());
 		uploadClips.setOnAction(new SettingsHandler(0, null, this, null, null));
@@ -472,9 +475,13 @@ public class SceneModel {
 		stylePathChooser
 				.setOnAction(new SettingsHandler(1, stage, this, scene, new Node[] { stylePathField, styleChooser }));
 
-		styleChooser.valueProperty().addListener((ObservableValue<? extends String> ov, String t, String t1) -> {
-			System.out.println(ov + "___" +t + "___" +t1);
-		});
+		styleChooser.valueProperty()
+				.addListener((ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
+					config.set("style", newValue);
+					scene.getStylesheets().clear();
+					scene.getStylesheets()
+							.add(new File(config.get("stylePath")).toURI().toString() + config.get("style").toString());
+				});
 
 		VBox settingsButtons = new VBox(20);
 		Button bExit = new Button("Exit");

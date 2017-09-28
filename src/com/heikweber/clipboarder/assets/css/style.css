@@ -163,3 +163,38 @@ ________________________________________
 	-fx-font-size:1.2em;
 }
 
+.combo-box .list-cell 
+{
+    -fx-background-color: #eec05e;
+    -fx-padding: 3 0 2 7;
+}
+
+.combo-box .list-cell:hover
+{
+    -fx-background-color: #aad028;
+    -fx-padding: 3 0 2 7;
+}
+
+.combo-box .list-cell .text{
+    -fx-font-size: 16;
+	-fx-fill: #342921;	
+}
+
+.combo-box .arrow {
+    -fx-background-color: #342921;
+}
+
+.combo-box .arrow-button {
+    -fx-background-color: #aad028;
+    -fx-size: 5;
+}
+
+/* .combo-box .arrow-button:hover { */
+/*     -fx-background-color: #aad028; */
+/* } */
+
+/* .combo-box .arrow-button:selected { */
+/*     -fx-background-color: #aad028; */
+/* } */
+
+
