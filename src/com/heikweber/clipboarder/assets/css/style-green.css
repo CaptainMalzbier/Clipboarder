@@ -73,7 +73,6 @@ ________________________________________
     -fx-text-fill: rgb(241,241,241);
 }
 
-
 .pagination{
     -fx-border-color:  rgba(33,115,70,1) !important;
     -fx-border-width: 0px;
@@ -81,11 +80,6 @@ ________________________________________
 }
 
 .label{
-    /*-fx-text-fill:white;
-    -fx-font: bold 25pt "Arial";
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 6, 0, 0, 5);
-    -fx-text-alignment:center;
-    */
     -fx-font-size: 12pt;
     -fx-text-fill: #3a3a3a;
 }
@@ -95,57 +89,6 @@ ________________________________________
     -fx-font: normal 10pt "Arial";
     -fx-text-alignment:center;
 }
-
-.combo-box{
-    -fx-padding: 6 15 9 15;
-    -fx-background-insets: 0,0 0 5 0, 0 0 6 0, 0 0 7 0;
-    -fx-background-radius: 0;
-    -fx-background-color: #226968,#26df4f;
-    -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.75) , 4,0,0,1 );
-    -fx-font-weight: normal;
-    -fx-font-size: 1.1em;
-    -fx-text-alignment:center;
-}
-
-.combo-box:hover{
-    -fx-padding: 8 15 7 15;
-    -fx-background-insets: 2 0 0 0,2 0 3 0, 2 0 4 0, 2 0 5 0;
-    -fx-cursor: hand;
-}
-.combo-box-base:showing{
-    -fx-padding: 8 15 7 15;
-    -fx-background-insets: 2 0 0 0,2 0 3 0, 2 0 4 0, 2 0 5 0;
-}
-
-.combo-box-base > .arrow-button > .arrow {
-    -fx-background-color: white;
-    -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.75) , 5,0,0,2 );
-}
-
-.combo-box .text{
-    -fx-font-family:'Arial';
-    -fx-fill: #3a3a3a;
-    -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.75) , 5,0,0,2 );
-}
-
-.combo-box-popup .list-view:focus .combo-box{
-    -fx-padding: 10 15 13 15;
-    -fx-background-insets: 2 0 0 0,2 0 3 0, 2 0 4 0, 2 0 5 0;
-}
-
-.combo-box-popup .list-view .list-cell{
-    -fx-background-color:  rgba(33,115,70,1);
-}
-
-.combo-box-popup .list-view .list-cell:hover{
-    -fx-background-color:  rgba(33,115,70,1);
-    -fx-cursor: hand;
-}
-
-.combo-box-popup .list-view .list-cell .text{
-    -fx-font-size: 12pt;
-    -fx-fill: #68d3a2;
-    -fx-effect: dropshadow(three-pass-box, rgba(33,115,70,1), 0, 0, 2, 2);}
 
 
 .scroll-pane > .viewport{
@@ -188,7 +131,6 @@ ________________________________________
     -fx-border-color:  rgba(33,115,70,1);
     -fx-text-fill: rgba(33,115,70,1);
     -fx-pref-width: 118;
-
 }
 
 .nav{
@@ -220,10 +162,6 @@ ________________________________________
     -fx-font-weight:normal;
 }
 
-.nav:hover .text{
-    /* 	-fx-fill:#342921; */
-}
-
 .removeEntry{
     -fx-background-color:#ff3300;
 }
@@ -236,10 +174,37 @@ ________________________________________
 }
 
 .hide{
-    -fx-background-color: rgb(67, 148, 103);
+    -fx-background-color: rgba(33,115,70,1);
     -fx-alignment: right;
 }
 .hide .tab-label {
     -fx-alignment: right;
     -fx-text-fill:  rgba(255,255,255,1);
+}
+
+.combo-box .list-cell
+{
+    -fx-background-color: rgba(33,115,70,1);
+    -fx-margin: 0 0 0 0;
+    -fx-padding: 6 0 9 11;
+    -fx-color: #ffffff;
+}
+
+.combo-box .list-cell:hover
+{
+    -fx-background-color: rgb(58, 58, 58);
+}
+
+.combo-box .list-cell .text{
+    -fx-font-size: 12px;
+    -fx-fill: #ffffff;
+}
+
+.combo-box .arrow {
+    -fx-background-color: #ffffff;
+}
+
+.combo-box .arrow-button {
+    -fx-background-color: rgb(67, 148, 103);
+    -fx-size: 5;
 }
