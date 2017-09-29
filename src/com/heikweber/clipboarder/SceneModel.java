@@ -479,20 +479,33 @@ public class SceneModel {
 		HBox widthFields = new HBox(5);
 		HBox heightFields = new HBox(5);
 
-		widthFields.getChildren().addAll(widthChooser, new Label("px"));
-		heightFields.getChildren().addAll(heightChooser, new Label("px"));
+		Label px1 = new Label("px");
+		Label px2 = new Label("px");
+		px1.getStyleClass().add("descriptionLabel");
+		px2.getStyleClass().add("descriptionLabel");
 
-		widthChooser.textProperty().addListener((observable, oldValue, newValue) -> {
-			if (!newValue.matches("\\d*")) {
-				widthChooser.setText(newValue.replaceAll("[^\\d]", ""));
+		widthFields.getChildren().addAll(widthChooser, px1);
+		heightFields.getChildren().addAll(heightChooser, px2);
+
+		widthChooser.focusedProperty().addListener((observable, oldValue, newValue) -> {
+			if (newValue == false) {
+				if (widthChooser.getText().matches("\\d*")) {
+					int newWidth = Math.max(Integer.parseInt(widthChooser.getText().replaceAll("[^\\d]", "")), 200);
+					widthChooser.setText(Integer.toString(newWidth));
+					config.set("width", Integer.toString(newWidth));
+					stage.setWidth(newWidth);
+				}
 			}
-			config.set("width", widthChooser.getText());
 		});
-		heightChooser.textProperty().addListener((observable, oldValue, newValue) -> {
-			if (!newValue.matches("\\d*")) {
-				heightChooser.setText(newValue.replaceAll("[^\\d]", ""));
+		heightChooser.focusedProperty().addListener((observable, oldValue, newValue) -> {
+			if (newValue == false) {
+				if (heightChooser.getText().matches("\\d*")) {
+					int newHeight = Math.max(Integer.parseInt(heightChooser.getText().replaceAll("[^\\d]", "")), 470);
+					heightChooser.setText(Integer.toString(newHeight));
+					config.set("height", Integer.toString(newHeight));
+					stage.setHeight(newHeight);
+				}
 			}
-			config.set("height", heightChooser.getText());
 		});
 
 		collectStyles(styleChooser);
