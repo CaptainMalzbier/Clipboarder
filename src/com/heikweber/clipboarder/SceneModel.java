@@ -16,6 +16,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.OverrunStyle;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -612,7 +613,8 @@ public class SceneModel {
 
 	private HBox createEntry(CopyEntry copyEntry) {
 		HBox entry = new HBox(5);
-		Button entryContent = new Button(copyEntry.getShortContent());
+		Button entryContent = new Button(copyEntry.getSingleLineContent());
+		entryContent.setTextOverrun(OverrunStyle.ELLIPSIS);
 		entryContent.setMaxWidth(Double.MAX_VALUE);
 
 		HBox.setHgrow(entryContent, Priority.ALWAYS);

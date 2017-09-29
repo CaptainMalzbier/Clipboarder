@@ -10,7 +10,7 @@ class CopyEntry {
 
 	private int id;
 	private String content = "";
-	private String shortContent = "";
+	private String singleLineContent = "";
 	private boolean status;
 	private Runnable listener = () -> {
 	};
@@ -36,14 +36,14 @@ class CopyEntry {
 	public void setContent(String content) {
 		this.content = content != null ? content : "";
 
-		// shorten printed content of CopyEntry
-		if (content.length() >= 12) {
-			content = content.substring(0, 12) + "...";
-		}
+		// // shorten printed content of CopyEntry
+		// if (content.length() >= 12) {
+		// content = content.substring(0, 12) + "...";
+		// }
 
 		content = content.replaceAll("[\\r\\n\\t]", "");
 
-		setShortContent(content.trim());
+		setSingleLineContent(content.trim());
 
 		listener.run();
 	}
@@ -61,17 +61,17 @@ class CopyEntry {
 		this.listener = listener;
 	}
 
-	public String getShortContent() {
-		return shortContent;
+	public String getSingleLineContent() {
+		return singleLineContent;
 	}
 
-	public void setShortContent(String shortContent) {
-		this.shortContent = shortContent;
+	private void setSingleLineContent(String singleLineContent) {
+		this.singleLineContent = singleLineContent;
 	}
 
 	@Override
 	public String toString() {
-		return String.format("CopyEntry(id=%s,short=%s,content=%s)", this.id, this.shortContent, this.content);
+		return String.format("CopyEntry(id=%s,short=%s,content=%s)", this.id, this.singleLineContent, this.content);
 	}
 
 }
