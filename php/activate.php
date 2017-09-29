@@ -20,7 +20,7 @@ if (isset($_GET['email']) && isset($_GET['token'])){
         }
     }
     if($iID){
-        $sql = "UPDATE `clipboarderuser` SET `Activatedate`= ". time() . " WHERE `ID` = '". $iID . "'";
+        $sql = "UPDATE `clipboarderuser` SET `Activatedate`= ". time() . ",`Activatetoken`= NULL WHERE `ID` = '". $iID . "'";
         if ($dbClipboarder->query($sql)) {
             echo "Successfully activated";
             sendMail($email, $username);

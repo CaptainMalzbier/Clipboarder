@@ -8,7 +8,7 @@ function tokenUsed($dbClipboarder, $iID, $token)
     } else {
         die("Error while updating");
     }
-    $Zeitpunkt = time() - (60*60*24*7);
+    $Zeitpunkt = time() - (60*60*24*3);
     $sql = "DELETE FROM `clipboarderlogin` WHERE `CreateDate` < $Zeitpunkt";
     if ($dbClipboarder->query($sql)) {
         // ("Successfully deleted not used token");
