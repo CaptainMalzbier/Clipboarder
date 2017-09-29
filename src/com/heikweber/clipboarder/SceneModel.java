@@ -465,6 +465,9 @@ public class SceneModel {
 
 		ComboBox<String> styleChooser = new ComboBox<>();
 
+		TextField widthChooser = new TextField();
+		TextField heightChooser = new TextField();
+
 		collectStyles(styleChooser);
 		styleChooser.getSelectionModel().select(config.get("style"));
 		styleChooser.setMaxWidth(Double.MAX_VALUE);
