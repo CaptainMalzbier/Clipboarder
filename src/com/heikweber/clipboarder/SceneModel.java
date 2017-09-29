@@ -417,14 +417,15 @@ public class SceneModel {
 
 	AnchorPane setupClipsMenu(boolean createPage) throws IllegalStateException, Exception {
 
-		int itemsPerPage = 10;
+		int itemsPerPage = (Integer.parseInt(config.get("height")) - (95)) / (33 + 5);
+		config.set("count", Integer.toString(itemsPerPage));
 
 		refreshEntries(createPage);
 
-		System.out.println("Größe der Liste: " + copyEntryList.size());
+		// System.out.println("Größe der Liste: " + copyEntryList.size());
 
 		int pageCount = 1;
-		if (copyEntryList.size() >= 10) {
+		if (copyEntryList.size() >= itemsPerPage) {
 			pageCount = (int) Math.ceil(copyEntryList.size() / (float) itemsPerPage);
 		}
 
@@ -449,7 +450,7 @@ public class SceneModel {
 
 		setSelectedTab(2);
 
-		VBox settingsContent = new VBox(10);
+		VBox settingsContent = new VBox(20);
 		Label settingsStatus = new Label("Settings");
 
 		CheckBox uploadClips = new CheckBox("Enable Recording");
@@ -459,14 +460,40 @@ public class SceneModel {
 			stylePath = "c:/";
 		}
 
+		Label stylePathLabel = new Label("CSS Directory");
+		stylePathLabel.getStyleClass().add("descriptionLabel");
 		TextField stylePathField = new TextField(config.get("stylePath"));
 		Button stylePathChooser = new Button("Choose");
 		stylePathChooser.setMaxWidth(Double.MAX_VALUE);
 
 		ComboBox<String> styleChooser = new ComboBox<>();
 
-		TextField widthChooser = new TextField();
-		TextField heightChooser = new TextField();
+		TextField widthChooser = new TextField(config.get("width"));
+		TextField heightChooser = new TextField(config.get("height"));
+
+		widthChooser.setMaxWidth(Double.MAX_VALUE);
+		HBox.setHgrow(widthChooser, Priority.ALWAYS);
+		heightChooser.setMaxWidth(Double.MAX_VALUE);
+		HBox.setHgrow(heightChooser, Priority.ALWAYS);
+
+		HBox widthFields = new HBox(5);
+		HBox heightFields = new HBox(5);
+
+		widthFields.getChildren().addAll(widthChooser, new Label("px"));
+		heightFields.getChildren().addAll(heightChooser, new Label("px"));
+
+		widthChooser.textProperty().addListener((observable, oldValue, newValue) -> {
+			if (!newValue.matches("\\d*")) {
+				widthChooser.setText(newValue.replaceAll("[^\\d]", ""));
+			}
+			config.set("width", widthChooser.getText());
+		});
+		heightChooser.textProperty().addListener((observable, oldValue, newValue) -> {
+			if (!newValue.matches("\\d*")) {
+				heightChooser.setText(newValue.replaceAll("[^\\d]", ""));
+			}
+			config.set("height", heightChooser.getText());
+		});
 
 		collectStyles(styleChooser);
 		styleChooser.getSelectionModel().select(config.get("style"));
@@ -486,16 +513,20 @@ public class SceneModel {
 							.add(new File(config.get("stylePath")).toURI().toString() + config.get("style").toString());
 				});
 
+		VBox styleElements = new VBox(10);
+		VBox sizeElements = new VBox(10);
 		VBox settingsButtons = new VBox(20);
 		Button bExit = new Button("Exit");
 		settingsButtons.setMaxWidth(Double.MAX_VALUE);
 		bExit.setMaxWidth(Double.MAX_VALUE);
 		bExit.setOnAction(actionEvent -> System.exit(0));
 
+		styleElements.getChildren().addAll(stylePathLabel, stylePathField, stylePathChooser, styleChooser);
+		sizeElements.getChildren().addAll(widthFields, heightFields);
+
 		settingsButtons.getChildren().add(bExit);
 
-		settingsContent.getChildren().addAll(settingsStatus, uploadClips, stylePathField, stylePathChooser,
-				styleChooser, settingsButtons);
+		settingsContent.getChildren().addAll(settingsStatus, uploadClips, styleElements, sizeElements, settingsButtons);
 
 		if (config.get("token").toString() != null && !config.get("token").toString().isEmpty()) {
 			Button bLogout = new Button("Forget me");
@@ -545,8 +576,12 @@ public class SceneModel {
 		if (pageIndex == null || copyEntryList.isEmpty())
 			return page;
 
-		int entryFrom = pageIndex * 10;
-		int entryTo = entryFrom + 10;
+		int count = config.getInt("count");
+
+		int entryFrom = pageIndex * count;
+		int entryTo = entryFrom + count;
+
+		config.set("count", Integer.toString(count));
 
 		if (entryFrom >= copyEntryList.size())
 			return page;
@@ -565,7 +600,9 @@ public class SceneModel {
 	private HBox createEntry(CopyEntry copyEntry) {
 		HBox entry = new HBox(5);
 		Button entryContent = new Button(copyEntry.getShortContent());
-		entryContent.setPrefWidth(155);
+		entryContent.setMaxWidth(Double.MAX_VALUE);
+
+		HBox.setHgrow(entryContent, Priority.ALWAYS);
 		entryContent.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
@@ -580,7 +617,8 @@ public class SceneModel {
 
 		Button removeEntry = new Button("X");
 		removeEntry.getStyleClass().add("removeEntry");
-		removeEntry.setPrefWidth(20);
+		removeEntry.setMaxWidth(Double.MAX_VALUE);
+		HBox.setHgrow(entryContent, Priority.ALWAYS);
 		removeEntry.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
@@ -604,7 +642,6 @@ public class SceneModel {
 		});
 
 		// removeEntry.setOnAction(value);
-
 		entry.getChildren().addAll(entryContent, removeEntry);
 		return entry;
 	}
@@ -612,8 +649,8 @@ public class SceneModel {
 	public void refreshEntries(boolean createNewPage) throws IllegalStateException, Exception {
 
 		int number = config.getInt("number");
-		System.out.println("number-2 " + number);
-		System.out.println("refresh " + getNumberOfClips());
+		// System.out.println("number-2 " + number);
+		// System.out.println("refresh " + getNumberOfClips());
 		// if (copyEntryList.size() < number) {
 		// number = copyEntryList.size();
 		// }

@@ -155,7 +155,7 @@ public class Clipboarder extends Application {
 			// if the user selects the default menu item (which includes the app name),
 			// show the main app stage.
 			MenuItem openItem = new MenuItem("Clipboarder");
-			// openItem.addActionListener(event -> Platform.runLater(this::showStage));
+			openItem.addActionListener(event -> Platform.runLater(this::showStage));
 
 			// the convention for tray icons seems to be to set the default icon for opening
 			// the application stage in a bold font.

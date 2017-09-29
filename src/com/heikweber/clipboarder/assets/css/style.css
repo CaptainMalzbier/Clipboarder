@@ -165,7 +165,7 @@ ________________________________________
 }
 
 .combo-box {
-	-fx-border-width:0;
+/* 	-fx-border-color: #342921; */
 }
 
 .combo-box .list-cell 
@@ -181,7 +181,7 @@ ________________________________________
 }
 
 .combo-box .list-cell .text{
-    -fx-font-size: 16;
+    -fx-font-size: 1.2em;
 	-fx-fill: #342921;	
 }
 
@@ -208,6 +208,10 @@ ________________________________________
 
 .combo-box .arrow-button:selected .arrow {
     -fx-background-color: #aad028;
+}
+
+.descriptionLabel{
+	-fx-font-size:1.3em;
 }
 
 
