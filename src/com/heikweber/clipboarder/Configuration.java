@@ -107,6 +107,16 @@ public class Configuration {
 		return path;
 	}
 
+	public void setWidth(double width) {
+		this.width = width;
+		set("width", Double.toString(width));
+	}
+
+	public void setHeight(double height) {
+		this.height = height;
+		set("height", Double.toString(height));
+	}
+
 	public void saveConfig() throws IOException, ConfigurationException {
 		// FileOutputStream fr = new FileOutputStream(new File(this.getPath()));
 		layout.save(config, new FileWriter(path, false));

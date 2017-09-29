@@ -109,10 +109,16 @@ public class Clipboarder extends Application {
 		}
 
 		Rectangle2D primaryScreenBounds = Screen.getPrimary().getBounds();
-		stage.setX(primaryScreenBounds.getMinX() + primaryScreenBounds.getWidth() - config.getWidth()
-				- config.getInt("offsetwidth"));
-		stage.setY(primaryScreenBounds.getMinY() + primaryScreenBounds.getHeight() - config.getHeight()
-				- config.getInt("offsetheight"));
+
+		stage.widthProperty().addListener((obs, oldVal, newVal) -> {
+			stage.setX(primaryScreenBounds.getMinX() + primaryScreenBounds.getWidth() - (double) newVal
+					- config.getInt("offsetwidth"));
+		});
+		stage.heightProperty().addListener((obs, oldVal, newVal) -> {
+			stage.setY(primaryScreenBounds.getMinY() + primaryScreenBounds.getHeight() - (double) newVal
+					- config.getInt("offsetheight"));
+		});
+
 		stage.initStyle(StageStyle.UNDECORATED);
 		stage.setMinWidth(config.getWidth()); // setze Mindestbreite des Fensters bei
 		stage.setMinHeight(config.getHeight()); // setze Mindesthoehe des Fensters bei
