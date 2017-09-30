@@ -29,6 +29,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 /**
@@ -492,6 +493,8 @@ public class SceneModel {
 			if (newValue == false) {
 				if (widthChooser.getText().matches("\\d*")) {
 					int newWidth = Math.max(Integer.parseInt(widthChooser.getText().replaceAll("[^\\d]", "")), 200);
+					newWidth = (int) Math.min(newWidth,
+							Screen.getPrimary().getBounds().getMaxX() - config.getInt("offsetwidth"));
 					widthChooser.setText(Integer.toString(newWidth));
 					config.set("width", Integer.toString(newWidth));
 					stage.setWidth(newWidth);
@@ -502,6 +505,8 @@ public class SceneModel {
 			if (newValue == false) {
 				if (heightChooser.getText().matches("\\d*")) {
 					int newHeight = Math.max(Integer.parseInt(heightChooser.getText().replaceAll("[^\\d]", "")), 470);
+					newHeight = (int) Math.min(newHeight,
+							Screen.getPrimary().getBounds().getMaxY() - config.getInt("offsetheight"));
 					heightChooser.setText(Integer.toString(newHeight));
 					config.set("height", Integer.toString(newHeight));
 					stage.setHeight(newHeight);
