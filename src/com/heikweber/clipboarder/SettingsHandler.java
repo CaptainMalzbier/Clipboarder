@@ -16,14 +16,12 @@ public class SettingsHandler implements EventHandler<ActionEvent> {
 	private int id;
 	private Stage stage;
 	private SceneModel model;
-	private Scene scene;
 	private Node[] node;
 
 	public SettingsHandler(int id, Stage stage, SceneModel model, Scene scene, Node[] node) {
 		this.id = id;
 		this.stage = stage;
 		this.model = model;
-		this.scene = scene;
 		this.node = node;
 	}
 
@@ -63,10 +61,6 @@ public class SettingsHandler implements EventHandler<ActionEvent> {
 
 			model.collectStyles((ComboBox<String>) node[1]);
 
-			break;
-		case 2:
-			break;
-		case 3:
 			break;
 		}
 

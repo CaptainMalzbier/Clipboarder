@@ -467,6 +467,8 @@ public class SceneModel {
 		TextField stylePathField = new TextField(config.get("stylePath"));
 		Button stylePathChooser = new Button("Choose");
 		stylePathChooser.setMaxWidth(Double.MAX_VALUE);
+		Label styleLabel = new Label("Theme");
+		styleLabel.getStyleClass().add("descriptionLabel");
 
 		ComboBox<String> styleChooser = new ComboBox<>();
 
@@ -504,7 +506,7 @@ public class SceneModel {
 		heightChooser.focusedProperty().addListener((observable, oldValue, newValue) -> {
 			if (newValue == false) {
 				if (heightChooser.getText().matches("\\d*")) {
-					int newHeight = Math.max(Integer.parseInt(heightChooser.getText().replaceAll("[^\\d]", "")), 470);
+					int newHeight = Math.max(Integer.parseInt(heightChooser.getText().replaceAll("[^\\d]", "")), 500);
 					newHeight = (int) Math.min(newHeight,
 							Screen.getPrimary().getBounds().getMaxY() - config.getInt("offsetheight"));
 					heightChooser.setText(Integer.toString(newHeight));
@@ -515,7 +517,7 @@ public class SceneModel {
 		});
 
 		collectStyles(styleChooser);
-		styleChooser.getSelectionModel().select(config.get("style"));
+		styleChooser.getSelectionModel().select(getDisplayStyleName(config.get("style")));
 		styleChooser.setMaxWidth(Double.MAX_VALUE);
 
 		uploadClips.setSelected(isRecording());
@@ -526,7 +528,7 @@ public class SceneModel {
 
 		styleChooser.valueProperty()
 				.addListener((ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-					config.set("style", newValue);
+					config.set("style", resetStyleName(newValue));
 					scene.getStylesheets().clear();
 					scene.getStylesheets()
 							.add(new File(config.get("stylePath")).toURI().toString() + config.get("style").toString());
@@ -540,7 +542,7 @@ public class SceneModel {
 		bExit.setMaxWidth(Double.MAX_VALUE);
 		bExit.setOnAction(actionEvent -> System.exit(0));
 
-		styleElements.getChildren().addAll(stylePathLabel, stylePathField, stylePathChooser, styleChooser);
+		styleElements.getChildren().addAll(stylePathLabel, stylePathField, stylePathChooser, styleLabel, styleChooser);
 		sizeElements.getChildren().addAll(widthFields, heightFields);
 
 		settingsButtons.getChildren().add(bExit);
@@ -557,6 +559,16 @@ public class SceneModel {
 
 		return settingsContent;
 
+	}
+
+	private String resetStyleName(String style) {
+		style = style + ".css";
+		return style.toLowerCase();
+	}
+
+	private String getDisplayStyleName(String style) {
+		style = style.replace(".css", "");
+		return style.substring(0, 1).toUpperCase() + style.substring(1);
 	}
 
 	VBox setupMessageDisplay(String displayMessage, int confirmAction) {
@@ -741,7 +753,7 @@ public class SceneModel {
 
 		for (File file : files) {
 			if (file.isFile() && file.getName().endsWith(".css")) {
-				comboBox.getItems().add(file.getName());
+				comboBox.getItems().add(getDisplayStyleName(file.getName()));
 			}
 		}
 	}
