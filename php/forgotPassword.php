@@ -25,7 +25,7 @@ if (isset($_POST['email'])) {
     if ($iID) {
         $sql = "UPDATE `clipboarderuser` SET `PasswordReset`= '" . $token . "' WHERE `ID` = '" . $iID . "'";
         if ($dbClipboarder->query($sql)) {
-            echo "Successfully request, check your mails to change ";
+            echo "Successfully request, check your mails to change";
             sendMail($email, $username, $token);
         } else {
             echo "Error while password ";
