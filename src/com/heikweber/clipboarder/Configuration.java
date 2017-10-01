@@ -20,14 +20,7 @@ public class Configuration {
 
 	public Configuration(String path)
 			throws FileNotFoundException, IOException, IllegalStateException, ConfigurationException {
-		// props = new Properties();
 		this.path = path;
-		// File propertiesFile = new File(path);
-		// try (BufferedInputStream bis = new BufferedInputStream(new
-		// FileInputStream(propertiesFile))) {
-		// props.load(bis);
-		// }
-		// load();
 
 		File file = new File(path);
 
@@ -118,7 +111,6 @@ public class Configuration {
 	}
 
 	public void saveConfig() throws IOException, ConfigurationException {
-		// FileOutputStream fr = new FileOutputStream(new File(this.getPath()));
 		layout.save(config, new FileWriter(path, false));
 	}
 }

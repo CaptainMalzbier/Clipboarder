@@ -68,8 +68,6 @@ public class SysTray extends TrayIcon implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// Clipboarder.showStage();
-		// Platform.runLater(Clipboarder::showStage);
 
 	}
 

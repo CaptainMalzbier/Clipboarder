@@ -49,7 +49,6 @@ public class Clipboarder extends Application {
 		PlatformImpl.setTaskbarApplication(false);
 		// Clear previous logging configurations.
 		LogManager.getLogManager().reset();
-		// Get the logger for "org.jnativehook" and set the level to off.
 		Logger logger = Logger.getLogger(GlobalScreen.class.getPackage().getName());
 		logger.setLevel(Level.OFF);
 
@@ -78,8 +77,8 @@ public class Clipboarder extends Application {
 
 	@Override
 	public void start(final Stage stage) throws IllegalStateException, Exception {
-		String configPath = getParameters().getRaw().get(0); // erhalte Pfad zur Konfigurationsdatei aus Startargumenten
-																// des Programms
+		String configPath = getParameters().getRaw().get(0);
+
 		try {
 			config = new Configuration(configPath);
 		} catch (Exception ex) {
@@ -95,14 +94,14 @@ public class Clipboarder extends Application {
 		// instructs the javafx system not to exit implicitly when the last application
 		// window is shut.
 		Platform.setImplicitExit(false);
-		// Funktion zum Starten des Fensters
+
 		model = new SceneModel(stage, config);
-		// setze eigenes Icon fuer das Fenster
+		// set icon for window
 		stage.getIcons().add(new Image(new File(config.get("icon")).toURI().toString()));
 
 		stage.setFullScreen(false);
-		stage.setScene(model.getScene()); // setze Szene in Fenster ein
-		stage.setMaximized(false); // minimiere Fenster
+		stage.setScene(model.getScene());
+		stage.setMaximized(false);
 		stage.setResizable(false);
 		if (Boolean.parseBoolean(config.get("alwaysontop"))) {
 			stage.setAlwaysOnTop(true);
@@ -120,8 +119,8 @@ public class Clipboarder extends Application {
 		});
 
 		stage.initStyle(StageStyle.UNDECORATED);
-		stage.setMinWidth(config.getWidth()); // setze Mindestbreite des Fensters bei
-		stage.setMinHeight(config.getHeight()); // setze Mindesthoehe des Fensters bei
+		stage.setMinWidth(config.getWidth());
+		stage.setMinHeight(config.getHeight());
 
 		// add key listener
 		GlobalScreen.addNativeKeyListener(new KeyboardListener(this, model));
@@ -129,14 +128,11 @@ public class Clipboarder extends Application {
 		// sets up the tray icon (using awt code run on the swing thread).
 		SwingUtilities.invokeLater(this::addAppToTray);
 
-		// Verkleinerung
-		// stage.show(); // zeige Fenster
 		showStage();
 	}
 
 	private void addAppToTray() {
 		try {
-			// ensure awt toolkit is initialized.
 			Toolkit.getDefaultToolkit();
 
 			// set up a system tray icon.

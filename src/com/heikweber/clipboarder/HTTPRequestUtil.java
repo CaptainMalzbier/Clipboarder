@@ -339,30 +339,13 @@ public class HTTPRequestUtil {
 		conn.getOutputStream().write(postDataBytes);
 
 		try (InputStream is = conn.getInputStream()) {
-			// JsonIterator.deserialize("qwe").
 
-			// Behandlung der empfangenen Daten des JSON-Objektes
+			// save received string in var json
 			String json = IOUtils.toString(is, StandardCharsets.UTF_8);
 
-			// Objekt, das das iterierte JSON-Objekt enthält
+			// create an object via deserialize
 			Any obj = JsonIterator.deserialize(json);
 
-			// TODO: Repair Login, Whats happens, when no record is set
-			// System.out.println("JSON->Data:");
-			// System.out.println(obj.get("data").toString());
-			// if (obj.get("data").toString() == null ||
-			// obj.get("data").toString().isEmpty()) {
-			// System.out.println("JSON->Data ist leer");
-			// String iniData = "[{\"ID\":\"543\",\"UserID\":\"29\",\"Content\":\"Execute
-			// registration\",\"CreateDate\":\"1505031692\"}]";
-			// return obj.get("data").asList().stream().map(item -> new CopyEntry("Test
-			// Entry", "1"))
-			// .collect(Collectors.toList());
-			// }
-			// System.out.println("JSON->Data:");
-			// System.out.println(obj.get("data").toString());
-
-			System.out.println("HIER " + obj.get("count").toInt());
 			model.setNumberOfClips(obj.get("count").toInt());
 
 			return obj.get("data").asList().stream()
@@ -381,10 +364,6 @@ public class HTTPRequestUtil {
 		params.put("email", email);
 		params.put("offset", offset);
 		params.put("number", number);
-		System.out.println("HIER " + email);
-		System.out.println("HIER " + token);
-		System.out.println("HIER " + offset);
-		System.out.println("HIER " + number);
 
 		StringBuilder postData = new StringBuilder();
 		for (Map.Entry<String, Object> param : params.entrySet()) {
@@ -404,12 +383,11 @@ public class HTTPRequestUtil {
 		conn.getOutputStream().write(postDataBytes);
 
 		try (InputStream is = conn.getInputStream()) {
-			// Behandlung der empfangenen Daten des JSON-Objektes
+			// save received string in var json
 			String json = IOUtils.toString(is, StandardCharsets.UTF_8);
-			// Objekt, das das iterierte JSON-Objekt enthält
+			// create an object via deserialize
 			Any obj = JsonIterator.deserialize(json);
 
-			System.out.println("HIER " + obj.get("count").toInt());
 			model.setNumberOfClips(obj.get("count").toInt());
 
 			return obj.get("data").asList().stream()

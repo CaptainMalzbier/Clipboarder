@@ -92,7 +92,6 @@ public class SceneModel {
 	}
 
 	private Scene createScene(Configuration config) throws IllegalStateException, Exception {
-		// Klasse zum Erzeugen der Szene
 		setAccount(new Button("Account"));
 		setClips(new Button("Clips"));
 		setSettings(new Button("Settings"));
@@ -106,26 +105,16 @@ public class SceneModel {
 				setToken(config.get("token").toString());
 				if (config.get("mail").toString() != null && !config.get("mail").toString().isEmpty()) {
 					setMail(config.get("mail").toString());
-
-					// both is set -> so we can try to login
-					// model.setSelectedTab(1); // Login Action
-					// new NavigationHandler(model, 1);
-					// System.out.println("Login with Token");
 					String response = HTTPRequestUtil.loginWithToken(config.get("mail"), config.get("token"));
-					System.out.println(response);
 					if (response.contains("true")) {
 						setLoggedIn(true);
-					} else {
-						System.out.println(response);
 					}
 				}
 			}
 		} catch (Exception e) {
-			System.out.println("Could not automatically login");
+			// Could not automatically login
 			e.printStackTrace();
 		}
-
-		System.out.println("SIND WIR EINGELOGGT? " + isLoggedIn());
 
 		if (isLoggedIn()) {
 			setNavigation(1);
@@ -147,9 +136,6 @@ public class SceneModel {
 		layoutPane.setTop(getNavigationPane());
 		BorderPane.setMargin(getNavigationPane(), insets);
 		layoutPane.setCenter(getContentPane());
-
-		// layoutPane.getChildren().addAll(getNavigationPane(), getContentPane());
-
 		StackPane.setMargin(layoutPane, new Insets(5));
 		layout.getChildren().add(layoutPane);
 
@@ -176,9 +162,9 @@ public class SceneModel {
 			setSelectedTab(tabOne);
 		}
 
-		// Navigationsleiste
+		// Navigationbar
 		HBox navigationPane = new HBox(5);
-		// Abstandshalter für die 3 Buttons in der Navigationsleiste
+		// Spacer
 		final Pane spacer = new Pane();
 		spacer.setMinSize(5, 1);
 		HBox.setHgrow(spacer, Priority.ALWAYS);
@@ -243,10 +229,6 @@ public class SceneModel {
 		register.setOnAction(new NavigationHandler(this, 5));
 		forgotPassword.setOnAction(new NavigationHandler(this, 7));
 
-		// HBox upperAccountButtons = new HBox(5);
-		// HBox.setHgrow(register, Priority.ALWAYS);
-		// HBox.setHgrow(login, Priority.ALWAYS);
-
 		register.setMaxWidth(Double.MAX_VALUE);
 		login.setMaxWidth(Double.MAX_VALUE);
 		forgotPassword.setMaxWidth(Double.MAX_VALUE);
@@ -294,7 +276,6 @@ public class SceneModel {
 		mailBox.getChildren().addAll(lMail, mail);
 		passwordBox.getChildren().addAll(lPassword, password);
 
-		// HBox registerButton = new HBox(5);
 		Button register = new Button("Register");
 		register.setMaxWidth(Double.MAX_VALUE);
 
@@ -310,8 +291,6 @@ public class SceneModel {
 		});
 
 		register.setOnAction(new NavigationHandler(this, 4));
-
-		// registerButton.getChildren().addAll(register);
 
 		registerContent.getChildren().addAll(registertStatus, nameBox, mailBox, passwordBox, register);
 
@@ -420,10 +399,6 @@ public class SceneModel {
 		return newPasswordContent;
 	}
 
-	// AnchorPane setupClipsMenu() throws IllegalStateException, Exception {
-	// return setupClipsMenu(false);
-	// }
-
 	AnchorPane setupClipsMenu(boolean createPage) throws IllegalStateException, Exception {
 
 		int itemsPerPage = (Integer.parseInt(config.get("height")) - (95)) / (33 + 5);
@@ -431,16 +406,11 @@ public class SceneModel {
 
 		refreshEntries(createPage);
 
-		// System.out.println("Größe der Liste: " + copyEntryList.size());
-
 		int pageCount = 1;
 		if (copyEntryList.size() >= itemsPerPage) {
 			pageCount = (int) Math.ceil(copyEntryList.size() / (float) itemsPerPage);
 		}
 
-		System.out.println("pageCount: " + pageCount);
-
-		// pagination = new Pagination(pageCount, 0);
 		Pagination pagination = new Pagination();
 		pagination.setPageCount(pageCount);
 		pagination.setCurrentPageIndex(0);
@@ -620,10 +590,6 @@ public class SceneModel {
 	}
 
 	protected Node createPage(Integer pageIndex) {
-		System.out.println("creating page " + pageIndex);
-
-		System.out.println(copyEntryList.size());
-
 		final VBox page = new VBox(5);
 
 		if (pageIndex == null || copyEntryList.isEmpty())
@@ -660,7 +626,6 @@ public class SceneModel {
 		entryContent.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				System.out.println(copyEntry.getContent());
 				SceneModel.this.selectedEntry = copyEntry.getId();
 				final Clipboard clipboard = Clipboard.getSystemClipboard();
 				final ClipboardContent content = new ClipboardContent();
@@ -679,15 +644,11 @@ public class SceneModel {
 				try {
 					HTTPRequestUtil.deleteClipWithPassword(getMail(), getPassword(), copyEntry.getId());
 					refreshEntries(true);
-					// setClipsLoaded(true);
 					layoutPane.getChildren().clear();
 					Node contentPane = setupClipsMenu(true);
-					// clipboarder.getModel().layout.requestLayout();
 					layoutPane.setTop(getNavigationPane());
 					BorderPane.setMargin(getNavigationPane(), getInsets());
 					layoutPane.setCenter(contentPane);
-					// layoutPane.getChildren().addAll(getNavigationPane(), contentPane);
-					// model.setSelectedTab(getSelectedTab());
 					layoutPane.requestLayout();
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -695,7 +656,6 @@ public class SceneModel {
 			}
 		});
 
-		// removeEntry.setOnAction(value);
 		entry.getChildren().addAll(entryContent, removeEntry);
 		return entry;
 	}
@@ -703,11 +663,6 @@ public class SceneModel {
 	public void refreshEntries(boolean createNewPage) throws IllegalStateException, Exception {
 
 		int number = config.getInt("number");
-		// System.out.println("number-2 " + number);
-		// System.out.println("refresh " + getNumberOfClips());
-		// if (copyEntryList.size() < number) {
-		// number = copyEntryList.size();
-		// }
 
 		if (config.get("token").toString() != null && !config.get("token").toString().isEmpty()) {
 			copyEntryList = HTTPRequestUtil.getClipsWithToken(config.get("mail"), config.get("token"),
@@ -716,7 +671,6 @@ public class SceneModel {
 			copyEntryList = HTTPRequestUtil.getClipsWithPassword(getMail(), getPassword(), config.getInt("offset"),
 					number, this);
 		}
-		System.out.println("refresh " + getNumberOfClips());
 		if (createNewPage)
 			pagination.setPageFactory(idx -> createPage(idx));
 	}
