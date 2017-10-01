@@ -34,14 +34,11 @@ public class KeyboardListener extends NativeKeyAdapter {
 	public void nativeKeyPressed(NativeKeyEvent e) {
 		if (e.getKeyCode() == NativeKeyEvent.VC_C) {
 			if ((e.getModifiers() & NativeInputEvent.CTRL_L_MASK) != 0) {
-				System.out.println(model.isRecording());
-				System.out.println(model.isLoggedIn());
 				if (model.isRecording()) {
 					if (model.isLoggedIn()) {
 						try {
 							copyToClipboarder();
 						} catch (HeadlessException | UnsupportedFlavorException | IOException e1) {
-							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						}
 					}
@@ -57,7 +54,6 @@ public class KeyboardListener extends NativeKeyAdapter {
 			Clipboard clipboard = Clipboard.getSystemClipboard();
 			String string = clipboard.getString();
 			clipboardText = string;
-			System.out.println(clipboardText);
 
 			if (clipboardText == null)
 				return;
@@ -72,36 +68,26 @@ public class KeyboardListener extends NativeKeyAdapter {
 				// check if set token and mail in config
 				if (model.config.get("token").toString() != null && !model.config.get("token").toString().isEmpty()) {
 					if (model.config.get("mail").toString() != null && !model.config.get("mail").toString().isEmpty()) {
-						System.out.println("Add Clip with Token");
 						// both is set -> so we can try to addClipWithtoken
 						response = HTTPRequestUtil.addClipWithToken(model.config.get("mail").toString(),
 								model.config.get("token").toString(), clipboardText);
 					}
 				} else {
-					System.out.println("Add Clip with Password");
 					response = HTTPRequestUtil.addClipWithPassword(model.getMail(), model.getPassword(), clipboardText);
 				}
 			} catch (Exception e) {
 				System.out.println("Could not add Clip");
-				e.printStackTrace();
 			}
-			System.out.println("Strato: " + response);
 			try {
-				// clipboarder.getModel().refreshEntries(true);
 				model.layoutPane.getChildren().clear();
 				Node contentPane = clipboarder.getModel().setupClipsMenu(true);
 
-				// clipboarder.getModel().layout.requestLayout();
 				model.layoutPane.setTop(model.getNavigationPane());
 				BorderPane.setMargin(model.getNavigationPane(), model.getInsets());
 				model.layoutPane.setCenter(contentPane);
-				// model.layoutPane.getChildren().addAll(model.getNavigationPane(),
-				// contentPane);
-				// model.setSelectedTab(getSelectedTab());
 				model.layoutPane.requestLayout();
 			} catch (Exception e) {
 				System.out.println("Could not refresh.");
-				e.printStackTrace();
 			}
 		});
 	}

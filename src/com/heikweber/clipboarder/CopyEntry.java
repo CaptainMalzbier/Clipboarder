@@ -36,11 +36,6 @@ class CopyEntry {
 	public void setContent(String content) {
 		this.content = content != null ? content : "";
 
-		// // shorten printed content of CopyEntry
-		// if (content.length() >= 12) {
-		// content = content.substring(0, 12) + "...";
-		// }
-
 		content = content.replaceAll("[\\r\\n\\t]", "");
 
 		setSingleLineContent(content.trim());

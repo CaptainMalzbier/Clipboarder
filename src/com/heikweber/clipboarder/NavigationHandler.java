@@ -46,7 +46,6 @@ public class NavigationHandler implements EventHandler<ActionEvent> {
 				try {
 					if (model.config.get("token").toString() != null
 							&& !model.config.get("token").toString().isEmpty()) {
-						System.out.println("Login with Token");
 						String response = HTTPRequestUtil.loginWithToken(model.config.get("mail"),
 								model.config.get("token"));
 						if (response.contains("true")) {
@@ -54,16 +53,13 @@ public class NavigationHandler implements EventHandler<ActionEvent> {
 						} else {
 							model.setContentPane(model.setupMessageDisplay(response, 0)); // Try Again: Render Login
 																							// Pane
-							System.out.println(response);
 						}
 					} else {
-						System.out.println("Login with Password");
 						String response = HTTPRequestUtil.loginWithPassword(model.getMail(), model.getPassword(),
 								model.isRememberMe());
 
 						if (response.contains("true")) {
 							if (model.isRememberMe()) {
-								System.out.println(response);
 								response = response.split(",")[1];
 								model.config.set("mail", model.getMail());
 								model.config.set("token", response);
@@ -73,14 +69,12 @@ public class NavigationHandler implements EventHandler<ActionEvent> {
 						} else {
 							model.setContentPane(model.setupMessageDisplay(response, 0)); // Try Again: Render Login
 																							// Pane
-							System.out.println(response);
 						}
 					}
 				} catch (Exception e) {
 					model.setContentPane(model.setupMessageDisplay("Could not log in", 0)); // Try Again: Render Login
 																							// Pane
 					System.out.println("Could not log in");
-					// e.printStackTrace();
 				}
 
 			}
@@ -95,68 +89,53 @@ public class NavigationHandler implements EventHandler<ActionEvent> {
 			break;
 		case 4:
 			// Execute registration
-			System.out.println("Execute registration");
 			try {
 				String response = HTTPRequestUtil.register(model.getName(), model.getMail(), model.getPassword());
-				System.out.println(response);
 				if (response.contains("User created")) {
 					model.setContentPane(model.setupMessageDisplay("Check your mails", 11)); // Render Activation Pane
-					System.out.println(response);
 				} else {
 					model.setContentPane(model.setupMessageDisplay(response, 5)); // Try Again: Render Register Pane
-					System.out.println(response);
+
 				}
 			} catch (Exception e) {
 				model.setContentPane(model.setupMessageDisplay("Could not registed", 5)); // Try Again: Render Register
 																							// Pane
 				System.out.println("Could not registed");
-				// e.printStackTrace();
 			}
 			break;
 		case 5:
-			System.out.println("Render Register Pane");
 			// Render Register Pane
 			model.setContentPane(model.setupRegisterMenu());
 			break;
 		case 6:
-			System.out.println("Execute Forgot Password");
 			// Execute Forgot Password
 			try {
 				String response = HTTPRequestUtil.forgotPassword(model.getMail());
-				System.out.println(response);
 				if (response.contains("Successfully")) {
 					model.setContentPane(model.setupMessageDisplay(response, 9)); // Render Set new Password Pane
-					System.out.println(response);
 				} else {
 					model.setContentPane(model.setupMessageDisplay(response, 7)); // Repeat: Render Forgot Password Pane
-					System.out.println(response);
 				}
 			} catch (Exception e) {
 				System.out.println("Could not request a new password");
 				model.setContentPane(model.setupMessageDisplay("Could not request a new password", 7)); // Repeat:
 																										// Render Forgot
 																										// Password Pane
-				// e.printStackTrace();
 			}
 			break;
 		case 7:
-			System.out.println("Render Forgot Password Pane");
 			// Render Forgot Password Pane
 			model.setContentPane(model.setupForgotPassword());
 			break;
 		case 8:
-			System.out.println("Execute Set new Password");
 			// Execute Set new Password
 			try {
 				String response = HTTPRequestUtil.resetPassword(model.getMail(), model.getToken(), model.getPassword());
-				System.out.println(response);
 				if (response.contains("Password changed")) {
 					model.setContentPane(model.setupMessageDisplay(response, 0)); // Login
-					System.out.println(response);
 				} else {
 					model.setContentPane(model.setupMessageDisplay(response, 9)); // Tray again, Render Set new Password
 																					// Pane
-					System.out.println(response);
 				}
 			} catch (Exception e) {
 				model.setContentPane(model.setupMessageDisplay("Could not setup a new password", 9)); // Tray again,
@@ -164,27 +143,21 @@ public class NavigationHandler implements EventHandler<ActionEvent> {
 																										// new Password
 																										// Pane
 				System.out.println("Could not setup a new password");
-				// e.printStackTrace();
 			}
 			break;
 		case 9:
-			System.out.println("Render Set new Password Pane");
 			// Render Set new Password Pane
 			model.setContentPane(model.setupNewPassword());
 			break;
 		case 10:
-			System.out.println("Execute Activation");
 			// Execute Activation
 			try {
 				String response = HTTPRequestUtil.activate(model.getMail(), model.getActivateToken());
-				System.out.println(response);
 				if (response.contains("Successfully activated")) {
 					model.setContentPane(model.setupMessageDisplay(response, 0)); // Render Login Pane
-					System.out.println(response);
 				} else {
 					model.setContentPane(model.setupMessageDisplay(response, 11)); // Repeat: Render Forgot Password
 																					// Pane
-					System.out.println(response);
 				}
 			} catch (Exception e) {
 				System.out.println("Could not request a new password");
@@ -192,17 +165,14 @@ public class NavigationHandler implements EventHandler<ActionEvent> {
 																											// Render
 																											// Forgot
 																											// Password
-				// e.printStackTrace();
 			}
 			break;
 		case 11:
-			System.out.println("Render Activation Pane");
 			// Render Activation Pane
 			model.setContentPane(model.setupActivationMenu());
 			break;
 		case 12:
 			// Render Logout Pane
-			System.out.println("Render Forgot me Pane");
 			model.setLoggedIn(false);
 			model.setMail("");
 			model.setActivateToken("");
@@ -241,7 +211,6 @@ public class NavigationHandler implements EventHandler<ActionEvent> {
 			model.setContentPane(model.setupClipsMenu(true));
 		} catch (Exception e1) {
 			System.out.println("Could not load Clips");
-			e1.printStackTrace();
 		}
 		if (!model.areClipsLoaded()) {
 			try {
@@ -249,7 +218,6 @@ public class NavigationHandler implements EventHandler<ActionEvent> {
 				model.setClipsLoaded(true);
 			} catch (Exception e) {
 				System.out.println("Unable to refresh Clips");
-				e.printStackTrace();
 			}
 		}
 	}
