@@ -22,6 +22,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -230,6 +231,12 @@ public class SceneModel {
 		});
 		password.textProperty().addListener((observable, oldPassword, newPassword) -> {
 			setPassword(newPassword);
+		});
+
+		// fire button action, login by pressing ENTER
+		password.setOnKeyPressed(e -> {
+			if (e.getCode() == KeyCode.ENTER)
+				login.fire();
 		});
 
 		login.setOnAction(new NavigationHandler(this, 1));
@@ -491,28 +498,52 @@ public class SceneModel {
 		widthFields.getChildren().addAll(widthChooser, px1);
 		heightFields.getChildren().addAll(heightChooser, px2);
 
+		widthChooser.textProperty().addListener((observable, oldValue, newValue) -> {
+			widthChooser.setText(widthChooser.getText().replaceAll("[^\\d]", ""));
+
+			if (widthChooser.getText().length() > 9)
+				widthChooser.setText(removeLastChar(widthChooser.getText()));
+		});
+
+		heightChooser.textProperty().addListener((observable, oldValue, newValue) -> {
+			heightChooser.setText(heightChooser.getText().replaceAll("[^\\d]", ""));
+
+			if (heightChooser.getText().length() > 9)
+				heightChooser.setText(removeLastChar(heightChooser.getText()));
+		});
+
 		widthChooser.focusedProperty().addListener((observable, oldValue, newValue) -> {
 			if (newValue == false) {
-				if (widthChooser.getText().matches("\\d*")) {
-					int newWidth = Math.max(Integer.parseInt(widthChooser.getText().replaceAll("[^\\d]", "")), 200);
-					newWidth = (int) Math.min(newWidth,
-							Screen.getPrimary().getBounds().getMaxX() - config.getInt("offsetwidth"));
-					widthChooser.setText(Integer.toString(newWidth));
-					config.set("width", Integer.toString(newWidth));
-					stage.setWidth(newWidth);
-				}
+				resizeWindow(0, widthChooser, 200);
+				widthChooser.selectPositionCaret(widthChooser.getText().length());
 			}
 		});
 		heightChooser.focusedProperty().addListener((observable, oldValue, newValue) -> {
 			if (newValue == false) {
-				if (heightChooser.getText().matches("\\d*")) {
-					int newHeight = Math.max(Integer.parseInt(heightChooser.getText().replaceAll("[^\\d]", "")), 500);
-					newHeight = (int) Math.min(newHeight,
-							Screen.getPrimary().getBounds().getMaxY() - config.getInt("offsetheight"));
-					heightChooser.setText(Integer.toString(newHeight));
-					config.set("height", Integer.toString(newHeight));
-					stage.setHeight(newHeight);
-				}
+				resizeWindow(1, heightChooser, 500);
+				heightChooser.selectPositionCaret(heightChooser.getText().length());
+			}
+		});
+
+		widthChooser.setOnKeyPressed(e -> {
+			if (e.getCode() == KeyCode.ENTER) {
+				resizeWindow(0, widthChooser, 200);
+				widthChooser.selectPositionCaret(widthChooser.getText().length());
+			} else if (e.getCode() == KeyCode.DOWN) {
+				resizeWindow(0, widthChooser, 200);
+				heightChooser.requestFocus();
+				heightChooser.selectPositionCaret(heightChooser.getText().length());
+			}
+		});
+
+		heightChooser.setOnKeyPressed(e -> {
+			if (e.getCode() == KeyCode.ENTER) {
+				resizeWindow(1, heightChooser, 500);
+				heightChooser.selectPositionCaret(heightChooser.getText().length());
+			} else if (e.getCode() == KeyCode.UP) {
+				resizeWindow(1, heightChooser, 500);
+				widthChooser.requestFocus();
+				widthChooser.selectPositionCaret(widthChooser.getText().length());
 			}
 		});
 
@@ -554,21 +585,12 @@ public class SceneModel {
 			HBox.setHgrow(bLogout, Priority.ALWAYS);
 			bLogout.setMaxWidth(Double.MAX_VALUE);
 			bLogout.setOnAction(new NavigationHandler(this, 12)); // Forget me
-			settingsButtons.getChildren().add(bLogout);
+			settingsButtons.getChildren().clear();
+			settingsButtons.getChildren().addAll(bLogout, bExit);
 		}
 
 		return settingsContent;
 
-	}
-
-	private String resetStyleName(String style) {
-		style = style + ".css";
-		return style.toLowerCase();
-	}
-
-	private String getDisplayStyleName(String style) {
-		style = style.replace(".css", "");
-		return style.substring(0, 1).toUpperCase() + style.substring(1);
 	}
 
 	VBox setupMessageDisplay(String displayMessage, int confirmAction) {
@@ -697,6 +719,47 @@ public class SceneModel {
 		System.out.println("refresh " + getNumberOfClips());
 		if (createNewPage)
 			pagination.setPageFactory(idx -> createPage(idx));
+	}
+
+	private String removeLastChar(String s) {
+		s = s.substring(0, s.length() - 1);
+		return s;
+	}
+
+	private void resizeWindow(int id, TextField textField, int maxVal) {
+
+		if (textField.getText().matches("[0-9]*")) {
+
+			int newVal = Math.max(Integer.parseInt(textField.getText()), maxVal);
+
+			switch (id) {
+			case 0:
+				newVal = (int) Math.min(newVal,
+						Screen.getPrimary().getBounds().getMaxX() - config.getInt("offsetwidth"));
+				config.set("width", Integer.toString(newVal));
+				stage.setWidth(newVal);
+				break;
+			case 1:
+				newVal = (int) Math.min(newVal,
+						Screen.getPrimary().getBounds().getMaxY() - config.getInt("offsetheight"));
+				config.set("height", Integer.toString(newVal));
+				stage.setHeight(newVal);
+				break;
+			}
+			textField.setText(Integer.toString(newVal));
+		} else {
+			System.out.println("Alter, nur Ziffern");
+		}
+	}
+
+	private String resetStyleName(String style) {
+		style = style + ".css";
+		return style.toLowerCase();
+	}
+
+	private String getDisplayStyleName(String style) {
+		style = style.replace(".css", "");
+		return style.substring(0, 1).toUpperCase() + style.substring(1);
 	}
 
 	public int getSelectedEntryIndex() {
