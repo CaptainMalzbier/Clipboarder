@@ -23,11 +23,13 @@ public class KeyboardListener extends NativeKeyAdapter {
 
 	private Clipboarder clipboarder;
 	private SceneModel model;
+	private Configuration config;
 
 	// Inject dependency clipboarder
-	public KeyboardListener(Clipboarder clipboarder, SceneModel model) {
+	public KeyboardListener(Clipboarder clipboarder, SceneModel model, Configuration config) {
 		this.clipboarder = clipboarder;
 		this.model = model;
+		this.config = config;
 	}
 
 	@Override
@@ -50,10 +52,9 @@ public class KeyboardListener extends NativeKeyAdapter {
 
 	public void copyToClipboarder() throws HeadlessException, UnsupportedFlavorException, IOException {
 		Platform.runLater(() -> {
-			final String clipboardText;
+			String clipboardText;
 			Clipboard clipboard = Clipboard.getSystemClipboard();
-			String string = clipboard.getString();
-			clipboardText = string;
+			clipboardText = clipboard.getString();
 
 			if (clipboardText == null)
 				return;
@@ -70,18 +71,20 @@ public class KeyboardListener extends NativeKeyAdapter {
 					if (model.config.get("mail").toString() != null && !model.config.get("mail").toString().isEmpty()) {
 						// both is set -> so we can try to addClipWithtoken
 						response = HTTPRequestUtil.addClipWithToken(model.config.get("mail").toString(),
-								model.config.get("token").toString(), clipboardText);
+								model.config.get("token").toString(), clipboardText, config.get("cryptKey"));
 					}
 				} else {
-					response = HTTPRequestUtil.addClipWithPassword(model.getMail(), model.getPassword(), clipboardText);
+					response = HTTPRequestUtil.addClipWithPassword(model.getMail(), model.getPassword(), clipboardText,
+							config.get("cryptKey"));
 				}
 			} catch (Exception e) {
-				System.out.println("Could not add Clip");
+				System.out.println("Could not add Clip" + response);
 			}
 			try {
 				model.layoutPane.getChildren().clear();
 				Node contentPane = clipboarder.getModel().setupClipsMenu(true);
-
+				// setting active tab to clips
+				model.setNavigation(1);
 				model.layoutPane.setTop(model.getNavigationPane());
 				BorderPane.setMargin(model.getNavigationPane(), model.getInsets());
 				model.layoutPane.setCenter(contentPane);

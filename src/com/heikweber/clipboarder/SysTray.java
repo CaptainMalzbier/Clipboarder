@@ -21,7 +21,7 @@ import java.util.List;
  *
  * @author Philipp
  */
-public class SysTray extends TrayIcon implements ActionListener {
+public class SysTray extends TrayIcon {
 
 	private Clipboarder clipboarder;
 
@@ -65,10 +65,4 @@ public class SysTray extends TrayIcon implements ActionListener {
 		SystemTray tray = SystemTray.getSystemTray();
 		tray.add(trayIcon);
 	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-
-	}
-
 }

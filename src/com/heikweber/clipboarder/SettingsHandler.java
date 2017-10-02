@@ -32,11 +32,11 @@ public class SettingsHandler implements EventHandler<ActionEvent> {
 		case 0:
 			if (!model.isRecording()) {
 				model.setRecording(true);
-				model.config.set("uploadclips", "true");
+				model.config.set("recording", "true");
 
 			} else {
 				model.setRecording(false);
-				model.config.set("uploadclips", "false");
+				model.config.set("recording", "false");
 			}
 			break;
 		case 1:

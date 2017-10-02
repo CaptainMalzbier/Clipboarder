@@ -43,7 +43,7 @@ public class SceneModel {
 	private Stage stage;
 	private Scene scene;
 	Configuration config;
-	public static StackPane layout = new StackPane(); // Layout-Pane auf dem alles dargestellt wird
+	public static StackPane layout = new StackPane();
 	private List<CopyEntry> copyEntryList = new ArrayList<>();
 	private int selectedEntry = 0;
 	private int selectedTab = 0;
@@ -76,7 +76,9 @@ public class SceneModel {
 		scene.getStylesheets()
 				.add(new File(config.get("stylePath")).toURI().toString() + config.get("style").toString());
 
-		// set button actions (seen as tabs)
+		/*
+		 * set button actions (seen as tabs) account: 0 clips: 1 settings: 2 hide: 3
+		 */
 		int counter = 0;
 		for (Button b : getTabs()) {
 			b.setOnAction(new NavigationHandler(this, counter++));
@@ -84,11 +86,6 @@ public class SceneModel {
 		}
 
 		pagination = new Pagination(1, 0);
-
-		this.account.setId("account"); // 0
-		this.clips.setId("clips"); // 1
-		this.settings.setId("settings"); // 2
-		this.hide.setId("hide"); // 3
 	}
 
 	private Scene createScene(Configuration config) throws IllegalStateException, Exception {
@@ -118,14 +115,14 @@ public class SceneModel {
 
 		if (isLoggedIn()) {
 			setNavigation(1);
-			setContentPane(setupClipsMenu(false));
+			setContentPane(setupClipsMenu(false)); // setup clips menu but don't create new page
 		} else {
 			setNavigation(0);
 			setContentPane(setupAccountMenu());
 		}
 
 		// init from config
-		if (config.get("uploadclips").toString().equals("true")) {
+		if (config.get("recording").toString().equals("true")) {
 			setRecording(true);
 		} else {
 			setRecording(false);
@@ -257,7 +254,7 @@ public class SceneModel {
 
 		VBox registerContent = new VBox(10);
 
-		Label registertStatus = new Label("Registration");
+		Label registerStatus = new Label("Registration");
 
 		HBox nameBox = new HBox(5);
 		HBox mailBox = new HBox(5);
@@ -292,7 +289,7 @@ public class SceneModel {
 
 		register.setOnAction(new NavigationHandler(this, 4));
 
-		registerContent.getChildren().addAll(registertStatus, nameBox, mailBox, passwordBox, register);
+		registerContent.getChildren().addAll(registerStatus, nameBox, mailBox, passwordBox, register);
 
 		return registerContent;
 	}
@@ -309,17 +306,15 @@ public class SceneModel {
 
 		tokenBox.getChildren().addAll(lToken, token);
 
-		HBox activationButton = new HBox(5);
-		Button activation = new Button("Activate");
+		Button activate = new Button("Activate");
 
 		token.textProperty().addListener((observable, oldToken, newToken) -> {
 			setActivateToken(newToken);
 		});
 
-		activation.setOnAction(new NavigationHandler(this, 10)); // // Execute Activation
-		activationButton.getChildren().addAll(activation);
+		activate.setOnAction(new NavigationHandler(this, 10)); // // Execute Activation
 
-		activationContent.getChildren().addAll(activationStatus, tokenBox, activationButton);
+		activationContent.getChildren().addAll(activationStatus, tokenBox, activate);
 
 		return activationContent;
 	}
@@ -375,8 +370,7 @@ public class SceneModel {
 		tokenBox.getChildren().addAll(lToken, token);
 		passwordBox.getChildren().addAll(lPassword, password);
 
-		HBox newPasswordButton = new HBox(5);
-		Button newPasswordB = new Button("Confirm");
+		Button bNewPassword = new Button("Confirm");
 
 		token.textProperty().addListener((observable, oldToken, newToken) -> {
 			setToken(newToken);
@@ -390,11 +384,9 @@ public class SceneModel {
 			setPassword(newPassword);
 		});
 
-		newPasswordB.setOnAction(new NavigationHandler(this, 8));
+		bNewPassword.setOnAction(new NavigationHandler(this, 8));
 
-		newPasswordButton.getChildren().addAll(newPasswordB);
-
-		newPasswordContent.getChildren().addAll(newPasswordStatus, mailBox, tokenBox, passwordBox, newPasswordButton);
+		newPasswordContent.getChildren().addAll(newPasswordStatus, mailBox, tokenBox, passwordBox, bNewPassword);
 
 		return newPasswordContent;
 	}
@@ -432,7 +424,7 @@ public class SceneModel {
 		VBox settingsContent = new VBox(20);
 		Label settingsStatus = new Label("Settings");
 
-		CheckBox uploadClips = new CheckBox("Enable Recording");
+		CheckBox recording = new CheckBox("Enable Recording");
 
 		String stylePath = config.get("stylePath");
 		if (stylePath.isEmpty()) {
@@ -521,8 +513,8 @@ public class SceneModel {
 		styleChooser.getSelectionModel().select(getDisplayStyleName(config.get("style")));
 		styleChooser.setMaxWidth(Double.MAX_VALUE);
 
-		uploadClips.setSelected(isRecording());
-		uploadClips.setOnAction(new SettingsHandler(0, null, this, null, null));
+		recording.setSelected(isRecording());
+		recording.setOnAction(new SettingsHandler(0, null, this, null, null));
 
 		stylePathChooser
 				.setOnAction(new SettingsHandler(1, stage, this, scene, new Node[] { stylePathField, styleChooser }));
@@ -548,7 +540,7 @@ public class SceneModel {
 
 		settingsButtons.getChildren().add(bExit);
 
-		settingsContent.getChildren().addAll(settingsStatus, uploadClips, styleElements, sizeElements, settingsButtons);
+		settingsContent.getChildren().addAll(settingsStatus, recording, styleElements, sizeElements, settingsButtons);
 
 		if (config.get("token").toString() != null && !config.get("token").toString().isEmpty()) {
 			Button bLogout = new Button("Forget me");
@@ -566,8 +558,7 @@ public class SceneModel {
 	VBox setupMessageDisplay(String displayMessage, int confirmAction) {
 		VBox messageContent = new VBox(10);
 
-		// split message String into pieces of each 20 characters length for better
-		// displaying
+		// split message String into pieces of each 20 characters for better displaying
 		String[] message = displayMessage.split("(?<=\\G.{20})");
 
 		displayMessage = "";
@@ -666,10 +657,10 @@ public class SceneModel {
 
 		if (config.get("token").toString() != null && !config.get("token").toString().isEmpty()) {
 			copyEntryList = HTTPRequestUtil.getClipsWithToken(config.get("mail"), config.get("token"),
-					config.getInt("offset"), number, this);
+					config.getInt("offset"), number, this, config.get("cryptKey"));
 		} else {
 			copyEntryList = HTTPRequestUtil.getClipsWithPassword(getMail(), getPassword(), config.getInt("offset"),
-					number, this);
+					number, this, config.get("cryptKey"));
 		}
 		if (createNewPage)
 			pagination.setPageFactory(idx -> createPage(idx));
@@ -682,28 +673,21 @@ public class SceneModel {
 
 	private void resizeWindow(int id, TextField textField, int maxVal) {
 
-		if (textField.getText().matches("[0-9]*")) {
+		int newVal = Math.max(Integer.parseInt(textField.getText()), maxVal);
 
-			int newVal = Math.max(Integer.parseInt(textField.getText()), maxVal);
-
-			switch (id) {
-			case 0:
-				newVal = (int) Math.min(newVal,
-						Screen.getPrimary().getBounds().getMaxX() - config.getInt("offsetwidth"));
-				config.set("width", Integer.toString(newVal));
-				stage.setWidth(newVal);
-				break;
-			case 1:
-				newVal = (int) Math.min(newVal,
-						Screen.getPrimary().getBounds().getMaxY() - config.getInt("offsetheight"));
-				config.set("height", Integer.toString(newVal));
-				stage.setHeight(newVal);
-				break;
-			}
-			textField.setText(Integer.toString(newVal));
-		} else {
-			System.out.println("Alter, nur Ziffern");
+		switch (id) {
+		case 0:
+			newVal = (int) Math.min(newVal, Screen.getPrimary().getBounds().getMaxX() - config.getInt("offsetwidth"));
+			config.set("width", Integer.toString(newVal));
+			stage.setWidth(newVal);
+			break;
+		case 1:
+			newVal = (int) Math.min(newVal, Screen.getPrimary().getBounds().getMaxY() - config.getInt("offsetheight"));
+			config.set("height", Integer.toString(newVal));
+			stage.setHeight(newVal);
+			break;
 		}
+		textField.setText(Integer.toString(newVal));
 	}
 
 	private String resetStyleName(String style) {
@@ -859,8 +843,8 @@ public class SceneModel {
 		return isRecording;
 	}
 
-	public void setRecording(boolean userWantsToUploadClips) {
-		this.isRecording = userWantsToUploadClips;
+	public void setRecording(boolean recording) {
+		this.isRecording = recording;
 	}
 
 	public boolean areClipsLoaded() {
