@@ -103,9 +103,7 @@ public class Clipboarder extends Application {
 		stage.setScene(model.getScene());
 		stage.setMaximized(false);
 		stage.setResizable(false);
-		if (Boolean.parseBoolean(config.get("alwaysontop"))) {
-			stage.setAlwaysOnTop(true);
-		}
+		stage.setAlwaysOnTop(Boolean.parseBoolean(config.get("alwaysontop")));
 
 		Rectangle2D primaryScreenBounds = Screen.getPrimary().getBounds();
 
@@ -123,7 +121,7 @@ public class Clipboarder extends Application {
 		stage.setMinHeight(config.getHeight());
 
 		// add key listener
-		GlobalScreen.addNativeKeyListener(new KeyboardListener(this, model));
+		GlobalScreen.addNativeKeyListener(new KeyboardListener(this, model, config));
 
 		// sets up the tray icon (using awt code run on the swing thread).
 		SwingUtilities.invokeLater(this::addAppToTray);
